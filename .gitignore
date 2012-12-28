@@ -2,3 +2,5 @@
 checkstyle
 build.ant
 dist
+WebData.log
+
