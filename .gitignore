@@ -1,0 +1,6 @@
+.DS_*
+checkstyle
+build.ant
+build
+bin
+dist
