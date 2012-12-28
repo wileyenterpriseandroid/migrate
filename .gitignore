@@ -4,3 +4,5 @@ build.ant
 build
 bin
 dist
+WebData.log
+
