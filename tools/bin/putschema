@@ -1,0 +1,10 @@
+#!/bin/bash
+
+LIB=../lib/
+CP=""
+
+for x in `ls -1 $LIB` ; do
+    CP = "CP\;$x"
+done
+
+java -classpath "$CP"

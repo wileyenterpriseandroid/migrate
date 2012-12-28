@@ -1,8 +1,4 @@
 .DS_*
 checkstyle
 build.ant
-build
-bin
 dist
-WebData.log
-

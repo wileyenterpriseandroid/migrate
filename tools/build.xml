@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="postschema" default="compile" basedir=".">
+    <property name="app.name" value="postschema"/>
+    <property name="build" value="${basedir}/../../webdata-build/tools/postschema"/>
+    <property name="lib" value="${build}/lib"/>
+    <property name="postschema.src" value="/service/tools/postschema/src"/>
+    <property name="postschema.classes" value="${build}/classes"/>
+    <property name="postschema.dist" value="${build}/dist"/>
+
+    <target name="resolve" description="--> resolve ivy dependencies">
+        <property name="ivy.dep.file" value="${basedir}/../ivy.xml" />
+        <property name="ivy.lib.dir" value="${lib}" />
+        <ivy:retrieve />
+    </target>
+
+    <target name="prepare">
+        <mkdir dir="${build}"/>
+        <mkdir dir="${postschema.classes}"/>
+        <mkdir dir="${lib}"/>
+    </target>
+
+    <target name="all" depends="clean,compile" description="Clean build and dist directories, then compile"/>
+
+    <target name="clean" description="Delete old build and dist directories">
+        <echo message="${build}"/>
+
+        <!--<delete dir="${build}"/>-->
+    </target>
+
+    <path id="compile.classpath">
+        <fileset dir="${lib}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="compile" depends="prepare, resolve" description="Compile Java sources">
+        <mkdir dir="${postschema.classes}"/>
+
+        <javac srcdir="${postschema.src}" destdir="${postschema.classes}">
+            <classpath refid="compile.classpath"/>
+        </javac>
+
+        <copy  todir="${build}/WEB-INF/classes">
+            <fileset dir="${postschema.src}" excludes="**/*.java"/>
+        </copy>
+    </target>
+
+    <target name="dist" depends="compile" description="Create binary distribution">
+        <echo message="${postschema.dist}/${app.name}.jar"/>
+        <mkdir dir="${postschema.dist}"/>
+        <jar jarfile="${postschema.dist}/${app.name}.jar" basedir="${postschema.classes}"/>
+    </target>
+</project>
