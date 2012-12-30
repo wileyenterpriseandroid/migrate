@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="postschema" default="compile" basedir=".">
-    <property name="app.name" value="postschema"/>
-    <property name="build" value="${basedir}/../../webdata-build/tools/postschema"/>
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="updateschema" default="compile" basedir=".">
+    <property name="app.name" value="updateschema"/>
+    <property name="build" value="${basedir}/../../webdata-build/tools/updateschema"/>
     <property name="lib" value="${build}/lib"/>
-    <property name="postschema.src" value="/service/tools/postschema/src"/>
-    <property name="postschema.classes" value="${build}/classes"/>
-    <property name="postschema.dist" value="${build}/dist"/>
+    <property name="updateschema.src" value="/service/tools/updateschema/src"/>
+    <property name="updateschema.classes" value="${build}/classes"/>
+    <property name="updateschema.dist" value="${build}/dist"/>
 
     <target name="resolve" description="--> resolve ivy dependencies">
         <property name="ivy.dep.file" value="${basedir}/../ivy.xml" />
@@ -16,7 +16,7 @@
 
     <target name="prepare">
         <mkdir dir="${build}"/>
-        <mkdir dir="${postschema.classes}"/>
+        <mkdir dir="${updateschema.classes}"/>
         <mkdir dir="${lib}"/>
     </target>
 
@@ -35,20 +35,20 @@
     </path>
 
     <target name="compile" depends="prepare, resolve" description="Compile Java sources">
-        <mkdir dir="${postschema.classes}"/>
+        <mkdir dir="${updateschema.classes}"/>
 
-        <javac srcdir="${postschema.src}" destdir="${postschema.classes}">
+        <javac srcdir="${updateschema.src}" destdir="${updateschema.classes}">
             <classpath refid="compile.classpath"/>
         </javac>
 
         <copy  todir="${build}/WEB-INF/classes">
-            <fileset dir="${postschema.src}" excludes="**/*.java"/>
+            <fileset dir="${updateschema.src}" excludes="**/*.java"/>
         </copy>
     </target>
 
     <target name="dist" depends="compile" description="Create binary distribution">
-        <echo message="${postschema.dist}/${app.name}.jar"/>
-        <mkdir dir="${postschema.dist}"/>
-        <jar jarfile="${postschema.dist}/${app.name}.jar" basedir="${postschema.classes}"/>
+        <echo message="${updateschema.dist}/${app.name}.jar"/>
+        <mkdir dir="${updateschema.dist}"/>
+        <jar jarfile="${updateschema.dist}/${app.name}.jar" basedir="${updateschema.classes}"/>
     </target>
 </project>

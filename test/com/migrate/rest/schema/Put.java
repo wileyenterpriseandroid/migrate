@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.migrate.webdata.model.PersistentSchema;
 import org.junit.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,8 +18,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
-import com.migrate.dataModel.PropertyIndex;
-import com.migrate.dataModel.Schema;
+import com.migrate.webdata.model.PropertyIndex;
 import com.migrate.storage.impl.JsonHelper;
 
 public class Put extends com.migrate.rest.schema.SchemaCommon {
@@ -50,14 +50,14 @@ public class Put extends com.migrate.rest.schema.SchemaCommon {
 			String postUrl = URL;
 			
 			String jsonSchemaStr = getJsonSchema(Contact.class);
-			Schema schema = new Schema();
+			PersistentSchema persistentSchema = new PersistentSchema();
 			TypeReference<HashMap<String,Object>> typeRef  = new TypeReference<HashMap<String,Object> >() {};
 			Map<String, Object> jsonSchema =
 					JsonHelper.readValue(jsonSchemaStr.getBytes(), typeRef );
-			schema.setJsonSchema(jsonSchema);
-			schema.setIndexList(createIndexList());
+			persistentSchema.setJsonSchema(jsonSchema);
+			persistentSchema.setIndexList(createIndexList());
 
-			HttpEntity<Schema> requestEntity = new HttpEntity<Schema>(schema,header);
+			HttpEntity<PersistentSchema> requestEntity = new HttpEntity<PersistentSchema>(persistentSchema,header);
 			ResponseEntity<String> response = restTemplate.exchange(postUrl,
 					  HttpMethod.POST, requestEntity, String.class, schemaName);
 			log.info(response.getBody());

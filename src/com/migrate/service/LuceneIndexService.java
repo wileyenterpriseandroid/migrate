@@ -1,8 +1,8 @@
 package com.migrate.service;
 
-import com.migrate.dataModel.GenericMap;
-import com.migrate.dataModel.PropertyIndex;
-import com.migrate.dataModel.Schema;
+import com.migrate.webdata.model.GenericMap;
+import com.migrate.webdata.model.PersistentSchema;
+import com.migrate.webdata.model.PropertyIndex;
 import com.migrate.storage.impl.JsonHelper;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -52,11 +52,11 @@ public class LuceneIndexService {
 	public void updateIndex(GenericMap data) throws IOException
     {
 		String indexName = data.getBucket();
-		Schema schema = schemaService.getSchema(indexName);
-		if (schema == null) {
+		PersistentSchema persistentSchema = schemaService.getSchema(indexName);
+		if (persistentSchema == null) {
 			return;
 		}
-		List<PropertyIndex> indexList = schema.getIndexList();
+		List<PropertyIndex> indexList = persistentSchema.getIndexList();
 		Map<String, Object> map = getValueMap(indexList, data);
 		updateIndexDo(indexName, map);
 	}

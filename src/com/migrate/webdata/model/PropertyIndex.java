@@ -1,4 +1,4 @@
-package com.migrate.dataModel;
+package com.migrate.webdata.model;
 
 public class PropertyIndex {
 	private String type ="bTree";
@@ -6,9 +6,8 @@ public class PropertyIndex {
 	private String fieldName;
 	
 	public PropertyIndex() {
-		
 	}
-	
+
 	public PropertyIndex(String t, String iName, String pName) {
 		type = t;
 		indexName = iName;

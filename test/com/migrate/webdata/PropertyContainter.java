@@ -1,11 +1,11 @@
-package com.migrate.dataModel;
+package com.migrate.webdata;
+
+import com.migrate.webdata.model.BasePersistentObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.migrate.dataModel.BasePersistedObject;
-
-public class PropertyContainter extends BasePersistedObject {
+public class PropertyContainter extends BasePersistentObject {
 	private static final long serialVersionUID = 4892854749155167902L;
 	
 	private List<Property> propertyList = new ArrayList<Property>();

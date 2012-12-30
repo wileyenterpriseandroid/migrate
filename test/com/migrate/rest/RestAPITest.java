@@ -76,8 +76,7 @@ public class RestAPITest {
 		}
 	}
 
-	
-	protected void put(Map<String, Object> map) throws IOException {
+    protected void put(Map<String, Object> map) throws IOException {
 		try {		
 			HttpHeaders header = new HttpHeaders();
 			header.add("content-type", "application/json");

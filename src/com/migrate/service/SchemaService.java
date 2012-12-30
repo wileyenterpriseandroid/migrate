@@ -2,12 +2,12 @@ package com.migrate.service;
 
 import java.io.IOException;
 
+import com.migrate.webdata.model.PersistentSchema;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import com.migrate.dataModel.Schema;
 import com.migrate.storage.ObjectStore;
 
 @Component("schemaService")
@@ -19,12 +19,12 @@ public class SchemaService {
 	@Qualifier(value = "objectStore")
 	private ObjectStore store;
 	
-	public void updateSchema(Schema schema) throws IOException {
-		schema.setBucket(SCHEMA);
-		store.update(schema);
+	public void updateSchema(PersistentSchema persistentSchema) throws IOException {
+		persistentSchema.setBucket(SCHEMA);
+		store.update(persistentSchema);
 	}
 	
-	public Schema getSchema(String schemaName) throws IOException {
-		return store.get(SCHEMA, schemaName, Schema.class);
+	public PersistentSchema getSchema(String schemaName) throws IOException {
+		return store.get(SCHEMA, schemaName, PersistentSchema.class);
 	}
 }

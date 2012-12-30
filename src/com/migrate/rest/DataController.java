@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.migrate.dataModel.GenericMap;
+import com.migrate.webdata.model.GenericMap;
 import com.migrate.exception.DuplicationKeyException;
 import com.migrate.service.DataService;
 

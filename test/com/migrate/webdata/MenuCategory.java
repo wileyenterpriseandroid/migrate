@@ -1,16 +1,16 @@
-package com.migrate.dataModel;
+package com.migrate.webdata;
+
+import com.migrate.webdata.model.BasePersistentObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.migrate.dataModel.BasePersistedObject;
-
 /*
  * This class models a menu category such as Lunch menu etc.
  */
 
-public class MenuCategory extends BasePersistedObject {
+public class MenuCategory extends BasePersistentObject {
 	private static final long serialVersionUID = 2274690568099676712L;
 	private ServTimeRange[] servTimeRages = new ServTimeRange[7];
 	private List<Menu> menuList = new ArrayList<Menu>();

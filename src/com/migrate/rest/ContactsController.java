@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.migrate.Constants;
 import org.apache.lucene.queryParser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.migrate.dataModel.GenericMap;
+import com.migrate.webdata.model.GenericMap;
 import com.migrate.service.DataService;
 
 // TODO: is this even used? It looks like requests are just going to the DataController?
 @Controller
 @RequestMapping("/contacts")
 public class ContactsController {
-	private static final String className = "com.migrate.sample.contacts.dataModel.Contact";
+	private static final String className = "com.migrate.sample.contacts.webdata.Contact";
 	@Autowired
 	@Qualifier(value = "dataService")
 	private DataService dataService;

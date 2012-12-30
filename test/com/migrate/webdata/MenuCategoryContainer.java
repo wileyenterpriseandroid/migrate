@@ -1,9 +1,11 @@
-package com.migrate.dataModel;
+package com.migrate.webdata;
+
+import com.migrate.webdata.model.BasePersistentObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MenuCategoryContainer extends BasePersistedObject {
+public class MenuCategoryContainer extends BasePersistentObject {
 	private static final long serialVersionUID = -2753939187577143782L;
 	private List<MenuCategory> menuCategoryList = new ArrayList<MenuCategory>();
 	

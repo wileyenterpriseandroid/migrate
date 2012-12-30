@@ -1,4 +1,4 @@
-package com.migrate.dataModel;
+package com.migrate.webdata;
 
 public class PropertyOption {
 	private String name;

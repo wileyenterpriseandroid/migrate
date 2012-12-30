@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import com.migrate.dataModel.GenericMap;
+import com.migrate.webdata.model.GenericMap;
 import com.migrate.storage.ObjectStore;
 
 @Component("dataService")

@@ -2,13 +2,13 @@ package com.migrate.storage.impl;
 
 import java.io.IOException;
 
+import com.migrate.webdata.model.PersistentObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import com.migrate.dataModel.PersistedObject;
 import com.migrate.storage.KVObject;
 import com.migrate.storage.KVStore;
 import com.migrate.storage.ObjectStore;
@@ -23,7 +23,7 @@ public class ObjectStoreImpl implements ObjectStore {
 	private KVStore store;
 	
 	@Override
-	public <T extends PersistedObject> T get(String bucket, String key, Class<T> valueType) throws IOException {
+	public <T extends PersistentObject> T get(String bucket, String key, Class<T> valueType) throws IOException {
 		KVObject kvo = store.get(bucket, key);
 		if (kvo == null) {
 			return null;
@@ -41,7 +41,7 @@ public class ObjectStoreImpl implements ObjectStore {
 
 
 	@Override
-	public void update(PersistedObject bo)  throws IOException {
+	public void update(PersistentObject bo)  throws IOException {
 		/**
 		 * turn off the version check by reading the object version from DB for now.
 		 */
@@ -61,7 +61,7 @@ public class ObjectStoreImpl implements ObjectStore {
 	}
 
 	@Override
-	public void create(PersistedObject bo) throws IOException {
+	public void create(PersistentObject bo) throws IOException {
 		String bucket = bo.getBucket();
 		String key = bo.getId();
 		cleanBaseObjectId(bo);
@@ -71,11 +71,11 @@ public class ObjectStoreImpl implements ObjectStore {
 		
 	}
 
-	private void restoreBaseObjetId(PersistedObject bo, String bucket, String key) {
+	private void restoreBaseObjetId(PersistentObject bo, String bucket, String key) {
 		bo.setBucket(bucket);
 		bo.setId(key);
 	}
-	private void cleanBaseObjectId(PersistedObject bo) {
+	private void cleanBaseObjectId(PersistentObject bo) {
 		bo.setBucket(null);
 		bo.setId(null);	
 	}

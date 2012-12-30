@@ -1,4 +1,4 @@
-package com.migrate.dataModel;
+package com.migrate.webdata.model;
 
 /**
  * Zane Pan
@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class GenericMap extends HashMap<String, Object> implements PersistedObject  {
+public class GenericMap extends HashMap<String, Object> implements PersistentObject {
 	static private final String TYPE = "type" ;
 	static private final String KEY = "key" ;
 	static private final String VERSION = "version" ;

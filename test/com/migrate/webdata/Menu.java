@@ -1,4 +1,6 @@
-package com.migrate.dataModel;
+package com.migrate.webdata;
+
+import com.migrate.webdata.model.BasePersistentObject;
 
 import java.util.ArrayList;
 
@@ -7,9 +9,7 @@ import java.util.ArrayList;
  */
 import java.util.List;
 
-import com.migrate.dataModel.BasePersistedObject;
-
-public class Menu extends BasePersistedObject {
+public class Menu extends BasePersistentObject {
 	private static final long serialVersionUID = 3905132175109207406L;
 	private List<MenuItem> menuItemList = new ArrayList<MenuItem>();
 	public List<MenuItem> getMenuItemList() {

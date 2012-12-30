@@ -1,7 +1,4 @@
 package com.migrate.rest;
-/**
- * @author Zane Pan
- */
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -11,6 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.migrate.webdata.model.PersistentSchema;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,10 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import com.migrate.dataModel.Schema;
 import com.migrate.service.SchemaService;
 
-
+/**
+ * @author Zane Pan
+ */
 @Controller
 @RequestMapping("/{context}/schema")
 public class SchemaController {
@@ -37,27 +37,32 @@ public class SchemaController {
     @RequestMapping(value = "/{schemaName}", method = RequestMethod.POST)
     @ResponseBody public Map<String, String> createSchema( @PathVariable String context,
                                                            @PathVariable String schemaName,
-                                                           @RequestBody Schema schema,
+                                                           @RequestBody PersistentSchema schema,
                                                            HttpServletRequest req,
                                                            HttpServletResponse resp) throws IOException
     {
-        schema.setId(schemaName);
-        schemaService.updateSchema(schema);
-        Map<String, String > map = new HashMap<String, String>(1);
-        map.put("location", req.getRequestURL().toString());
-        resp.setStatus(HttpStatus.ACCEPTED.value());
-        return map;
+        try {
+            schema.setId(schemaName);
+            schemaService.updateSchema(schema);
+            Map<String, String> map = new HashMap<String, String>(1);
+            map.put("location", req.getRequestURL().toString());
+            resp.setStatus(HttpStatus.ACCEPTED.value());
+            return map;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
     @RequestMapping(value = "/{schemaName}", method = RequestMethod.GET)
-    @ResponseBody public Schema getSchema(@PathVariable String context,
-                                          @PathVariable String schemaName,
-                                          HttpServletRequest req,
-                                          HttpServletResponse resp) throws IOException
+    @ResponseBody public PersistentSchema getSchema(@PathVariable String context,
+                                                    @PathVariable String schemaName,
+                                                    HttpServletRequest req,
+                                                    HttpServletResponse resp) throws IOException
     {
-        Schema schema = schemaService.getSchema(schemaName);
-        System.out.println(" schema " + schema.getName());
-        return schema;
+        PersistentSchema persistentSchema = schemaService.getSchema(schemaName);
+        System.out.println(" schema " + persistentSchema.getName());
+        return persistentSchema;
     }
 }

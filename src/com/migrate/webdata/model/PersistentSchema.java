@@ -1,9 +1,9 @@
-package com.migrate.dataModel;
+package com.migrate.webdata.model;
 
 import java.util.List;
 import java.util.Map;
 
-public class Schema extends BasePersistedObject{
+public class PersistentSchema extends BasePersistentObject {
 	private static final long serialVersionUID = -7495813459656381108L;
 	private Map<String,Object> jsonSchema;
 	private List<PropertyIndex> indexList;
@@ -47,7 +47,7 @@ public class Schema extends BasePersistedObject{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Schema other = (Schema) obj;
+		PersistentSchema other = (PersistentSchema) obj;
 		if (indexList == null) {
 			if (other.indexList != null)
 				return false;

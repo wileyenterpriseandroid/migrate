@@ -1,4 +1,4 @@
-package com.migrate.dataModel;
+package com.migrate.webdata;
 
 import java.util.ArrayList;
 import java.util.List;

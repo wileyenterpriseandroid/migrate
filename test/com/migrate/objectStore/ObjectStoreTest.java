@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.migrate.webdata.model.BasePersistentObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.migrate.dataModel.BasePersistedObject;
 import com.migrate.storage.ObjectStore;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -54,7 +54,7 @@ public abstract class ObjectStoreTest {
 		store.delete(bucket, key);
 	}
 	
-	public static class TestClass extends BasePersistedObject {
+	public static class TestClass extends BasePersistentObject {
 		private static final long serialVersionUID = 8235408424870289742L;
 		private String stringValue;
 		private long longValue;

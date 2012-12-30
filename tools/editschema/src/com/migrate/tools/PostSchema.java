@@ -1,9 +1,9 @@
-package com.migrate.migrate.tools;
+package com.migrate.tools;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.migrate.dataModel.PropertyIndex;
-import com.migrate.dataModel.Schema;
-import com.migrate.util.JsonHelper;
+import com.migrate.storage.impl.JsonHelper;
+import com.migrate.webdata.model.PersistentSchema;
+import com.migrate.webdata.model.PropertyIndex;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.schema.JsonSchema;
@@ -28,7 +28,8 @@ import java.util.Map;
  */
 public class PostSchema {
     protected static org.apache.log4j.Logger log = Logger.getLogger(PostSchema.class);
-    protected static final String URL = "http://localhost:8080/WebData/schema/{type}";
+
+    protected static final String URL = "http://localhost:8080/migrate/schema/{type}";
 
     protected static RestTemplate restTemplate = new RestTemplate();
 
@@ -73,23 +74,29 @@ public class PostSchema {
         String type = apiClass.getName();
 
         String jsonSchemaStr = getJsonSchema(apiClass);
-        Schema schema = new Schema();
+        PersistentSchema persistentSchema = new PersistentSchema();
+
         TypeReference<HashMap<String,Object>> typeRef  = new TypeReference<HashMap<String,Object> >() {};
         Map<String, Object> jsonSchema =
                 JsonHelper.readValue(jsonSchemaStr.getBytes(), typeRef);
-        schema.setJsonSchema(jsonSchema);
+
+        persistentSchema.setJsonSchema(jsonSchema);
 
         // do this with annotations
-        schema.setIndexList(new ArrayList<PropertyIndex>());
+        persistentSchema.setIndexList(new ArrayList<PropertyIndex>());
 //        schema.setIndexList(createIndexList());
 
-        HttpHeaders header = new HttpHeaders();
-        header.add("content-type", "application/json");
-        String postUrl = URL;
-        HttpEntity<Schema> requestEntity = new HttpEntity<Schema>(schema, header);
+        String json = new String(JsonHelper.writeValueAsByte(persistentSchema));
 
-        ResponseEntity<String> response = restTemplate.exchange(postUrl, HttpMethod.POST,
-                requestEntity, String.class, type);
-        log.info(response.getBody());
+        System.out.println(json);
+
+//        HttpHeaders header = new HttpHeaders();
+//        header.add("content-type", "application/json");
+//        String postUrl = URL;
+//        HttpEntity<PersistentSchema> requestEntity = new HttpEntity<PersistentSchema>(persistentSchema, header);
+//
+//        ResponseEntity<String> response = restTemplate.exchange(postUrl, HttpMethod.POST,
+//                requestEntity, String.class, type);
+//        log.info(response.getBody());
     }
 }

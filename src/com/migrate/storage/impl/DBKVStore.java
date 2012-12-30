@@ -101,6 +101,7 @@ public class DBKVStore implements KVStore {
 								new Long(version) });
 		
 		if (rowupdated != 1)  {
+            // TODO: this needs to get back to client as intelligible error, not as internal 500 error
 	   		throw new VersionMismatchException("row updated : " + rowupdated);
 	   	}		
 	}

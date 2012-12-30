@@ -1,4 +1,4 @@
-package com.migrate.dataModel;
+package com.migrate.webdata;
 
 public class MenuItem {
 	private String name;

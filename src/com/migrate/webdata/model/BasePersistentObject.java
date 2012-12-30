@@ -1,12 +1,9 @@
-package com.migrate.dataModel;
-
+package com.migrate.webdata.model;
 
 /**
  * @author Zane Pan
  */
-
-public abstract class BasePersistedObject implements PersistedObject {
-
+public abstract class BasePersistentObject implements PersistentObject {
 	private static final long serialVersionUID = 634871409470406478L;
 	private String bucket;
 	private String key;
@@ -15,20 +12,21 @@ public abstract class BasePersistedObject implements PersistedObject {
 	private String description;
 	private long updateTime;
 	
-	public BasePersistedObject() {
-		
+	public BasePersistentObject() {
 	}
-	public BasePersistedObject(String bucket, String key, String name) {
+
+    public BasePersistentObject(String bucket, String key, String name) {
 		this(bucket, key, name, 0);
 	}
 
-	public BasePersistedObject(String bucket, String key, String name,long version) {
+	public BasePersistentObject(String bucket, String key, String name, long version) {
 		this.bucket = bucket;
 		this.key = key;
 		this.name = name;
 		this.version = version;
 	}	
-	public String getBucket() {
+
+    public String getBucket() {
 		return bucket;
 	}
 
@@ -78,7 +76,8 @@ public abstract class BasePersistedObject implements PersistedObject {
 		result = prime * result + (int) (updateTime ^ (updateTime >>> 32));
 		return result;
 	}
-	@Override
+
+    @Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -86,7 +85,7 @@ public abstract class BasePersistedObject implements PersistedObject {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		BasePersistedObject other = (BasePersistedObject) obj;
+		BasePersistentObject other = (BasePersistentObject) obj;
 		if (bucket == null) {
 			if (other.bucket != null)
 				return false;
@@ -111,5 +110,4 @@ public abstract class BasePersistedObject implements PersistedObject {
 			return false;
 		return true;
 	}
-
 }
