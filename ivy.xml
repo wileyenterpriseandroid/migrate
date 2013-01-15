@@ -37,9 +37,9 @@
 
         <dependency org="org.apache.lucene" name="lucene-core" rev="3.5.0"/>
 
-        <dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.0.0"/>
-        <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.0.0"/>
-        <dependency org="com.fasterxml.jackson.core" name="jackson-annotations" rev="2.0.0"/>
+        <dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.1.1"/>
+        <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.1.1"/>
+        <dependency org="com.fasterxml.jackson.core" name="jackson-annotations" rev="2.1.1"/>
         <!-- Spring still use the the 1.9x  -->
         <dependency org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.5" />
         <dependency org="org.codehaus.jackson" name="jackson-mapper-lgpl" rev="1.9.5"/>

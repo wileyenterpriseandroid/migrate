@@ -29,6 +29,7 @@ import java.util.Map;
 public class PostSchema {
     protected static org.apache.log4j.Logger log = Logger.getLogger(PostSchema.class);
 
+    // TODO: needs to be an argument as well...
     protected static final String URL = "http://localhost:8080/migrate/schema/{type}";
 
     protected static RestTemplate restTemplate = new RestTemplate();
@@ -67,6 +68,13 @@ public class PostSchema {
 	private static String getJsonSchema(Class cl) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonSchema schema = mapper.generateJsonSchema(cl);
+
+        // TODO: wish I could use jackson JsonSerializableSchema annotation here, but that would require jackson on android side
+        // Oh, and this actually is a "standard" json schema attribute that
+        // you use as a unique identifier for the schema - in our case, the
+        // class name, which we can use as the table name.
+        schema.getSchemaNode().put("id", cl.getName());
+
 		return schema.toString();
 	}
 
@@ -86,17 +94,15 @@ public class PostSchema {
         persistentSchema.setIndexList(new ArrayList<PropertyIndex>());
 //        schema.setIndexList(createIndexList());
 
-        String json = new String(JsonHelper.writeValueAsByte(persistentSchema));
+//        String json = new String(JsonHelper.writeValueAsByte(persistentSchema));
 
-        System.out.println(json);
+        HttpHeaders header = new HttpHeaders();
+        header.add("content-type", "application/json");
+        String postUrl = URL;
+        HttpEntity<PersistentSchema> requestEntity = new HttpEntity<PersistentSchema>(persistentSchema, header);
 
-//        HttpHeaders header = new HttpHeaders();
-//        header.add("content-type", "application/json");
-//        String postUrl = URL;
-//        HttpEntity<PersistentSchema> requestEntity = new HttpEntity<PersistentSchema>(persistentSchema, header);
-//
-//        ResponseEntity<String> response = restTemplate.exchange(postUrl, HttpMethod.POST,
-//                requestEntity, String.class, type);
-//        log.info(response.getBody());
+        ResponseEntity<String> response = restTemplate.exchange(postUrl, HttpMethod.POST,
+                requestEntity, String.class, type);
+        log.info(response.getBody());
     }
 }

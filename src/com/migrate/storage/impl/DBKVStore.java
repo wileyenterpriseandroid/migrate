@@ -78,13 +78,11 @@ public class DBKVStore implements KVStore {
 		}
 		return kvo;		
 	}
-	
-	
+
 	@Override
 	public void delete(final String bucket, final String key) throws IOException {
-		jdbcTemplate.update(deleteSql, new Object[] {bucket, key});		
+		jdbcTemplate.update(deleteSql, new Object[] {bucket, key});
 	}
-
 
 	@Override
 	public void update(KVObject data)

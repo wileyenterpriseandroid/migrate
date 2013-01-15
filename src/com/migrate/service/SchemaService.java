@@ -27,4 +27,8 @@ public class SchemaService {
 	public PersistentSchema getSchema(String schemaName) throws IOException {
 		return store.get(SCHEMA, schemaName, PersistentSchema.class);
 	}
+
+    public void deleteSchema(String schemaName) throws IOException {
+   		store.delete(SCHEMA, schemaName);
+   	}
 }

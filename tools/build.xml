@@ -1,12 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="updateschema" default="compile" basedir=".">
-    <property name="app.name" value="updateschema"/>
-    <property name="build" value="${basedir}/../../webdata-build/tools/updateschema"/>
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="editschema" default="compile" basedir=".">
+    <property name="app.name" value="editschema"/>
+    <property name="build" value="${basedir}/build/editschema"/>
     <property name="lib" value="${build}/lib"/>
-    <property name="updateschema.src" value="/service/tools/updateschema/src"/>
-    <property name="updateschema.classes" value="${build}/classes"/>
-    <property name="updateschema.dist" value="${build}/dist"/>
+    <property name="migrate.src" value="../src"/>
+    <property name="editschema.src" value="editschema/src"/>
+    <property name="editschema.classes" value="${build}/classes"/>
+    <property name="editschema.dist" value="${build}/dist"/>
 
     <target name="resolve" description="--> resolve ivy dependencies">
         <property name="ivy.dep.file" value="${basedir}/../ivy.xml" />
@@ -16,14 +17,14 @@
 
     <target name="prepare">
         <mkdir dir="${build}"/>
-        <mkdir dir="${updateschema.classes}"/>
+        <mkdir dir="${editschema.classes}"/>
         <mkdir dir="${lib}"/>
     </target>
 
     <target name="all" depends="clean,compile" description="Clean build and dist directories, then compile"/>
 
     <target name="clean" description="Delete old build and dist directories">
-        <echo message="${build}"/>
+        <echo message="Not actually deleting: ${build}"/>
 
         <!--<delete dir="${build}"/>-->
     </target>
@@ -35,20 +36,24 @@
     </path>
 
     <target name="compile" depends="prepare, resolve" description="Compile Java sources">
-        <mkdir dir="${updateschema.classes}"/>
+        <mkdir dir="${editschema.classes}"/>
 
-        <javac srcdir="${updateschema.src}" destdir="${updateschema.classes}">
+        <javac srcdir="${editschema.src}" destdir="${editschema.classes}">
+            <sourcepath>
+                <!--TODO: compile all migrate, yuck, want a jar file-->
+                <dirset dir="${migrate.src}" />
+            </sourcepath>
             <classpath refid="compile.classpath"/>
         </javac>
 
         <copy  todir="${build}/WEB-INF/classes">
-            <fileset dir="${updateschema.src}" excludes="**/*.java"/>
+            <fileset dir="${editschema.src}" excludes="**/*.java"/>
         </copy>
     </target>
 
     <target name="dist" depends="compile" description="Create binary distribution">
-        <echo message="${updateschema.dist}/${app.name}.jar"/>
-        <mkdir dir="${updateschema.dist}"/>
-        <jar jarfile="${updateschema.dist}/${app.name}.jar" basedir="${updateschema.classes}"/>
+        <echo message="${editschema.dist}/${app.name}.jar"/>
+        <mkdir dir="${editschema.dist}"/>
+        <jar jarfile="${editschema.dist}/${app.name}.jar" basedir="${editschema.classes}"/>
     </target>
 </project>

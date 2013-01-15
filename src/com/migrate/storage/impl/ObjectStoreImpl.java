@@ -84,6 +84,5 @@ public class ObjectStoreImpl implements ObjectStore {
 	@Override
 	public void delete(String bucket, String key) throws IOException {
 		store.delete(bucket, key);
-		
 	}
 }
