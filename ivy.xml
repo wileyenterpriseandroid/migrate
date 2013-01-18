@@ -34,7 +34,8 @@
 
     <dependencies>
         <dependency org="javax.servlet" name="servlet-api" rev="2.5" />
-
+		<dependency org="jstl" name="jstl" rev="1.2"/>
+            
         <dependency org="org.apache.lucene" name="lucene-core" rev="3.5.0"/>
 
         <dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.1.1"/>

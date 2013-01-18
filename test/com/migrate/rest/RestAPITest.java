@@ -28,9 +28,7 @@ import org.springframework.web.client.RestTemplate;
 @ContextConfiguration( { "/spring/applicationContext-test.xml" })
 public class RestAPITest {
 	protected static org.apache.log4j.Logger log = Logger.getLogger(RestAPITest.class);
-    // TODO: should the test be present?
-	protected static  final String CONTACTS_URL = "http://localhost:8080/migrate/classes/{type}/{id}";
-//	protected static  final String CONTACTS_URL = "http://localhost:8080/contacts/test/classes/{type}/{id}";
+	protected static  final String MIGRATE_URL = "http://localhost:8080/migrate/test/classes/{type}/{id}";
 	protected String type = "type1";
 	protected String id = "id1";
 	protected Map<String, Object> object = new HashMap<String, Object>();
@@ -49,7 +47,7 @@ public class RestAPITest {
 	
 	protected void delete(String type, String id) throws IOException {
 		try {
-			String deleteUrl = CONTACTS_URL;
+			String deleteUrl = MIGRATE_URL;
 			HttpEntity<String> requestEntity = new  HttpEntity<String>(new HttpHeaders());
 			ResponseEntity<String> response = restTemplate.exchange(deleteUrl,
 					  HttpMethod.DELETE, requestEntity, String.class, type, id);
@@ -64,7 +62,7 @@ public class RestAPITest {
 		try {		
 			HttpHeaders header = new HttpHeaders();
 			header.add("content-type", "application/json");
-			String putUrl = CONTACTS_URL;
+			String putUrl = MIGRATE_URL;
 			HttpEntity<Map<String, Object>> requestEntity = new  HttpEntity<Map<String, Object>>(object,header);
 			ResponseEntity<String> response = restTemplate.exchange(putUrl,
 					  HttpMethod.POST, requestEntity, String.class, type, id);
@@ -80,7 +78,7 @@ public class RestAPITest {
 		try {		
 			HttpHeaders header = new HttpHeaders();
 			header.add("content-type", "application/json");
-			String putUrl = CONTACTS_URL;
+			String putUrl = MIGRATE_URL;
 			HttpEntity<Map<String, Object>> requestEntity = new  HttpEntity<Map<String, Object>>(map,header);
 			ResponseEntity<String> response = restTemplate.exchange(putUrl,
 					  HttpMethod.PUT, requestEntity, String.class, type, id);
@@ -95,7 +93,7 @@ public class RestAPITest {
     protected Map<String, Object> get() throws IOException {
 		try {
 			TypeReference<HashMap<String,Object>> typeRef = new TypeReference<HashMap<String,Object> >() {};
-			String getUrl = CONTACTS_URL;
+			String getUrl = MIGRATE_URL;
 			HttpEntity<String> requestEntity = new HttpEntity<String>(new HttpHeaders());
 			ResponseEntity<String> response = restTemplate.exchange(getUrl,
 					  HttpMethod.GET, requestEntity, String.class, "type1", "id1");
