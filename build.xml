@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="myData" default="compile" basedir=".">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="migrate" default="compile" basedir=".">
 
   <property file="build.properties"/>
   <property file="src/jdbc.properties"/>
 
-  <property name="app.name"      value="WebData"/>
+  <property name="app.name"      value="migrate"/>
   <property name="app.path"      value="/${app.name}"/>
   <property name="app.version"   value="1.0"/>
   <property name="build.home"    value="${basedir}/build.ant"/>
@@ -16,9 +16,6 @@
   <property name="compile.debug"       value="true"/>
   <property name="compile.deprecation" value="false"/>
   <property name="compile.optimize"    value="true"/>
-
-  <property name="lib.tomcat" value="/Applications/tomcat-6.0.32/lib" />
-
  
 <!-- ==================== resolve ivy dependencies Target ================================== -->	
   <target name="resolve" description="--> resolve ivy dependencies">
@@ -58,10 +55,6 @@
 
    <path id="compile.classpath">
     <fileset dir="${build.home}/WEB-INF/lib">
-       <include name="*.jar"/>
-    </fileset>
-
-    <fileset dir="${lib.tomcat}">
        <include name="*.jar"/>
     </fileset>
 
@@ -110,7 +103,7 @@
 
 <!-- ==================== Dist Target ===================================== -->
 
-  <target name="dist" depends="compile"
+  <target name="war" depends="compile"
    description="Create binary distribution">
 
     <!-- Copy documentation subdirectories -->
