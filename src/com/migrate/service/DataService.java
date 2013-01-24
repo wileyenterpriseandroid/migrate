@@ -41,6 +41,8 @@ public class DataService {
 	}
 	
 	public void createObject(GenericMap data) throws IOException {
+		log.info("calling createObject");
+		luceneIndexService.updateIndex(data);
 		store.create(data);
 	}
 	

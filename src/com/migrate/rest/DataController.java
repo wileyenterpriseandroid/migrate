@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.migrate.webdata.model.GenericMap;
+import com.migrate.webdata.model.SyncResult;
 import com.migrate.exception.DuplicationKeyException;
 import com.migrate.service.DataService;
 
@@ -118,31 +119,31 @@ public class DataController {
 
 	@RequestMapping(value = "{className}", method = RequestMethod.POST)
 	@ResponseBody
-	public GenericMap sync(@PathVariable String context,
+	public SyncResult sync(@PathVariable String context,
 			@PathVariable String className,
 			@RequestBody List<GenericMap> dataList,
 			@RequestParam(value = "syncTime", required = true) String syncTime,
 			HttpServletResponse resp) throws IOException, ParseException {
 		System.out.println(" sync time : " + syncTime);
-		String queryStr = "modified:[" + syncTime + " TO 9341517871585]";
+		String queryStr = "modified:[" + syncTime + " TO 9991517871585]";
 
 		Long now = new Long(System.currentTimeMillis());
 		List<GenericMap> changedData = dataService.find(className, queryStr);
-		GenericMap ret = new GenericMap();
-		ret.put("syncTime", now.toString());
-		ret.put("result", changedData);
-		log.info(" ***** now : " + now.toString());
-		log.info(" ***** dataList size: " + dataList.size());
 
 		for (GenericMap data : dataList) {
-			data.setBucket(className);
-			if (((Boolean) data.get("deleted")).booleanValue()) {
-				dataService.deleteObject(className, data.getId());
-			} else {
-				dataService.storeObject(data);
+			if ( data != null ) {
+				data.setBucket(className);
+				if (((Boolean) data.get("deleted")).booleanValue()) {
+					dataService.deleteObject(className, data.getId());
+				} else {
+					dataService.storeObject(data);
+				}
 			}
 		}
-		return ret;
+		SyncResult result = new SyncResult();
+		result.setGenericMapList(changedData);
+		result.setSynchTime(now);
+		return result;
 	}
 
 	@ExceptionHandler(DuplicationKeyException.class)
