@@ -70,6 +70,7 @@ public class LuceneIndexService {
 		IndexWriter writer = new IndexWriter(dir, iwc);
 		writer.deleteDocuments(new Term(ID, id));
 		writer.close();
+		dir.close();
 
 	}
 
@@ -96,7 +97,8 @@ public class LuceneIndexService {
 		IndexWriter writer = new IndexWriter(dir, iwc);
 		Document doc = createDoc(valueMap);
 		writer.updateDocument(new Term(ID, valueMap.get(ID).toString()), doc);
-		writer.close();		
+		writer.close();
+		dir.close();
 	}
 		
 	private Document createDoc(Map<String, Object>valueMap)
@@ -135,6 +137,7 @@ public class LuceneIndexService {
 		    ScoreDoc[] hits = collector.topDocs().scoreDocs;
 		    List<GenericMap> ret = collectResult(hits, searcher);
 		    searcher.close();
+		    dir.close();
 			return ret;
 	    } catch (IndexNotFoundException e) {
 	    	return new ArrayList<GenericMap>();
