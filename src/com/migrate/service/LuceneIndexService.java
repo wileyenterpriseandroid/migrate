@@ -128,8 +128,16 @@ public class LuceneIndexService {
 	    Query q = new QueryParser(Version.LUCENE_35, "firstName", analyzer).parse(queryStr);
 	    try {
 		    int hitsPerPage = 30;
-		    Directory dir = FSDirectory.open(new File(DIR_ROOT + indexName));
+
+            File dirRootFile = new File(DIR_ROOT + indexName);
+            if (!dirRootFile.exists()) {
+                // they must not have put any data, so theres nothing here
+                return new ArrayList<GenericMap>();
+            }
+
+		    Directory dir = FSDirectory.open(dirRootFile);
 		    log.info("lucene dir: " + DIR_ROOT + indexName);
+
 		    IndexReader reader = IndexReader.open(dir);
 		    IndexSearcher searcher = new IndexSearcher(reader);
 		    TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
@@ -139,7 +147,8 @@ public class LuceneIndexService {
 		    searcher.close();
 		    dir.close();
 			return ret;
-	    } catch (IndexNotFoundException e) {
+	    } catch (Exception e) {
+	    	log.error("search failed: ", e);
 	    	return new ArrayList<GenericMap>();
 	    }
 	}
