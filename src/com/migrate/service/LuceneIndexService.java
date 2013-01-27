@@ -132,7 +132,7 @@ public class LuceneIndexService {
 
             File dirRootFile = new File(DIR_ROOT + indexName);
             if (!dirRootFile.exists()) {
-                // they must not have put any data, so theres nothing here
+                // theres no data, so return empty result
                 return new ArrayList<GenericMap>();
             }
 

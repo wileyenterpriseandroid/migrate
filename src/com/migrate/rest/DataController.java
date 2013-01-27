@@ -126,28 +126,33 @@ public class DataController {
 	@ResponseBody
 	public SyncResult sync(@PathVariable String context,
 			@PathVariable String className,
-			@RequestBody List<GenericMap> dataList,
+			@RequestBody List<GenericMap> clientChangedData,
 			@RequestParam(value = "syncTime", required = true) String syncTime,
 			HttpServletResponse resp) throws IOException, ParseException
     {
+        // TODO: client data wont deserialize as a generic map :-(
+
 		System.out.println(" sync time : " + syncTime);
 		String queryStr = "modified:[" + syncTime + " TO 9991517871585]";
 
 		Long now = new Long(System.currentTimeMillis());
-		List<GenericMap> changedData = dataService.find(className, queryStr);
+		List<GenericMap> serverChangedData = dataService.find(className, queryStr);
 
-		for (GenericMap data : dataList) {
-			if ( data != null ) {
-				data.setBucket(className);
-				if (((Boolean) data.get("deleted")).booleanValue()) {
-					dataService.deleteObject(className, data.getId());
+        // TODO: need to do a merge in here...
+
+		for (GenericMap clientData : clientChangedData) {
+			if ( clientData != null ) {
+				clientData.setBucket(className);
+				if (((Boolean) clientData.get("deleted")).booleanValue()) {
+					dataService.deleteObject(className, clientData.getId());
 				} else {
-					dataService.storeObject(data);
+					dataService.storeObject(clientData);
 				}
 			}
 		}
-		SyncResult result = new SyncResult();
-		result.setGenericMapList(changedData);
+
+	    SyncResult result = new SyncResult();
+		result.setGenericMapList(serverChangedData);
 		result.setSynchTime(now);
 		return result;
 	}
