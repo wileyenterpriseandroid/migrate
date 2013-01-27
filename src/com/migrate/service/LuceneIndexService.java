@@ -24,6 +24,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.NoSuchDirectoryException;
 import org.apache.lucene.util.Version;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -139,9 +140,9 @@ public class LuceneIndexService {
 		    searcher.close();
 		    dir.close();
 			return ret;
-	    } catch (IndexNotFoundException e) {
+	    } catch (Exception e) {
+	    	log.error("search failed: ", e);
 	    	return new ArrayList<GenericMap>();
-	    	//return new ArrayList<GenericMap>();
 	    }
 	}
 	
