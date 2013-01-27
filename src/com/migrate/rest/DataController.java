@@ -48,7 +48,8 @@ public class DataController {
 	@ResponseBody
 	public Map<String, Object> getObject(@PathVariable String context,
 			@PathVariable String className, @PathVariable String id,
-			HttpServletResponse resp) throws IOException {
+			HttpServletResponse resp) throws IOException
+    {
 
 		GenericMap ret = dataService.getObject(className, id);
 		if (ret == null) {
@@ -65,7 +66,8 @@ public class DataController {
 	public Map<String, String> putObject(@PathVariable String context,
 			@PathVariable String className, @PathVariable String id,
 			@RequestBody GenericMap data, HttpServletRequest req,
-			HttpServletResponse resp) throws IOException {
+			HttpServletResponse resp) throws IOException
+    {
 		data.setBucket(className);
 		data.setId(id);
 		dataService.storeObject(data);
@@ -86,7 +88,8 @@ public class DataController {
 	public Map<String, String> createObject(@PathVariable String context,
 			@PathVariable String className, @PathVariable String id,
 			@RequestBody GenericMap data, HttpServletRequest req,
-			HttpServletResponse resp) throws IOException {
+			HttpServletResponse resp) throws IOException
+    {
 		data.setBucket(className);
 		data.setId(id);
 		dataService.createObject(data);
@@ -98,7 +101,8 @@ public class DataController {
 	@RequestMapping(value = "{className}/{id}", method = RequestMethod.DELETE)
 	public void deleteObject(@PathVariable String context,
 			@PathVariable String className, @PathVariable String id,
-			HttpServletResponse resp) throws IOException {
+			HttpServletResponse resp) throws IOException
+    {
 		dataService.deleteObject(className, id);
 
 	}
@@ -108,7 +112,8 @@ public class DataController {
 	public List<GenericMap> searchObject(@PathVariable String context,
 			@PathVariable String className,
 			@RequestParam(value = "query", required = true) String queryStr,
-			HttpServletResponse resp) throws IOException, ParseException {
+			HttpServletResponse resp) throws IOException, ParseException
+    {
 		// log.info("******** queryStr: " + queryStr);
 		List<GenericMap> ret = dataService.find(className, queryStr);
 		if (ret == null || ret.size() == 0) {
@@ -123,7 +128,8 @@ public class DataController {
 			@PathVariable String className,
 			@RequestBody List<GenericMap> dataList,
 			@RequestParam(value = "syncTime", required = true) String syncTime,
-			HttpServletResponse resp) throws IOException, ParseException {
+			HttpServletResponse resp) throws IOException, ParseException
+    {
 		System.out.println(" sync time : " + syncTime);
 		String queryStr = "modified:[" + syncTime + " TO 9991517871585]";
 
@@ -149,7 +155,8 @@ public class DataController {
 	@ExceptionHandler(DuplicationKeyException.class)
 	@ResponseBody
 	public String handleDuplicationKeyException(Throwable exception,
-			HttpServletResponse response) throws IOException {
+			HttpServletResponse response) throws IOException
+    {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		return "Duplication key";
 	}
@@ -157,7 +164,8 @@ public class DataController {
 	@ExceptionHandler(VersionMismatchException.class)
 	@ResponseBody
 	public String handleVersionMissMatchException(Throwable exception,
-			HttpServletResponse response) throws IOException {
+			HttpServletResponse response) throws IOException
+    {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		return "Version MissMatch";
 	}
