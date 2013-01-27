@@ -137,6 +137,7 @@ public class LuceneIndexService {
 		    searcher.search(q, collector);
 		    ScoreDoc[] hits = collector.topDocs().scoreDocs;
 		    List<GenericMap> ret = collectResult(hits, searcher);
+		    reader.close();
 		    searcher.close();
 		    dir.close();
 			return ret;
