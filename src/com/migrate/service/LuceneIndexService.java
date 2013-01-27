@@ -141,6 +141,7 @@ public class LuceneIndexService {
 			return ret;
 	    } catch (IndexNotFoundException e) {
 	    	return new ArrayList<GenericMap>();
+	    	//return new ArrayList<GenericMap>();
 	    }
 	}
 	
