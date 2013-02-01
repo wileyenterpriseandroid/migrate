@@ -7,6 +7,7 @@ public class ContractBuilder {
 
     private StringBuilder contractBuilder;
     private static String LS = System.getProperty("line.separator");
+    private String contractClassName;
 
     public ContractBuilder() {
         contractBuilder = new StringBuilder();
@@ -35,7 +36,7 @@ public class ContractBuilder {
 //                .append(LS)
                 .append(LS);
 
-        String contractClassName = unqualifiedName + CONTRACT;
+        contractClassName = unqualifiedName + CONTRACT;
         String columnsName = unqualifiedName + COLUMNS;
         contractBuilder
                 .append("public final class ").append(contractClassName).append(" {")
@@ -93,5 +94,9 @@ public class ContractBuilder {
         String lastWord = new String(nameChars, wordStart, nameChars.length - wordStart).toUpperCase();
         underscoresBuilder.append(lastWord);
         return underscoresBuilder.toString();
+    }
+
+    public String getContractClassName() {
+        return contractClassName;
     }
 }

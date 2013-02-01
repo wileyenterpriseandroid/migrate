@@ -1,6 +1,5 @@
 package com.migrate.tools;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.migrate.api.annotations.WebdataSchema;
 import com.migrate.webdata.model.PersistentSchema;
 import com.migrate.webdata.model.PropertyIndex;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -51,16 +51,17 @@ public class PostSchema {
 
     public static final String UNIQUE = "unique";
     public static final String INDEX = "index";
+    private static String SCHEMA_TYPE = "/schema/{type}";
 
     public static void main(String[] args) throws Exception {
         Map<String, String> argMap = parseArgs(args);
 
         String cp = argMap.get(CP);
-        String dest = argMap.get(DEST);
+        String destDirectory = argMap.get(DEST);
         String migrateURL = argMap.get(MIGRATE_URL);
         String apis = argMap.get(API_CLASSES);
 
-        if ((cp == null) || (migrateURL == null) || (apis == null) || (dest == null)) {
+        if ((cp == null) || (migrateURL == null) || (apis == null) || (destDirectory == null)) {
             usage();
             // does not happen
             return;
@@ -77,7 +78,7 @@ public class PostSchema {
 
         URLClassLoader apiLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
 
-        createSchemasAndBuildContracts(apis, apiLoader);
+        postSchemasAndBuildContracts(apis, apiLoader, migrateURL, destDirectory);
     }
 
     private static Map<String, String> parseArgs(String[] args) {
@@ -99,7 +100,8 @@ public class PostSchema {
         return argMap;
     }
 
-    private static void createSchemasAndBuildContracts(String api, URLClassLoader apiLoader)
+    private static void postSchemasAndBuildContracts(String api, URLClassLoader apiLoader,
+                                                     String migrateURL, String destDirectory)
             throws ClassNotFoundException, IOException, MalformedSchemaDeclarationException
     {
         String[] classElts = api.split(",");
@@ -107,16 +109,13 @@ public class PostSchema {
             clName = clName.trim();
             if (!"".equals(clName.trim())) {
                 Class cl = Class.forName(clName, true, apiLoader);
-
-                PersistentSchema schema = readSchemaBuildContract(cl);
-
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.writeValue(System.out, schema);
+                PersistentSchema schema = readSchemaAndBuildContractAPI(cl, destDirectory);
+                postSchema(schema, cl, migrateURL);
             }
         }
     }
 
-    private static PersistentSchema readSchemaBuildContract(Class apiClass)
+    private static PersistentSchema readSchemaAndBuildContractAPI(Class apiClass, String destDirectory)
             throws IOException, MalformedSchemaDeclarationException
     {
         Map<String, Object> jsonSchema = new HashMap<String, Object>();
@@ -137,7 +136,11 @@ public class PostSchema {
         persistentSchema.setJsonSchema(jsonSchema);
 
         contractBuilder.end();
-        System.out.println(contractBuilder.build());
+        FileOutputStream fout = new FileOutputStream(destDirectory +
+                "/" + contractBuilder.getContractClassName() + ".java");
+        fout.write(contractBuilder.build().getBytes());
+        fout.flush();
+        fout.close();
 
         // do this with annotations
         List<PropertyIndex> indexList = creatIndexList();
@@ -229,13 +232,12 @@ public class PostSchema {
     }
 
     private static void postSchema(PersistentSchema persistentSchema, Class apiClass, String dest)
-            throws IOException,
-            MalformedSchemaDeclarationException
+            throws IOException, MalformedSchemaDeclarationException
     {
         HttpHeaders header = new HttpHeaders();
         header.add("content-type", "application/json");
 
-        String migrateURL = dest + "/schema/{schemaId}";
+        String migrateURL = dest + SCHEMA_TYPE;
 
         HttpEntity<PersistentSchema> requestEntity =
                 new HttpEntity<PersistentSchema>(persistentSchema, header);
