@@ -1,21 +1,31 @@
 package com.migrate.webdata.model;
 
+
 /**
  * @author Zane Pan
  */
-public abstract class BasePersistentObject implements PersistentObject {
+// TODO: why is this abstract?
+public /*abstract*/ class BasePersistentObject implements PersistentObject {
+    public static final String WD_BUCKET_COLUMN = "wd_bucket";
+    public static final String WD_SCHEMA_ID_COLUMN = "wd_id";
+    public static final String WD_TYPE_COLUMN = "wd_type";
+    public static final String WD_VERSION_COLUMN = "wd_version";
+    public static final String WD_NAME_NAME = "wd_name";
+    public static final String WD_SCHEMA_UPDATE_TIME_COLUMN = "wd_schema_updateTime";
+    public static final String WD_DELETED = "wd_deleted";
+
 	private static final long serialVersionUID = 634871409470406478L;
-	private String bucket;
+    private String bucket;
 	private String key;
 	private long version;
 	private String name;
 	private String description;
 	private long updateTime;
-	
-	public BasePersistentObject() {
-	}
 
-    public BasePersistentObject(String bucket, String key, String name) {
+	public BasePersistentObject() {
+
+	}
+	public BasePersistentObject(String bucket, String key, String name) {
 		this(bucket, key, name, 0);
 	}
 
@@ -24,9 +34,8 @@ public abstract class BasePersistentObject implements PersistentObject {
 		this.key = key;
 		this.name = name;
 		this.version = version;
-	}	
-
-    public String getBucket() {
+	}
+	public String getBucket() {
 		return bucket;
 	}
 
@@ -76,8 +85,7 @@ public abstract class BasePersistentObject implements PersistentObject {
 		result = prime * result + (int) (updateTime ^ (updateTime >>> 32));
 		return result;
 	}
-
-    @Override
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -110,4 +118,5 @@ public abstract class BasePersistentObject implements PersistentObject {
 			return false;
 		return true;
 	}
+
 }

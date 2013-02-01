@@ -1,25 +1,15 @@
 package com.migrate.webdata.model;
 
 public class PropertyIndex {
-	private String type ="bTree";
 	private String indexName;
 	private String fieldName;
 	
 	public PropertyIndex() {
 	}
-
+	
 	public PropertyIndex(String t, String iName, String pName) {
-		type = t;
 		indexName = iName;
 		fieldName = pName;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public String getIndexName() {
@@ -46,7 +36,6 @@ public class PropertyIndex {
 				+ ((fieldName == null) ? 0 : fieldName.hashCode());
 		result = prime * result
 				+ ((indexName == null) ? 0 : indexName.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -69,19 +58,12 @@ public class PropertyIndex {
 				return false;
 		} else if (!indexName.equals(other.indexName))
 			return false;
-		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equals(other.type))
-			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "PropertyIndex [type=" + type + ", indexName=" + indexName
+		return "PropertyIndex [indexName=" + indexName
 				+ ", fieldName=" + fieldName + "]";
 	}
-
-
 }

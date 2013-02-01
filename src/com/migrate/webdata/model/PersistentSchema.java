@@ -4,9 +4,18 @@ import java.util.List;
 import java.util.Map;
 
 public class PersistentSchema extends BasePersistentObject {
+    public static final String SCHEMA_TYPE_NAME = "type";
+    public static final String PROPERTIES = "properties";
+    public static final String PROPERTY_TYPE_NAME = "type";
+    public static final String WD_RESERVED_PREFIX = "wd_";
+
 	private static final long serialVersionUID = -7495813459656381108L;
-	private Map<String,Object> jsonSchema;
+    private Map<String, Object> jsonSchema;
 	private List<PropertyIndex> indexList;
+
+	 public enum DataType {
+         String, Boolean, Number, Integer
+     }
 
     public Map<String, Object> getJsonSchema() {
 		return jsonSchema;

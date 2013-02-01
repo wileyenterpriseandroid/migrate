@@ -1,11 +1,9 @@
 package com.migrate.webdata.model;
-
 /**
  * Zane Pan
  */
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class GenericMap extends HashMap<String, Object> implements PersistentObject {
 	static private final String TYPE = "type" ;
@@ -54,4 +52,6 @@ public class GenericMap extends HashMap<String, Object> implements PersistentObj
 	public void setUpdateTime(long updateTime) {
 		super.put(UPDATETIME, new Long(updateTime));
 	}
+	
+
 }
