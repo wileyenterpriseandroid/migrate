@@ -17,6 +17,7 @@ import com.migrate.storage.ObjectStore;
 
 @Component("dataService")
 public class DataService {
+	private static final String NAMESPACE = "migrateData";
 	private static org.apache.log4j.Logger log = Logger.getLogger(SchemaService.class);
 	@Autowired
 	@Qualifier(value = "objectStore")
@@ -27,22 +28,24 @@ public class DataService {
 	private LuceneIndexService luceneIndexService;
 
 	public GenericMap getObject(String className, String id) throws IOException {
-		return store.get(className, id, GenericMap.class);	
+		return store.get(NAMESPACE, id, GenericMap.class);	
 	}
 	
 	public void storeObject(GenericMap data) throws IOException {
+		data.setWd_namespace(NAMESPACE);
 		luceneIndexService.updateIndex(data);
 		store.update(data);
 	}
 	
 	public void deleteObject(String className, String id) throws IOException {
 		luceneIndexService.deleteIndex(className, id);
-		store.delete(className,  id);
+		store.delete(NAMESPACE,  id);
 	}
 	
 	public void createObject(GenericMap data) throws IOException {
 		log.info("calling createObject");
 		luceneIndexService.updateIndex(data);
+		data.setWd_namespace(NAMESPACE);
 		store.create(data);
 	}
 	

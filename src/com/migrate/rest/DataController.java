@@ -66,19 +66,17 @@ public class DataController {
 	public Map<String, String> putObject(@PathVariable String context,
 			@PathVariable String className, @PathVariable String id,
 			@RequestBody GenericMap data, HttpServletRequest req,
-			HttpServletResponse resp) throws IOException
-    {
-		data.setBucket(className);
-		data.setId(id);
+
+			HttpServletResponse resp) throws IOException {
+		data.setWd_classname(className);
+		data.setWd_id(id);
+
 		dataService.storeObject(data);
 		Map<String, String> map = new HashMap<String, String>(1);
 		map.put("location", req.getRequestURL().toString());
 		return map;
 	}
 
-	private void putObjectDo(GenericMap data) {
-
-	}
 
 	/*
 	 * create the JSON object with the given type and id.
@@ -88,10 +86,14 @@ public class DataController {
 	public Map<String, String> createObject(@PathVariable String context,
 			@PathVariable String className, @PathVariable String id,
 			@RequestBody GenericMap data, HttpServletRequest req,
-			HttpServletResponse resp) throws IOException
-    {
-		data.setBucket(className);
-		data.setId(id);
+
+			HttpServletResponse resp) throws IOException {
+		data.setWd_classname(className);
+		data.setWd_id(id);
+
+		data.setWd_classname(className);
+		data.setWd_id(id);
+
 		dataService.createObject(data);
 		Map<String, String> map = new HashMap<String, String>(1);
 		map.put("location", req.getRequestURL().toString());
@@ -138,13 +140,12 @@ public class DataController {
 		Long now = new Long(System.currentTimeMillis());
 		List<GenericMap> serverChangedData = dataService.find(className, queryStr);
 
-        // TODO: need to do a merge in here...
 
 		for (GenericMap clientData : clientChangedData) {
 			if ( clientData != null ) {
-				clientData.setBucket(className);
+				clientData.setWd_classname(className);
 				if (((Boolean) clientData.get("deleted")).booleanValue()) {
-					dataService.deleteObject(className, clientData.getId());
+					dataService.deleteObject(className, clientData.getWd_id());
 				} else {
 					dataService.storeObject(clientData);
 				}

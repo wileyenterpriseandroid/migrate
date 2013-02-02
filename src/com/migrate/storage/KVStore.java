@@ -1,6 +1,7 @@
 package com.migrate.storage;
 
 import java.io.IOException;
+import java.util.List;
 /**
  * @author Zane Pan
  */
@@ -13,4 +14,5 @@ public interface KVStore {
 	void update(KVObject data) throws IOException;
 	void create(String bucket, String key, String className, byte[] data) throws IOException;
 	void put(KVObject data) throws IOException;
+	List<KVObject> findChanged(String bucket, String className, long time);
 }

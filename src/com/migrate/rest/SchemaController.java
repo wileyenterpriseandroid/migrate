@@ -28,49 +28,47 @@ import com.migrate.service.SchemaService;
 @Controller
 @RequestMapping("/{context}/schema")
 public class SchemaController {
-    private static org.apache.log4j.Logger log = Logger.getLogger(SchemaController.class);
+	private static org.apache.log4j.Logger log = Logger
+			.getLogger(SchemaController.class);
 
-    @Autowired
-    @Qualifier(value = "schemaService")
-    private SchemaService schemaService;
+	@Autowired
+	@Qualifier(value = "schemaService")
+	private SchemaService schemaService;
 
-    @RequestMapping(value = "/{schemaName}", method = RequestMethod.POST)
-    @ResponseBody public Map<String, String> createSchema( @PathVariable String context,
-                                                           @PathVariable String schemaName,
-                                                           @RequestBody PersistentSchema schema,
-                                                           HttpServletRequest req,
-                                                           HttpServletResponse resp) throws IOException
-    {
-        try {
-            schema.setId(schemaName);
-            schemaService.updateSchema(schema);
-            Map<String, String> map = new HashMap<String, String>(1);
-            map.put("location", req.getRequestURL().toString());
-            resp.setStatus(HttpStatus.ACCEPTED.value());
-            return map;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+	@RequestMapping(value = "/{schemaName}", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> createSchema(@PathVariable String context,
+			@PathVariable String schemaName,
+			@RequestBody PersistentSchema schema, HttpServletRequest req,
+			HttpServletResponse resp) throws IOException {
+		try {
+			schema.setWd_id(schemaName);
+			System.out.println(" namespace: " + schema.getWd_namespace());
+			schemaService.updateSchema(schema);
+			Map<String, String> map = new HashMap<String, String>(1);
+			map.put("location", req.getRequestURL().toString());
+			resp.setStatus(HttpStatus.ACCEPTED.value());
+			return map;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-    @RequestMapping(value = "/{schemaName}", method = RequestMethod.GET)
-    @ResponseBody public PersistentSchema getSchema(@PathVariable String context,
-                                                    @PathVariable String schemaName,
-                                                    HttpServletRequest req,
-                                                    HttpServletResponse resp) throws IOException
-    {
-        PersistentSchema persistentSchema = schemaService.getSchema(schemaName);
-        return persistentSchema;
-    }
+	@RequestMapping(value = "/{schemaName}", method = RequestMethod.GET)
+	@ResponseBody
+	public PersistentSchema getSchema(@PathVariable String context,
+			@PathVariable String schemaName, HttpServletRequest req,
+			HttpServletResponse resp) throws IOException {
+		PersistentSchema persistentSchema = schemaService.getSchema(schemaName);
+		return persistentSchema;
+	}
 
-    @RequestMapping(value = "/{schemaName}", method = RequestMethod.DELETE)
-    @ResponseBody public void deleteSchema(@PathVariable String context,
-                                                    @PathVariable String schemaName,
-                                                    HttpServletRequest req,
-                                                    HttpServletResponse resp) throws IOException
-    {
-        schemaService.deleteSchema(schemaName);
-    }
+	@RequestMapping(value = "/{schemaName}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteSchema(@PathVariable String context,
+			@PathVariable String schemaName, HttpServletRequest req,
+			HttpServletResponse resp) throws IOException {
+		schemaService.deleteSchema(schemaName);
+	}
 }
-

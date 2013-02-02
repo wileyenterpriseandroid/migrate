@@ -21,7 +21,7 @@ public class MenuCategory extends BasePersistentObject {
 		
 	}
 	public MenuCategory(String bucket, String key, String name) {
-		super(bucket, key, name);
+		//super(bucket, key, name);
 	}
 	
 	public MenuCategory(String bucket, String key, String name, boolean bEmbedded) {

@@ -20,7 +20,8 @@ public class SchemaService {
 	private ObjectStore store;
 	
 	public void updateSchema(PersistentSchema persistentSchema) throws IOException {
-		persistentSchema.setBucket(SCHEMA);
+		persistentSchema.setWd_classname(PersistentSchema.class.getName());
+		persistentSchema.setWd_namespace(SCHEMA);
 		store.update(persistentSchema);
 	}
 	

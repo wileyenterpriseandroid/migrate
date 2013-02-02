@@ -43,6 +43,6 @@ public class PropertyContainter extends BasePersistentObject {
 			return false;
 		return true;
 	}
-	
+
 
 }

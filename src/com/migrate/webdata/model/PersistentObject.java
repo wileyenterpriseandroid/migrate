@@ -8,15 +8,19 @@ import java.io.Serializable;
  * @author Zane Pan
  */
 public interface PersistentObject extends Serializable {
-	String getBucket();
-	void setBucket(String type);
+	String getWd_namespace();
+	void setWd_namespace(String type);
+	
 
-	String getId();
-	void setId(String key);
+	String getWd_id();
+	void setWd_id(String key);
 
-	long getVersion();
-	void setVersion(long version);
+	long getWd_version();
+	void setWd_version(long version);
 
-	long getUpdateTime();
-	void setUpdateTime(long updateTime);
+	long getWd_updateTime();
+	void setWd_updateTime(long updateTime);
+	
+	String getWd_classname();
+	void setWd_classname(String classname);
 }

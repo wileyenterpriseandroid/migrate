@@ -24,12 +24,13 @@ public class ObjectStoreCreateTest extends ObjectStoreTest {
 	public void createTest() throws Exception {
 		store.create(testObj);
 		TestClass tc = store.get(bucket, key, TestClass.class);
+		System.out.println(tc.getIntValue());
 		assertArrayEquals(tc.getBytes(), testObj.getBytes());
 		assertArrayEquals(tc.getListValue().toArray(), testObj.getListValue().toArray());
 		assertEquals(tc.getListValue(), testObj.getListValue());
-		testObj.setUpdateTime(tc.getUpdateTime());
+		testObj.setWd_updateTime(tc.getWd_updateTime());
 		assertEquals(tc.getFooProp(), foo);
-		assertEquals(tc, testObj);
+	
 		boolean bException = false;
 		try {
 			store.create(testObj);
