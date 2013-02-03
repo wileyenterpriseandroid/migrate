@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
 @ContextConfiguration( { "/spring/applicationContext-test.xml" })
 public class SchemaCommon {
 	protected static org.apache.log4j.Logger log = Logger.getLogger(Put.class);
-	protected static  final String URL = "http://localhost:8080/migrate/test/schema/{schemaName}";
+	protected static  final String URL = "http://migrate.eordercenter.com/test/schema/{schemaName}";
 
 	@Autowired
 	@Qualifier(value = "restTemplate")

@@ -13,7 +13,7 @@ public class Contact {
 	private String lastname;
 	private String email;
 	private int age;
-	private Date birthDate;
+	private long birthDate;
 
     public String getFirstname() {
 		return firstname;
@@ -47,11 +47,11 @@ public class Contact {
 		this.age = age;
 	}
 
-    public Date getBirthDate() {
+    public long getBirthDate() {
 		return birthDate;
 	}
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(long birthDate) {
 		this.birthDate = birthDate;
 	}
 }

@@ -31,8 +31,9 @@ public abstract class ObjectStoreTest {
 	@Before 
 	public void setup() {
 		testObj = new TestClass();
-		testObj.setBucket(bucket);
-		testObj.setId(key);
+		testObj.setWd_namespace(bucket);
+		testObj.setWd_classname(testObj.getClass().getName());
+		testObj.setWd_id(key);
 		testObj.stringValue = "stringValue1";
 		testObj.longValue = System.currentTimeMillis();
 		testObj.intValue = 100;

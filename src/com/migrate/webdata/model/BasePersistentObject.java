@@ -1,10 +1,8 @@
 package com.migrate.webdata.model;
 
-
 /**
  * @author Zane Pan
  */
-// TODO: why is this abstract?
 public /*abstract*/ class BasePersistentObject implements PersistentObject {
     public static final String WD_BUCKET_COLUMN = "wd_bucket";
     public static final String WD_SCHEMA_ID_COLUMN = "wd_id";
@@ -15,108 +13,54 @@ public /*abstract*/ class BasePersistentObject implements PersistentObject {
     public static final String WD_DELETED = "wd_deleted";
 
 	private static final long serialVersionUID = 634871409470406478L;
-    private String bucket;
-	private String key;
-	private long version;
-	private String name;
-	private String description;
-	private long updateTime;
+	private String wd_id;
+	private long wd_version;
+	private String wd_classname;
+	private long wd_updateTime;
+	private String wd_namespace;
 
 	public BasePersistentObject() {
-
-	}
-	public BasePersistentObject(String bucket, String key, String name) {
-		this(bucket, key, name, 0);
 	}
 
-	public BasePersistentObject(String bucket, String key, String name, long version) {
-		this.bucket = bucket;
-		this.key = key;
-		this.name = name;
-		this.version = version;
-	}
-	public String getBucket() {
-		return bucket;
+    public String getWd_namespace() {
+		return wd_namespace;
 	}
 
-	public void setBucket(String bucket) {
-		this.bucket = bucket;
+	public void setWd_namespace(String wd_namespace) {
+		this.wd_namespace = wd_namespace;
 	}
 
-	public String getId() {
-		return key;
+	public String getWd_id() {
+		return wd_id;
 	}
 
-	public void setId(String key) {
-		this.key = key;
+	public void setWd_id(String wd_id) {
+		this.wd_id = wd_id;
 	}
 
-	public long getVersion() {
-		return version;
+	public long getWd_version() {
+		return wd_version;
 	}
 
-	public void setVersion(long version) {
-		this.version = version;
+	public void setWd_version(long wd_version) {
+		this.wd_version = wd_version;
 	}
 
-	public String getName() {
-		return name;
+	public String getWd_classname() {
+		return wd_classname;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setWd_classname(String wd_classname) {
+		this.wd_classname = wd_classname;
 	}
 
-	public long getUpdateTime() {
-		return updateTime;
+	public long getWd_updateTime() {
+		return wd_updateTime;
 	}
-	public void setUpdateTime(long updateTime) {
-		this.updateTime = updateTime;
+
+	public void setWd_updateTime(long wd_updateTime) {
+		this.wd_updateTime = wd_updateTime;
 	}
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((bucket == null) ? 0 : bucket.hashCode());
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((key == null) ? 0 : key.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (int) (updateTime ^ (updateTime >>> 32));
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		BasePersistentObject other = (BasePersistentObject) obj;
-		if (bucket == null) {
-			if (other.bucket != null)
-				return false;
-		} else if (!bucket.equals(other.bucket))
-			return false;
-		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (key == null) {
-			if (other.key != null)
-				return false;
-		} else if (!key.equals(other.key))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (updateTime != other.updateTime)
-			return false;
-		return true;
-	}
+
 
 }

@@ -52,7 +52,7 @@ public class LuceneIndexService {
 	
 	public void updateIndex(GenericMap data) throws IOException
     {
-		String indexName = data.getBucket();
+		String indexName = data.getWd_classname();
 		PersistentSchema persistentSchema = schemaService.getSchema(indexName);
 		if (persistentSchema == null) {
 			return;
@@ -84,7 +84,7 @@ public class LuceneIndexService {
 			map.put(fieldName, data.get(fieldName));
 		}
 		map.put(DATA, new String(JsonHelper.writeValueAsByte(data)));
-		map.put(ID, data.getId());
+		map.put(ID, data.getWd_id());
 		return map;
 	}
 	

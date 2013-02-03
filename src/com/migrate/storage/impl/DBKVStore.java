@@ -3,6 +3,7 @@ package com.migrate.storage.impl;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import com.migrate.exception.VersionMismatchException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -32,6 +33,7 @@ public class DBKVStore implements KVStore {
 	private static final String updateSql = "update kv_table set value = ?, updateTime=?, version=? where bucket = ? and datakey=?";
 	private static final String updateWithVersionSql = updateSql + " and version = ?";
 	private static final String insertSql = "insert into kv_table values (?,?,?,?,?,?)";
+	private static final String findSql = "select bucket, dataKey, className, value, updateTime, version from kv_table where bucket=? and classname = ? and updateTime > ?";
 	
 	private JdbcTemplate jdbcTemplate;
  
@@ -49,6 +51,25 @@ public class DBKVStore implements KVStore {
 	public KVObject get(String bucket, String key, long version)
 			throws IOException {
 		return getDo(bucket, key, getWithVersionSql, version);		
+	}
+
+	@Override
+	public List<KVObject> findChanged(String bucket, String classname, long time) {
+		RowMapper<KVObject> mapper = new RowMapper<KVObject>() {
+			public KVObject mapRow(ResultSet rs, int rowNum) throws SQLException {
+				KVObject obj = new KVObject();
+				obj.setBucket(rs.getString("bucket"));
+				obj.setKey(rs.getString("dataKey"));
+				obj.setClassName(rs.getString("className"));
+				obj.setUpdateTime(rs.getLong("updateTime"));
+				obj.setValue((rs.getBytes("value")));
+				obj.setVersion(rs.getLong("version"));
+				return obj;
+			}
+		};
+	
+		Object[] args = new Object[] {bucket, classname, new Long(time)};
+		return jdbcTemplate.query(findSql, args, mapper);
 	}
 
 	private KVObject getDo(final String bucket, final String key, String sql, long version) throws IOException {
