@@ -5,9 +5,17 @@ import java.util.Map;
 
 public class PersistentSchema extends BasePersistentObject {
 	private static final long serialVersionUID = -7495813459656381108L;
-	private Map<String,Object> jsonSchema;
+    public static final String SCHEMA_TYPE_NAME = "type";
+    public static final String PROPERTIES_NAME = "properties";
+    public static final String PROPERTY_TYPE_NAME = "type";
+    public static final String WD_RESERVED_PREFIX = "wd_";
+
+    private Map<String, Object> jsonSchema;
 	private List<PropertyIndex> indexList;
 
+	
+
+	
     public Map<String, Object> getJsonSchema() {
 		return jsonSchema;
 	}
@@ -61,3 +69,4 @@ public class PersistentSchema extends BasePersistentObject {
 		return true;
 	}
 }
+
