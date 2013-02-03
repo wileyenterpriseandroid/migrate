@@ -49,7 +49,11 @@ public class DataService {
 		store.create(data);
 	}
 	
-	public List<GenericMap> find(String className, String queryStr) throws ParseException, IOException {
+	public List<GenericMap> luceneSearch(String className, String queryStr) throws ParseException, IOException {
 		return luceneIndexService.search(className, queryStr);
+	}
+	
+	public List<GenericMap> find(String className, long time) throws ParseException, IOException {
+		return store.findChanged(NAMESPACE,className, time);
 	}
 }

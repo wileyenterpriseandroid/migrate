@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.migrate.webdata.model.GenericMap;
 import com.migrate.webdata.model.PersistentObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -67,7 +68,7 @@ public class ObjectStoreImpl implements ObjectStore {
 		String key = bo.getWd_id();
 		cleanBaseObjectId(bo);
 		byte[] value = JsonHelper.writeValueAsByte(bo);
-		store.create (bucket, key, bo.getClass().getName(), value);
+		store.create (bucket, key, bo.getWd_classname(), value);
 		restoreBaseObjetId(bo, bucket, key);
 		
 	}
@@ -88,18 +89,34 @@ public class ObjectStoreImpl implements ObjectStore {
 	}
 
 
+//	@Override
+//	public <T extends PersistentObject> List<T> findChanged( String namespace,  Class<T> valueType,  long time) throws IOException {
+//		List<KVObject> list = store.findChanged(namespace, valueType.getName(), time);
+//		List<T> result = new ArrayList<T>(list.size());
+//		for ( KVObject kvo: list ) {
+//			T t = JsonHelper.readValue(kvo.getValue(), valueType);
+//			t.setWd_namespace(namespace);
+//			t.setWd_id(kvo.getKey());
+//			t.setWd_updateTime(kvo.getUpdateTime());
+//			t.setWd_version(kvo.getVersion());
+//			result.add(t);
+//		}
+//		return result;
+//	}
+	
 	@Override
-	public <T extends PersistentObject> List<T> findChanged( String namespace,  Class<T> valueType,  long time) throws IOException {
-		List<KVObject> list = store.findChanged(namespace, valueType.getName(), time);
-		List<T> result = new ArrayList<T>(list.size());
+	public List<GenericMap> findChanged( String namespace, String classname,  long time) throws IOException {
+		List<KVObject> list = store.findChanged(namespace, classname, time);
+		List<GenericMap> result = new ArrayList<GenericMap>(list.size());
 		for ( KVObject kvo: list ) {
-			T t = JsonHelper.readValue(kvo.getValue(), valueType);
-			t.setWd_namespace(namespace);
-			t.setWd_id(kvo.getKey());
-			t.setWd_updateTime(kvo.getUpdateTime());
-			t.setWd_version(kvo.getVersion());
-			result.add(t);
+			GenericMap map = JsonHelper.readValue(kvo.getValue(), GenericMap.class);
+			map.setWd_namespace(namespace);
+			map.setWd_id(kvo.getKey());
+			map.setWd_updateTime(kvo.getUpdateTime());
+			map.setWd_version(kvo.getVersion());
+			result.add(map);
 		}
 		return result;
 	}
+	
 }
