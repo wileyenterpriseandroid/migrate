@@ -2,118 +2,88 @@
 
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="migrate" default="compile" basedir=".">
 
-  <property file="build.properties"/>
-  <property file="src/jdbc.properties"/>
+    <property file="build.properties"/>
+    <property file="src/jdbc.properties"/>
 
-  <property name="app.name"      value="migrate"/>
-  <property name="app.path"      value="/${app.name}"/>
-  <property name="app.version"   value="1.0"/>
-  <property name="build.home"    value="${basedir}/build.ant"/>
-  <property name="build.dir"    value="${basedir}/build/WEB-INF/classes"/>
-  <property name="src.home"      value="src"/>
-  <property name="web.home"      value="WebContent"/>
-  <property name="dist.home"     value="${basedir}/dist"/>
-  <property name="compile.debug"       value="true"/>
-  <property name="compile.deprecation" value="false"/>
-  <property name="compile.optimize"    value="true"/>
- 
-<!-- ==================== resolve ivy dependencies Target ================================== -->	
-  <target name="resolve" description="--> resolve ivy dependencies">
-	        <property name="ivy.dep.file" value="${basedir}/ivy.xml" />
-	        <property name="ivy.lib.dir" value="${build.home}/WEB-INF/lib" />
-	        <ivy:retrieve />
-   </target>
+    <property name="migrate" value="migrate"/>
+    <property name="migrate.path" value="/${migrate}"/>
+    <property name="migrate.version" value="1.0"/>
+    <property name="build.home" value="${basedir}/build"/>
+    <property name="build.classes" value="${build.home}/WEB-INF/classes"/>
+    <property name="src.home" value="src"/>
+    <property name="web.home" value="WebContent"/>
+    <property name="dist.home" value="${basedir}/dist"/>
+    <property name="compile.debug" value="true"/>
+    <property name="compile.deprecation" value="false"/>
+    <property name="compile.optimize" value="true"/>
 
+    <target name="resolve" description="--> resolve ivy dependencies">
+        <property name="ivy.dep.file" value="${basedir}/ivy.xml" />
+        <property name="ivy.lib.dir" value="${build.home}/WEB-INF/lib" />
+        <ivy:retrieve />
+    </target>
 
-<!-- ==================== Prepare Target ================================== -->
+    <target name="prepare">
 
-  <target name="prepare">
+        <!-- Create build directories as needed -->
+        <mkdir  dir="${build.home}"/>
+        <mkdir  dir="${build.home}/WEB-INF"/>
+        <mkdir  dir="${build.home}/WEB-INF/classes"/>
 
-    <!-- Create build directories as needed -->
-    <mkdir  dir="${build.home}"/>
-    <mkdir  dir="${build.home}/WEB-INF"/>
-    <mkdir  dir="${build.home}/WEB-INF/classes"/>
+        <copy todir="${build.home}">
+            <fileset dir="${web.home}"/>
+        </copy>
 
+        <mkdir  dir="${build.home}/WEB-INF/lib"/>
 
-    <copy todir="${build.home}">
-       <fileset dir="${web.home}"/>
-    </copy>
-  	
-    <!-- Copy external dependencies as required -->
-    <mkdir  dir="${build.home}/WEB-INF/lib"/>
+        <copy todir="${build.home}/WEB-INF" >
+            <fileset dir="${web.home}/WEB-INF"  excludes="**/*.classes"/>
+        </copy>
+    </target>
 
-    <copy todir="${build.home}/WEB-INF" >
-      <fileset dir="${web.home}/WEB-INF"  excludes="**/*.classes"/>
-    </copy>
+    <path id="compile.classpath">
+        <fileset dir="${build.home}/WEB-INF/lib">
+            <include name="*.jar"/>
+        </fileset>
 
+        <pathelement location="src"/>
+    </path>
 
+    <target name="all" depends="clean,compile"
+            description="Clean build and dist directories, then compile"/>
 
-  </target>
+    <target name="clean"
+            description="Delete old build and dist directories">
+        <delete dir="${build.home}"/>
+        <delete dir="${dist.home}"/>
+    </target>
 
+    <target name="compile" depends="prepare, resolve">
+        <mkdir dir="${build.home}/WEB-INF/classes"/>
+        <javac srcdir="${src.home}"
+               destdir="${build.home}/WEB-INF/classes"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               optimize="${compile.optimize}"
+               includeantruntime="false">
 
-<!-- ==================== Compilation Classpath =========================== -->
+            <classpath refid="compile.classpath"/>
+            <compilerarg  value="-Xlint:unchecked" />
+        </javac>
 
-   <path id="compile.classpath">
-    <fileset dir="${build.home}/WEB-INF/lib">
-       <include name="*.jar"/>
-    </fileset>
+        <!-- Copy application resources -->
+        <copy  todir="${build.home}/WEB-INF/classes">
+            <fileset dir="src" excludes="**/*.java"/>
+        </copy>
+    </target>
 
-   <pathelement location="src"/>
-  </path>
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist.home}"/>
 
-<!-- ==================== All Target ====================================== -->
-
-  <target name="all" depends="clean,compile"
-   description="Clean build and dist directories, then compile"/>
-
-
-<!-- ==================== Clean Target ==================================== -->
-
-  <target name="clean"
-   description="Delete old build and dist directories">
-    <delete dir="${build.home}"/>
-    <delete dir="${dist.home}"/>
-  </target>
-
-
-
-<!-- ==================== Compile Target ================================== -->
-	
-  <target name="compile" depends="prepare, resolve"
-   description="Compile Java sources">
-
-    <!-- Compile Java classes as necessary -->
-    <mkdir    dir="${build.home}/WEB-INF/classes"/>
-    <javac srcdir="${src.home}"
-          destdir="${build.home}/WEB-INF/classes"
-            debug="${compile.debug}"
-      deprecation="${compile.deprecation}"
-         optimize="${compile.optimize}"
-    	includeantruntime="false">
-        <classpath refid="compile.classpath"/>
-        <compilerarg  value="-Xlint:unchecked" />
-    </javac>
-
-    <!-- Copy application resources -->
-    <copy  todir="${build.home}/WEB-INF/classes">
-      <fileset dir="src" excludes="**/*.java"/>
-    </copy>
-
-  </target>
-
-<!-- ==================== Dist Target ===================================== -->
-
-  <target name="war" depends="compile"
-   description="Create binary distribution">
-
-    <!-- Copy documentation subdirectories -->
-    <mkdir  dir="${dist.home}"/>
-
-    <!-- Create application JAR file -->
-    <jar jarfile="${dist.home}/${app.name}.war" basedir="${build.home}"/>
-
-    <!-- Copy additional files to ${dist.home} as necessary -->
-
-  </target>
+        <jar jarfile="${dist.home}/${migrate}.war" basedir="${build.home}"/>
+        <jar jarfile="${dist.home}/${migrate}-model.jar">
+            <fileset dir="${build.classes}" includes="**/model/*.class"/>
+        </jar>
+    </target>
 
 </project>
