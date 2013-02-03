@@ -2,6 +2,8 @@ package com.migrate.tools;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.migrate.api.annotations.WebdataSchema;
+import com.migrate.tools.ContractBuilder;
+import com.migrate.tools.MalformedSchemaDeclarationException;
 import com.migrate.webdata.model.PersistentSchema;
 import com.migrate.webdata.model.PropertyIndex;
 import org.apache.log4j.Logger;
@@ -127,9 +129,9 @@ public class PostSchema {
         String version = readVersion(apiClass, contractBuilder);
 
         PersistentSchema persistentSchema = new PersistentSchema();
-        persistentSchema.setVersion(Long.valueOf(version));
-        persistentSchema.setUpdateTime(System.currentTimeMillis());
-        persistentSchema.setBucket(SCHEMA_BUCKET);
+        persistentSchema.setWd_version(Long.valueOf(version));
+        persistentSchema.setWd_updateTime(System.currentTimeMillis());
+
 
         Map<String, Object> properties = getProperties(apiClass, contractBuilder);
         jsonSchema.put("properties", properties);
