@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 
+import com.migrate.webdata.model.GenericMap;
 import com.migrate.webdata.model.PersistentObject;
 
 /**
@@ -14,5 +15,5 @@ public interface ObjectStore {
 	void update(PersistentObject bo) throws IOException;
 	void create(PersistentObject bo) throws IOException;
 	void delete(String bucket, String key) throws IOException;
-	<T extends PersistentObject> List<T> findChanged(String namespace, Class<T> valueType, long time) throws IOException;
+	List<GenericMap> findChanged( String namespace, String classname,  long time) throws IOException;
 }

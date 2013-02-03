@@ -69,7 +69,8 @@ public class DBKVStore implements KVStore {
 		};
 	
 		Object[] args = new Object[] {bucket, classname, new Long(time)};
-		return jdbcTemplate.query(findSql, args, mapper);
+		List<KVObject> list = jdbcTemplate.query(findSql, args, mapper);
+		return list;
 	}
 
 	private KVObject getDo(final String bucket, final String key, String sql, long version) throws IOException {

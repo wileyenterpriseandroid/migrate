@@ -48,8 +48,7 @@ public class DataController {
 	@ResponseBody
 	public Map<String, Object> getObject(@PathVariable String context,
 			@PathVariable String className, @PathVariable String id,
-			HttpServletResponse resp) throws IOException
-    {
+			HttpServletResponse resp) throws IOException {
 
 		GenericMap ret = dataService.getObject(className, id);
 		if (ret == null) {
@@ -77,7 +76,6 @@ public class DataController {
 		return map;
 	}
 
-
 	/*
 	 * create the JSON object with the given type and id.
 	 */
@@ -88,9 +86,8 @@ public class DataController {
 			@RequestBody GenericMap data, HttpServletRequest req,
 
 			HttpServletResponse resp) throws IOException {
-		data.setWd_classname(className);
-		data.setWd_id(id);
-
+		
+		System.out.println(" classname :" + className);
 		data.setWd_classname(className);
 		data.setWd_id(id);
 
@@ -103,8 +100,7 @@ public class DataController {
 	@RequestMapping(value = "{className}/{id}", method = RequestMethod.DELETE)
 	public void deleteObject(@PathVariable String context,
 			@PathVariable String className, @PathVariable String id,
-			HttpServletResponse resp) throws IOException
-    {
+			HttpServletResponse resp) throws IOException {
 		dataService.deleteObject(className, id);
 
 	}
@@ -114,36 +110,69 @@ public class DataController {
 	public List<GenericMap> searchObject(@PathVariable String context,
 			@PathVariable String className,
 			@RequestParam(value = "query", required = true) String queryStr,
-			HttpServletResponse resp) throws IOException, ParseException
-    {
+			HttpServletResponse resp) throws IOException, ParseException {
 		// log.info("******** queryStr: " + queryStr);
-		List<GenericMap> ret = dataService.find(className, queryStr);
+		List<GenericMap> ret = dataService.luceneSearch(className, queryStr);
 		if (ret == null || ret.size() == 0) {
 			resp.setStatus(HttpStatus.NOT_FOUND.value());
 		}
 		return ret;
 	}
 
+	// @RequestMapping(value = "{className}", method = RequestMethod.POST)
+	// @ResponseBody
+	// public SyncResult sync(@PathVariable String context,
+	// @PathVariable String className,
+	// @RequestBody List<GenericMap> clientChangedData,
+	// @RequestParam(value = "syncTime", required = true) String syncTime,
+	// HttpServletResponse resp) throws IOException, ParseException
+	// {
+	// // TODO: client data wont deserialize as a generic map :-(
+	//
+	// System.out.println(" sync time : " + syncTime);
+	// String queryStr = "modified:[" + syncTime + " TO 9991517871585]";
+	//
+	// Long now = new Long(System.currentTimeMillis());
+	// List<GenericMap> serverChangedData = dataService.find(className,
+	// queryStr);
+	//
+	//
+	// for (GenericMap clientData : clientChangedData) {
+	// if ( clientData != null ) {
+	// clientData.setWd_classname(className);
+	// if (((Boolean) clientData.get("deleted")).booleanValue()) {
+	// dataService.deleteObject(className, clientData.getWd_id());
+	// } else {
+	// dataService.storeObject(clientData);
+	// }
+	// }
+	// }
+	//
+	// SyncResult result = new SyncResult();
+	// result.setGenericMapList(serverChangedData);
+	// result.setSynchTime(now);
+	// return result;
+	// }
 	@RequestMapping(value = "{className}", method = RequestMethod.POST)
 	@ResponseBody
 	public SyncResult sync(@PathVariable String context,
 			@PathVariable String className,
-			@RequestBody List<GenericMap> clientChangedData,
-			@RequestParam(value = "syncTime", required = true) String syncTime,
-			HttpServletResponse resp) throws IOException, ParseException
-    {
-        // TODO: client data wont deserialize as a generic map :-(
+			@RequestBody GenericMap[] clientChangedData,
+			@RequestParam(value = "syncTime", required = true) long syncTime,
+			HttpServletResponse resp) throws IOException, ParseException {
+		// TODO: client data wont deserialize as a generic map :-(
 
-		System.out.println(" sync time : " + syncTime);
-		String queryStr = "modified:[" + syncTime + " TO 9991517871585]";
+		System.out.println(" *sync time : " + syncTime);
+		//String queryStr = "modified:[" + syncTime + " TO 9991517871585]";
 
 		Long now = new Long(System.currentTimeMillis());
-		List<GenericMap> serverChangedData = dataService.find(className, queryStr);
-
+		List<GenericMap> serverChangedData = dataService.find(className,
+				syncTime);
 
 		for (GenericMap clientData : clientChangedData) {
-			if ( clientData != null ) {
+			if (clientData != null) {
 				clientData.setWd_classname(className);
+				System.out.println(" *** wd_id: " + clientData.getWd_id());
 				if (((Boolean) clientData.get("deleted")).booleanValue()) {
 					dataService.deleteObject(className, clientData.getWd_id());
 				} else {
@@ -152,7 +181,7 @@ public class DataController {
 			}
 		}
 
-	    SyncResult result = new SyncResult();
+		SyncResult result = new SyncResult();
 		result.setGenericMapList(serverChangedData);
 		result.setSynchTime(now);
 		return result;
@@ -161,8 +190,7 @@ public class DataController {
 	@ExceptionHandler(DuplicationKeyException.class)
 	@ResponseBody
 	public String handleDuplicationKeyException(Throwable exception,
-			HttpServletResponse response) throws IOException
-    {
+			HttpServletResponse response) throws IOException {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		return "Duplication key";
 	}
@@ -170,8 +198,7 @@ public class DataController {
 	@ExceptionHandler(VersionMismatchException.class)
 	@ResponseBody
 	public String handleVersionMissMatchException(Throwable exception,
-			HttpServletResponse response) throws IOException
-    {
+			HttpServletResponse response) throws IOException {
 		response.setStatus(HttpStatus.BAD_REQUEST.value());
 		return "Version MissMatch";
 	}
