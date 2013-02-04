@@ -3,7 +3,7 @@ package com.migrate.webdata.model;
 /**
  * @author Zane Pan
  */
-public /*abstract*/ class BasePersistentObject implements PersistentObject {
+public class BasePersistentObject implements PersistentObject {
     public static final String WD_BUCKET_COLUMN = "wd_bucket";
     public static final String WD_SCHEMA_ID_COLUMN = "wd_id";
     public static final String WD_TYPE_COLUMN = "wd_type";
@@ -15,10 +15,22 @@ public /*abstract*/ class BasePersistentObject implements PersistentObject {
 	private static final long serialVersionUID = 634871409470406478L;
 	private String wd_id;
 	private long wd_version;
+	
+	
+	public boolean isWd_deleted() {
+		return wd_deleted;
+	}
+
+	public void setWd_deleted(boolean wd_deleted) {
+		this.wd_deleted = wd_deleted;
+	}
+
 	private String wd_classname;
 	private long wd_updateTime;
 	private String wd_namespace;
-
+	private boolean wd_deleted;
+	
+	
 	public BasePersistentObject() {
 	}
 
