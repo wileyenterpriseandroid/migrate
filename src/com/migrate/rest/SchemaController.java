@@ -28,8 +28,7 @@ import com.migrate.service.SchemaService;
 @Controller
 @RequestMapping("/{context}/schema")
 public class SchemaController {
-	private static org.apache.log4j.Logger log = Logger
-			.getLogger(SchemaController.class);
+	private static org.apache.log4j.Logger log = Logger.getLogger(SchemaController.class);
 
 	@Autowired
 	@Qualifier(value = "schemaService")
@@ -40,7 +39,8 @@ public class SchemaController {
 	public Map<String, String> createSchema(@PathVariable String context,
 			@PathVariable String schemaName,
 			@RequestBody PersistentSchema schema, HttpServletRequest req,
-			HttpServletResponse resp) throws IOException {
+			HttpServletResponse resp) throws IOException
+    {
 		try {
 			schema.setWd_id(schemaName);
 			System.out.println(" namespace: " + schema.getWd_namespace());
@@ -59,7 +59,8 @@ public class SchemaController {
 	@ResponseBody
 	public PersistentSchema getSchema(@PathVariable String context,
 			@PathVariable String schemaName, HttpServletRequest req,
-			HttpServletResponse resp) throws IOException {
+			HttpServletResponse resp) throws IOException
+    {
 		PersistentSchema persistentSchema = schemaService.getSchema(schemaName);
 		return persistentSchema;
 	}
@@ -68,7 +69,8 @@ public class SchemaController {
 	@ResponseBody
 	public void deleteSchema(@PathVariable String context,
 			@PathVariable String schemaName, HttpServletRequest req,
-			HttpServletResponse resp) throws IOException {
+			HttpServletResponse resp) throws IOException
+    {
 		schemaService.deleteSchema(schemaName);
 	}
 }

@@ -18,8 +18,6 @@ public class PersistentSchema extends BasePersistentObject {
          String, Boolean, Number, Integer
      }
 
-
-
     public Map<String, Object> getJsonSchema() {
 		return jsonSchema;
 	}
