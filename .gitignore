@@ -1,6 +1,9 @@
 .DS_*
+.classpath
+.project
+.settings
 checkstyle
 build
 dist
 WebData.log
-
+build.ant
