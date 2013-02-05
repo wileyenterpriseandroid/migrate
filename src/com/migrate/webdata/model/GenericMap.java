@@ -74,6 +74,7 @@ public class GenericMap extends HashMap<String, Object> implements PersistentObj
 		} else if (obj instanceof Long) {
 			return ((Long) obj).longValue();
 		}
-		throw new IllegalArgumentException(" bad type :" + obj.getClass().getName());
+
+        throw new IllegalArgumentException(" bad type :" + ((null != obj ? obj.getClass().getName(): "null")));
 	}
 }
