@@ -173,9 +173,9 @@ public class DataController {
 			if (clientData != null) {
 				clientData.setWd_classname(className);
 				System.out.println(" *** wd_id: " + clientData.getWd_id());
-				Boolean deleted = (Boolean) clientData.get("wd_deleted");
+				Integer deleted = (Integer) clientData.get("wd_deleted");
 				
-				if (deleted != null && deleted.booleanValue()) {
+				if (deleted != null && deleted.equals('1')) { // as represented by sqlite
 					dataService.deleteObject(className, clientData.getWd_id());
 				} else {
 					dataService.storeObject(clientData);

@@ -41,94 +41,96 @@ import java.util.Map.Entry;
 
 @Component("luceneIndexService")
 public class LuceneIndexService {
-	private static org.apache.log4j.Logger log = Logger.getLogger(LuceneIndexService.class);
-	private static final String ID = "id";
-	private static final String DATA = "data";
-	private static final String DIR_ROOT = "/tmp/migrate/";
-	
-	@Autowired
-	@Qualifier(value = "schemaService")
-	private SchemaService schemaService;
-	
-	public void updateIndex(GenericMap data) throws IOException
-    {
-		String indexName = data.getWd_classname();
-		PersistentSchema persistentSchema = schemaService.getSchema(indexName);
-		if (persistentSchema == null) {
-			return;
-		}
-		List<PropertyIndex> indexList = persistentSchema.getIndexList();
-		Map<String, Object> map = getValueMap(indexList, data);
-		updateIndexDo(indexName, map);
-	}
+    private static org.apache.log4j.Logger log = Logger.getLogger(LuceneIndexService.class);
+    private static final String ID = "id";
+    private static final String DATA = "data";
+    private static final String DIR_ROOT = "/tmp/migrate/";
 
-	public void deleteIndex(String indexName, String id) throws IOException
-    {
-		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
-		IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_35,analyzer);
-	    iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
-		Directory dir = FSDirectory.open(new File(DIR_ROOT + indexName));
-		IndexWriter writer = new IndexWriter(dir, iwc);
-		writer.deleteDocuments(new Term(ID, id));
-		writer.close();
-		dir.close();
+    @Autowired
+    @Qualifier(value = "schemaService")
+    private SchemaService schemaService;
 
-	}
+    public void updateIndex(GenericMap data) throws IOException
+    {
+        String indexName = data.getWd_classname();
+        PersistentSchema persistentSchema = schemaService.getSchema(indexName);
+        if (persistentSchema == null) {
+            return;
+        }
+        List<PropertyIndex> indexList = persistentSchema.getIndexList();
+        if (indexList != null) {
+            Map<String, Object> map = getValueMap(indexList, data);
+            updateIndexDo(indexName, map);
+        }
+    }
 
-	private Map<String, Object> getValueMap(List<PropertyIndex> indexList, GenericMap data)
-			throws IOException
+    public void deleteIndex(String indexName, String id) throws IOException
     {
-		Map<String, Object> map = new HashMap<String, Object>();
-		for (PropertyIndex pIndex : indexList) {
-			String fieldName = pIndex.getFieldName();
-			map.put(fieldName, data.get(fieldName));
-		}
-		map.put(DATA, new String(JsonHelper.writeValueAsByte(data)));
-		map.put(ID, data.getWd_id());
-		return map;
-	}
-	
-	private void updateIndexDo(String indexName, Map<String, Object>valueMap) 
-			throws CorruptIndexException, IOException
-    {
-		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
-		IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_35,analyzer);
-	    iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
-		Directory dir = FSDirectory.open(new File(DIR_ROOT + indexName));
-		IndexWriter writer = new IndexWriter(dir, iwc);
-		Document doc = createDoc(valueMap);
-		writer.updateDocument(new Term(ID, valueMap.get(ID).toString()), doc);
-		writer.close();
-		dir.close();
-	}
-		
-	private Document createDoc(Map<String, Object>valueMap)
-    {
-		Document doc = new Document();
-		for ( Entry<String, Object> entry : valueMap.entrySet()) {
-			String fieldName = entry.getKey();
-			Field.Index fi = Field.Index.ANALYZED;
-			log.info(" ************ filedName " + fieldName );
-			log.info(" ************ " +  " object type: " + entry.getValue());
+        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
+        IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_35,analyzer);
+        iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
+        Directory dir = FSDirectory.open(new File(DIR_ROOT + indexName));
+        IndexWriter writer = new IndexWriter(dir, iwc);
+        writer.deleteDocuments(new Term(ID, id));
+        writer.close();
+        dir.close();
 
-			if (fieldName.equals(ID)) {
-				fi = Field.Index.NOT_ANALYZED;
-			} else if (fieldName.equals(DATA)) {
-				fi = Field.Index.NOT_ANALYZED;
-			} 
-			Field field = new Field(fieldName ,entry.getValue().toString(), Field.Store.YES, fi);
-			doc.add(field);			
-		}
-		return doc;
-	}
+    }
 
-	public List<GenericMap> search(String indexName, String queryStr) throws ParseException, IOException
+    private Map<String, Object> getValueMap(List<PropertyIndex> indexList, GenericMap data)
+            throws IOException
     {
-		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
-		
-	    Query q = new QueryParser(Version.LUCENE_35, "firstName", analyzer).parse(queryStr);
-	    try {
-		    int hitsPerPage = 30;
+        Map<String, Object> map = new HashMap<String, Object>();
+        for (PropertyIndex pIndex : indexList) {
+            String fieldName = pIndex.getFieldName();
+            map.put(fieldName, data.get(fieldName));
+        }
+        map.put(DATA, new String(JsonHelper.writeValueAsByte(data)));
+        map.put(ID, data.getWd_id());
+        return map;
+    }
+
+    private void updateIndexDo(String indexName, Map<String, Object>valueMap)
+            throws CorruptIndexException, IOException
+    {
+        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
+        IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_35,analyzer);
+        iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
+        Directory dir = FSDirectory.open(new File(DIR_ROOT + indexName));
+        IndexWriter writer = new IndexWriter(dir, iwc);
+        Document doc = createDoc(valueMap);
+        writer.updateDocument(new Term(ID, valueMap.get(ID).toString()), doc);
+        writer.close();
+        dir.close();
+    }
+
+    private Document createDoc(Map<String, Object>valueMap)
+    {
+        Document doc = new Document();
+        for ( Entry<String, Object> entry : valueMap.entrySet()) {
+            String fieldName = entry.getKey();
+            Field.Index fi = Field.Index.ANALYZED;
+            log.info(" ************ filedName " + fieldName );
+            log.info(" ************ " +  " object type: " + entry.getValue());
+
+            if (fieldName.equals(ID)) {
+                fi = Field.Index.NOT_ANALYZED;
+            } else if (fieldName.equals(DATA)) {
+                fi = Field.Index.NOT_ANALYZED;
+            }
+            Field field = new Field(fieldName ,entry.getValue().toString(), Field.Store.YES, fi);
+            doc.add(field);
+        }
+        return doc;
+    }
+
+    public List<GenericMap> search(String indexName, String queryStr) throws ParseException, IOException
+    {
+        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
+
+        Query q = new QueryParser(Version.LUCENE_35, "firstName", analyzer).parse(queryStr);
+        try {
+            int hitsPerPage = 30;
 
             File dirRootFile = new File(DIR_ROOT + indexName);
             if (!dirRootFile.exists()) {
@@ -136,38 +138,38 @@ public class LuceneIndexService {
                 return new ArrayList<GenericMap>();
             }
 
-		    Directory dir = FSDirectory.open(dirRootFile);
-		    log.info("lucene dir: " + DIR_ROOT + indexName);
+            Directory dir = FSDirectory.open(dirRootFile);
+            log.info("lucene dir: " + DIR_ROOT + indexName);
 
-		    IndexReader reader = IndexReader.open(dir);
-		    IndexSearcher searcher = new IndexSearcher(reader);
-		    TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
-		    searcher.search(q, collector);
-		    ScoreDoc[] hits = collector.topDocs().scoreDocs;
-		    List<GenericMap> ret = collectResult(hits, searcher);
-		    reader.close();
-		    searcher.close();
-		    dir.close();
-			return ret;
-	    } catch (Exception e) {
-	    	log.error("search failed: ", e);
-	    	return new ArrayList<GenericMap>();
-	    }
-	}
-	
-	private List<GenericMap>  collectResult (ScoreDoc[] hits, IndexSearcher searcher ) 
-			throws CorruptIndexException, IOException
+            IndexReader reader = IndexReader.open(dir);
+            IndexSearcher searcher = new IndexSearcher(reader);
+            TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
+            searcher.search(q, collector);
+            ScoreDoc[] hits = collector.topDocs().scoreDocs;
+            List<GenericMap> ret = collectResult(hits, searcher);
+            reader.close();
+            searcher.close();
+            dir.close();
+            return ret;
+        } catch (Exception e) {
+            log.error("search failed: ", e);
+            return new ArrayList<GenericMap>();
+        }
+    }
+
+    private List<GenericMap>  collectResult (ScoreDoc[] hits, IndexSearcher searcher )
+            throws CorruptIndexException, IOException
     {
-		List<GenericMap> ret = new ArrayList<GenericMap>();
-		log.info("Found " + hits.length + " hits.");
-	    for(int i=0;i<hits.length;++i) {
-		      int docId = hits[i].doc;
-		      Document d = searcher.doc(docId);		      
-		      log.info(" ********* json:" + d.get(DATA));
-		      ret.add(JsonHelper.readValue(d.get(DATA).getBytes(), GenericMap.class));
-		      log.info((i + 1) + ". " + d.get(ID) +  "  data" + d.get(DATA));
-	    }
-	    return ret;
-	}
+        List<GenericMap> ret = new ArrayList<GenericMap>();
+        log.info("Found " + hits.length + " hits.");
+        for(int i=0;i<hits.length;++i) {
+            int docId = hits[i].doc;
+            Document d = searcher.doc(docId);
+            log.info(" ********* json:" + d.get(DATA));
+            ret.add(JsonHelper.readValue(d.get(DATA).getBytes(), GenericMap.class));
+            log.info((i + 1) + ". " + d.get(ID) +  "  data" + d.get(DATA));
+        }
+        return ret;
+    }
 }
 	

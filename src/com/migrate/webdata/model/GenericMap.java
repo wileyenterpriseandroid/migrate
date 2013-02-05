@@ -39,7 +39,7 @@ public class GenericMap extends HashMap<String, Object> implements PersistentObj
 
 	@Override
 	public long getWd_version() {
-		return getLongVallue(super.get(VERSION));
+		return getLongValue(super.get(VERSION));
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class GenericMap extends HashMap<String, Object> implements PersistentObj
 
 	@Override
 	public long getWd_updateTime() {
-		return getLongVallue(super.get(UPDATETIME));
+		return getLongValue(super.get(UPDATETIME));
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class GenericMap extends HashMap<String, Object> implements PersistentObj
 		super.put(CLASSNAME, classname);
 	}
 
-	private long getLongVallue(Object obj) {
+	private long getLongValue(Object obj) {
 		if ( obj instanceof Double ) {
 			return ((Double) obj).longValue();
 		} else if (obj instanceof Long) {
