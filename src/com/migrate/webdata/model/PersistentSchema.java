@@ -14,7 +14,17 @@ public class PersistentSchema extends BasePersistentObject {
     private Map<String, Object> jsonSchema;
 	private List<PropertyIndex> indexList;
 
-	 public enum DataType {
+    private int status;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public enum DataType {
          String, Boolean, Number, Integer
      }
 
