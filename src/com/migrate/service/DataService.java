@@ -17,7 +17,7 @@ import com.migrate.storage.ObjectStore;
 
 @Component("dataService")
 public class DataService {
-	private static final String NAMESPACE = "migrateData";
+	private static final String NAMESPACE = "__data";
 	private static org.apache.log4j.Logger log = Logger.getLogger(SchemaService.class);
 	@Autowired
 	@Qualifier(value = "objectStore")
