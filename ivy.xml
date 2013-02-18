@@ -33,6 +33,7 @@
     </configurations>
 
     <dependencies>
+        <dependency org="cglib" name="cglib" rev="2.2.2"/>   
         <dependency org="javax.servlet" name="servlet-api" rev="2.5" />
 		<dependency org="jstl" name="jstl" rev="1.2"/>
             

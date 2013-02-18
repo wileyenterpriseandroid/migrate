@@ -12,6 +12,7 @@
 	<!-- Enable annotation scanning. -->
 	<context:component-scan base-package="com.migrate" />
 
+
 	<bean id="marshallingHttpMessageConverter"
 		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
 	</bean>
@@ -33,11 +34,11 @@
       <property name="prefix" value="/WEB-INF/jsp/"/>
       <property name="suffix" value=".jsp"/>
   </bean>
- 
+ <!--
     <mvc:default-servlet-handler/>
-	<!-- Should be defined last! -->
-	<mvc:annotation-driven />
- 
-    <mvc:resources mapping="/resource/**" location="/resource/"/>  
+	 Should be defined last! 
+	<mvc:annotation-driven /> -->
+	<bean class='com.migrate.rest.WebConfig'/>
+	<mvc:resources mapping="/resource/**" location="/resource/"/>  
  
 </beans>
