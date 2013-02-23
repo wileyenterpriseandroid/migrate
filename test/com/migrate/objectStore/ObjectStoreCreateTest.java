@@ -23,7 +23,7 @@ public class ObjectStoreCreateTest extends ObjectStoreTest {
 	@Test
 	public void createTest() throws Exception {
 		store.create(testObj);
-		TestClass tc = store.get(bucket, key, TestClass.class);
+		TestClass tc = store.get(bucket, key, TestClass.class.getCanonicalName(), TestClass.class);
 		System.out.println(tc.getIntValue());
 		assertArrayEquals(tc.getBytes(), testObj.getBytes());
 		assertArrayEquals(tc.getListValue().toArray(), testObj.getListValue().toArray());

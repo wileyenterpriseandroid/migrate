@@ -43,7 +43,6 @@ public class SchemaController {
     {
 		try {
 			schema.setWd_id(schemaName);
-			System.out.println(" namespace: " + schema.getWd_namespace());
 			schemaService.updateSchema(schema);
 			Map<String, String> map = new HashMap<String, String>(1);
 			map.put("location", req.getRequestURL().toString());

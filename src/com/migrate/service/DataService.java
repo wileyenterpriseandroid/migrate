@@ -28,7 +28,7 @@ public class DataService {
 	private LuceneIndexService luceneIndexService;
 
 	public GenericMap getObject(String className, String id) throws IOException {
-		return store.get(NAMESPACE, id, GenericMap.class);	
+		return store.get(NAMESPACE, id, className, GenericMap.class);	
 	}
 	
 	public void storeObject(GenericMap data) throws IOException {

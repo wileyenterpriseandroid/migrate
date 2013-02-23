@@ -26,12 +26,12 @@ public class ObjectStoreImpl implements ObjectStore {
 	private KVStore store;
 	
 	@Override
-	public <T extends PersistentObject> T get(String namespace, String key, Class<T> valueType) throws IOException {
+	public <T extends PersistentObject> T get(String namespace, String key, String className, Class<T> valueType) throws IOException {
 		KVObject kvo = store.get(namespace, key);
 		if (kvo == null) {
 			return null;
 		}
-		if (!valueType.getName().equals(kvo.getClassName())) {
+		if (!className.equals(kvo.getClassName())) {
 			throw new IllegalArgumentException( valueType.getName() + " does not match " + kvo.getClassName() );
 		}
 		T t = JsonHelper.readValue(kvo.getValue(), valueType);
