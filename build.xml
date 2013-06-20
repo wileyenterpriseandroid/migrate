@@ -117,6 +117,7 @@
         <jar jarfile="${dist.home}/${migrate}.war" basedir="${build.home}"/>
         <jar jarfile="${dist.home}/${migrate}-model.jar">
             <fileset dir="${build.classes}" includes="**/model/*.class"/>
+            <fileset dir="${build.classes}" includes="com/migrate/storage/impl/JsonHelper.class"/>
         </jar>
     </target>
 
