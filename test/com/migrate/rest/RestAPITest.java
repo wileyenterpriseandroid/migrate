@@ -28,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 @ContextConfiguration( { "/spring/applicationContext-test.xml" })
 public class RestAPITest {
 	protected static org.apache.log4j.Logger log = Logger.getLogger(RestAPITest.class);
-	protected static  final String MIGRATE_URL = "http://migrate.eordercenter.com/test/classes/{type}/{id}";
+	protected static  final String MIGRATE_URL = "http://migrate.wileyenterpriseandroid.com/test/classes/{type}/{id}";
 	protected String type = "type1";
 	protected String id = "id1";
 	protected Map<String, Object> object = new HashMap<String, Object>();
