@@ -40,7 +40,7 @@ public class DBKVStore implements KVStore {
 	public void setDataSource(BasicDataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
-    
+
 	@Override
 	public KVObject get(String bucket, String key) throws IOException {
 		log.info("get bucket:" + bucket + " key:" + key);

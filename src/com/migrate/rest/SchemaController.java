@@ -49,6 +49,7 @@ public class SchemaController {
 			resp.setStatus(HttpStatus.ACCEPTED.value());
 			return map;
 		} catch (Exception e) {
+            // TODO: need to use logging for these
 			e.printStackTrace();
 		}
 		return null;

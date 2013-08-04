@@ -9,7 +9,7 @@
     <property name="migrate.path" value="/${migrate}"/>
     <property name="migrate.version" value="1.0"/>
     <property name="build.home" value="${basedir}/build"/>
-    <property name="build.classes" value="${build.home}/WEB-INF/classes"/>
+    <property name="build.web-inf.classes" value="${build.home}/WEB-INF/classes"/>
     <property name="src.home" value="src"/>
     <property name="web.home" value="WebContent"/>
     <property name="dist.home" value="${basedir}/dist"/>
@@ -116,8 +116,8 @@
 
         <jar jarfile="${dist.home}/${migrate}.war" basedir="${build.home}"/>
         <jar jarfile="${dist.home}/${migrate}-model.jar">
-            <fileset dir="${build.classes}" includes="**/model/*.class"/>
-            <fileset dir="${build.classes}" includes="com/migrate/storage/impl/JsonHelper.class"/>
+            <fileset dir="${build.web-inf.classes}" includes="**/model/*.class"/>
+            <fileset dir="${build.web-inf.classes}" includes="com/migrate/storage/impl/JsonHelper.class"/>
         </jar>
     </target>
 

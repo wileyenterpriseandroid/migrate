@@ -1,0 +1,22 @@
+This file explains how to initialize and run a "Migrate" project generic CRUD
+and synchronization service. The Migrate project provides an implementation of
+the WebData protocol.
+
+This repository contains:
+
+A prototype key value WebData implementation based on mysql. To run this
+backend, a mysql instance must be present on local port 3306. Future releases
+will accommodate varying scalable implementations, likely based on Google App
+Engine, Amazon Dynamo DB, etc.
+
+* To build the project:
+
+   Install ant version 1.1.8
+
+   Run the following command to build the project:
+
+   ant dist
+
+   On build completion, you can find the binary distribution in:
+
+   dist/migrate.war

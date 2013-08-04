@@ -26,7 +26,10 @@
   	
 	<bean id="kvStore" class="com.migrate.storage.impl.DBKVStore" p:dataSource-ref="dataSource" >
     </bean>
- 
+
+    <bean id="dataHolder" class="com.migrate.storage.init.sql.DataSourceHolder" p:dataSource-ref="dataSource" >
+    </bean>
+
  	<bean id="objectStore" class="com.migrate.storage.impl.ObjectStoreImpl">
     </bean>
 
