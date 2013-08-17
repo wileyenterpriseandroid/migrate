@@ -154,11 +154,11 @@ public class DataController {
 	// }
 	@RequestMapping(value = "{className}", method = RequestMethod.POST)
 	@ResponseBody
-	public SyncResult sync(@PathVariable String context,
-			@PathVariable String className,
-			@RequestBody GenericMap[] clientChangedData,
-			@RequestParam(value = "syncTime", required = true) long syncTime,
-			HttpServletResponse resp) throws IOException, ParseException
+	public SyncResult syncData(@PathVariable String context,
+                               @PathVariable String className,
+                               @RequestBody GenericMap[] clientChangedData,
+                               @RequestParam(value = "syncTime", required = true) long syncTime,
+                               HttpServletResponse resp) throws IOException, ParseException
     {
 		// TODO: client data wont deserialize as a generic map :-(
 
@@ -166,8 +166,7 @@ public class DataController {
 		//String queryStr = "modified:[" + syncTime + " TO 9991517871585]";
 
 		Long now = new Long(System.currentTimeMillis());
-		List<GenericMap> serverChangedData = dataService.find(className,
-				syncTime);
+		List<GenericMap> serverChangedData = dataService.find(className, syncTime);
 
 		for (GenericMap clientData : clientChangedData) {
 			if (clientData != null) {
@@ -178,6 +177,9 @@ public class DataController {
 				if (deleted != null && deleted.equals('1')) { // as represented by sqlite
 					dataService.deleteObject(className, clientData.getWd_id());
 				} else {
+
+                    // TODO: need to better handle corrupt or incomplete data
+
 					dataService.storeObject(clientData);
 				}
 			}
