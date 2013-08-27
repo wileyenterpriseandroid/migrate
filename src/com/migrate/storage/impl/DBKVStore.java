@@ -119,7 +119,10 @@ public class DBKVStore implements KVStore {
 				new Object[] { 	data.getValue(), System.currentTimeMillis(),
 								data.getVersion(), data.getBucket(), data.getKey(),
 								new Long(version) });
-		
+
+        // throwing cryptic 500 errors to the client absolutely sucks. They need to be
+        // more informative, like: the version mismatched, fix your client.
+
 		if (rowupdated != 1)  {
             // TODO: this needs to get back to client as intelligible error, not as internal 500 error
 	   		throw new VersionMismatchException("row updated : " + rowupdated);
