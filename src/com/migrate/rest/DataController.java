@@ -31,7 +31,7 @@ import com.migrate.service.DataService;
  * @author Zane Pan
  */
 @Controller
-@RequestMapping("/{context}/classes")
+@RequestMapping("/classes")
 public class DataController {
 	private static org.apache.log4j.Logger log =
             Logger.getLogger(DataController.class);

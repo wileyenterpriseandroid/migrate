@@ -120,5 +120,4 @@
             <fileset dir="${build.web-inf.classes}" includes="com/migrate/storage/impl/JsonHelper.class"/>
         </jar>
     </target>
-
 </project>

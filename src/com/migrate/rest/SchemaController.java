@@ -26,7 +26,7 @@ import com.migrate.service.SchemaService;
  * @author Zane Pan
  */
 @Controller
-@RequestMapping("/{context}/schema")
+@RequestMapping("/schema")
 public class SchemaController {
 	private static org.apache.log4j.Logger log = Logger.getLogger(SchemaController.class);
 
