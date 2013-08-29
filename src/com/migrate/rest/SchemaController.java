@@ -36,8 +36,8 @@ public class SchemaController {
 
 	@RequestMapping(value = "/{schemaName}", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, String> createSchema(@PathVariable String context,
-			@PathVariable String schemaName,
+	public Map<String, String> createSchema(
+            @PathVariable String schemaName,
 			@RequestBody PersistentSchema schema, HttpServletRequest req,
 			HttpServletResponse resp) throws IOException
     {
@@ -57,8 +57,8 @@ public class SchemaController {
 
 	@RequestMapping(value = "/{schemaName}", method = RequestMethod.GET)
 	@ResponseBody
-	public PersistentSchema getSchema(@PathVariable String context,
-			@PathVariable String schemaName, HttpServletRequest req,
+	public PersistentSchema getSchema(@PathVariable String schemaName,
+                                      HttpServletRequest req,
 			HttpServletResponse resp) throws IOException
     {
 		PersistentSchema persistentSchema = schemaService.getSchema(schemaName);
@@ -67,8 +67,8 @@ public class SchemaController {
 
 	@RequestMapping(value = "/{schemaName}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteSchema(@PathVariable String context,
-			@PathVariable String schemaName, HttpServletRequest req,
+	public void deleteSchema(@PathVariable String schemaName,
+                             HttpServletRequest req,
 			HttpServletResponse resp) throws IOException
     {
 		schemaService.deleteSchema(schemaName);

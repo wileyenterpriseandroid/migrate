@@ -35,7 +35,8 @@
     <bean class="com.migrate.rest.WebConfig"/>
 
     <!--<mvc:annotation-driven />-->
-    <!--<mvc:default-servlet-handler/>-->
+
+    <mvc:default-servlet-handler/>
 
     <mvc:resources mapping="/resource/**" location="/resource/"/>
 </beans>
