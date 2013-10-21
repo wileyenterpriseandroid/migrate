@@ -16,15 +16,15 @@ public class KVStoreCreateTest extends KVStoreTest {
 	@Test
 	public void createTest() throws Exception {
 		log.info(" store: " + store);
-		store.create(bucket, key, className, value);
-		KVObject kvo = store.get(bucket, key);
+		store.create(namespace, key, className, value);
+		KVObject kvo = store.get(namespace, key);
 		assertNotNull(kvo);
-		assertEquals(bucket, kvo.getBucket());
+		assertEquals(namespace, kvo.getNamespace());
 		assertEquals(key, kvo.getKey());
 		assertArrayEquals(value, kvo.getValue());
 		boolean bException = false;
 		try {
-			store.create(bucket, key, className, value);
+			store.create(namespace, key, className, value);
 		} catch(DuplicationKeyException e ) {
 			bException = true;
 		}

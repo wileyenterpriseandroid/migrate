@@ -24,14 +24,14 @@ public abstract class ObjectStoreTest {
 	@Autowired
 	@Qualifier(value = "objectStore")
 	protected ObjectStore store;
-	protected String bucket = "ObjectStoreTest";
+	protected String namespace = "ObjectStoreTest";
 	protected String key = "key:" + System.currentTimeMillis();
 	protected TestClass testObj;
 	protected Foo foo;
 	@Before 
 	public void setup() {
 		testObj = new TestClass();
-		testObj.setWd_namespace(bucket);
+		testObj.setWd_namespace(namespace);
 		testObj.setWd_classname(testObj.getClass().getName());
 		testObj.setWd_id(key);
 		testObj.stringValue = "stringValue1";
@@ -52,7 +52,7 @@ public abstract class ObjectStoreTest {
 	
 	@After
 	public void tearDown() throws IOException {
-		store.delete(bucket, key);
+		store.delete(namespace, key);
 	}
 	
 	public static class TestClass extends BasePersistentObject {

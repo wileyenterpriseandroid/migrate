@@ -18,16 +18,16 @@ public class KVStoreUpdateTest extends KVStoreTest {
 	@Override
 	public void setup() throws Exception {
 		super.setup();
-		store.create(bucket, key, className, value);
+		store.create(namespace, key, className, value);
 	}
 	
 	@Test 
 	public void updataTest() throws IOException {
 		long ver = 1;
-		KVObject kvo = store.get(bucket, key, ver);
+		KVObject kvo = store.get(namespace, key, ver);
 		kvo.setValue("new value".getBytes());
 		store.update(kvo);
-		KVObject updateKvo = store.get(bucket, key, ver+1);
+		KVObject updateKvo = store.get(namespace, key, ver+1);
 		assertNotNull(updateKvo);
 		assertEquals(ver+1, updateKvo.getVersion());
 		assertArrayEquals(kvo.getValue(), updateKvo.getValue());
@@ -43,7 +43,7 @@ public class KVStoreUpdateTest extends KVStoreTest {
 	}
 	
 	public void tearDown() throws Exception {
-		store.delete(bucket, key);
+		store.delete(namespace, key);
 	}
 	
 	

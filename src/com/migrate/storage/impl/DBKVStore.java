@@ -27,14 +27,15 @@ import com.migrate.storage.KVStore;
 @Transactional(isolation=Isolation.REPEATABLE_READ)
 public class DBKVStore implements KVStore {
 	private static org.apache.log4j.Logger log = Logger.getLogger(DBKVStore.class);
-	private static final String getSql = "select dataKey, className, value, updateTime, version from kv_table where bucket=? and dataKey = ?";
+	private static final String getSql = "select dataKey, className, value, updateTime, version from kv_table where namespace=? and dataKey = ?";
 	private static final String getWithVersionSql = getSql + " and version = ?";
-	private static final String deleteSql = "delete from kv_table where bucket=? and dataKey = ?";
-	private static final String updateSql = "update kv_table set value = ?, updateTime=?, version=? where bucket = ? and datakey=?";
+	private static final String deleteSql = "delete from kv_table where namespace=? and dataKey = ?";
+	private static final String updateSql = "update kv_table set value = ?, updateTime=?, version=? where namespace = ? and datakey=?";
 	private static final String updateWithVersionSql = updateSql + " and version = ?";
 	private static final String insertSql = "insert into kv_table values (?,?,?,?,?,?)";
-	private static final String findSql = "select bucket, dataKey, className, value, updateTime, version from kv_table where bucket=? and classname = ? and updateTime > ?";
-	
+//	private static final String findSql = "select namespace, dataKey, className, value, updateTime, version from kv_table where namespace=? and classname = ? and updateTime > ?";
+	private static final String findSql = "select namespace, dataKey, className, value, updateTime, version from kv_table where (namespace=?) and (classname = ?) and (updateTime > ?) limit ?,?";
+
 	private JdbcTemplate jdbcTemplate;
  
 	public void setDataSource(BasicDataSource dataSource) {
@@ -42,23 +43,25 @@ public class DBKVStore implements KVStore {
     }
 
 	@Override
-	public KVObject get(String bucket, String key) throws IOException {
-		log.info("get bucket:" + bucket + " key:" + key);
-		return getDo(bucket, key, getSql, KVObject.ANY_VERSION);
+	public KVObject get(String namespace, String key) throws IOException {
+		log.info("get namespace:" + namespace + " key:" + key);
+		return getDo(namespace, key, getSql, KVObject.ANY_VERSION);
 	}
 
 	@Override
-	public KVObject get(String bucket, String key, long version)
+	public KVObject get(String namespace, String key, long version)
 			throws IOException {
-		return getDo(bucket, key, getWithVersionSql, version);		
+		return getDo(namespace, key, getWithVersionSql, version);
 	}
 
 	@Override
-	public List<KVObject> findChanged(String bucket, String classname, long time) {
+	public List<KVObject> findChanged(String namespace, String classname,
+                                      long time, int start, int numMatches)
+    {
 		RowMapper<KVObject> mapper = new RowMapper<KVObject>() {
 			public KVObject mapRow(ResultSet rs, int rowNum) throws SQLException {
 				KVObject obj = new KVObject();
-				obj.setBucket(rs.getString("bucket"));
+				obj.setNamespace(rs.getString("namespace"));
 				obj.setKey(rs.getString("dataKey"));
 				obj.setClassName(rs.getString("className"));
 				obj.setUpdateTime(rs.getLong("updateTime"));
@@ -68,16 +71,16 @@ public class DBKVStore implements KVStore {
 			}
 		};
 	
-		Object[] args = new Object[] {bucket, classname, new Long(time)};
+		Object[] args = new Object[] {namespace, classname, time, start, numMatches};
 		List<KVObject> list = jdbcTemplate.query(findSql, args, mapper);
 		return list;
 	}
 
-	private KVObject getDo(final String bucket, final String key, String sql, long version) throws IOException {
+	private KVObject getDo(final String namespace, final String key, String sql, long version) throws IOException {
 		RowMapper<KVObject> mapper = new RowMapper<KVObject>() {
 			public KVObject mapRow(ResultSet rs, int rowNum) throws SQLException {
 				KVObject obj = new KVObject();
-				obj.setBucket(bucket);
+				obj.setNamespace(namespace);
 				obj.setKey(rs.getString("dataKey"));
 				obj.setClassName(rs.getString("className"));
 				obj.setUpdateTime(rs.getLong("updateTime"));
@@ -89,9 +92,9 @@ public class DBKVStore implements KVStore {
 		KVObject kvo = null;;
 		try {
 			if ( version == KVObject.ANY_VERSION) {
-				kvo = jdbcTemplate.queryForObject(sql, mapper, bucket, key);
+				kvo = jdbcTemplate.queryForObject(sql, mapper, namespace, key);
 			} else {
-				kvo = jdbcTemplate.queryForObject(sql, mapper, bucket, key, version);
+				kvo = jdbcTemplate.queryForObject(sql, mapper, namespace, key, version);
 			}
 		} catch ( IncorrectResultSizeDataAccessException e) {
 			if (e.getActualSize() != 0 ) {
@@ -102,8 +105,8 @@ public class DBKVStore implements KVStore {
 	}
 
 	@Override
-	public void delete(final String bucket, final String key) throws IOException {
-		jdbcTemplate.update(deleteSql, new Object[] {bucket, key});
+	public void delete(final String namespace, final String key) throws IOException {
+		jdbcTemplate.update(deleteSql, new Object[] {namespace, key});
 	}
 
 	@Override
@@ -117,7 +120,7 @@ public class DBKVStore implements KVStore {
 		data.setVersion(version +1);
 		int rowupdated = jdbcTemplate.update(updateWithVersionSql,
 				new Object[] { 	data.getValue(), System.currentTimeMillis(),
-								data.getVersion(), data.getBucket(), data.getKey(),
+								data.getVersion(), data.getNamespace(), data.getKey(),
 								new Long(version) });
 
         // throwing cryptic 500 errors to the client absolutely sucks. They need to be
@@ -132,17 +135,17 @@ public class DBKVStore implements KVStore {
 	private void insertObject(KVObject data) throws IOException {
    		try {
 			jdbcTemplate.update(insertSql,	   	
-				new Object[] {	data.getBucket(), data.getKey(), data.getClassName(),
+				new Object[] {	data.getNamespace(), data.getKey(), data.getClassName(),
 	   							data.getValue(),
 								data.getUpdateTime(),
 								new Long(1)});
    		} catch (org.springframework.dao.DuplicateKeyException e) {
-   			throw new DuplicationKeyException ("bucket: " + data.getBucket() + " key:" + data.getKey() );  			
+   			throw new DuplicationKeyException ("namespace: " + data.getNamespace() + " key:" + data.getKey() );
    		}
 	}
 	@Override
-	public void create(final String bucket, final String key, String className, byte[] value) throws IOException {
-		KVObject kvo = new KVObject(bucket, key, className, value);
+	public void create(final String namespace, final String key, String className, byte[] value) throws IOException {
+		KVObject kvo = new KVObject(namespace, key, className, value);
 		insertObject(kvo);
 	}
 

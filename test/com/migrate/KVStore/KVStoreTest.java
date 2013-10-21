@@ -19,7 +19,7 @@ public abstract class KVStoreTest {
 	@Autowired
 	@Qualifier(value = "kvStore")
 	protected KVStore store;
-	protected String bucket;
+	protected String namespace;
 	protected String key;
 	protected String className = "fooClass";
 	protected byte[] value = "KVStoreTest".getBytes();
@@ -27,14 +27,14 @@ public abstract class KVStoreTest {
 	@Before
 	public void setup() throws Exception {
 		String time = new Long(System.currentTimeMillis()).toString();
-		bucket = "bucket:" + time;
+		namespace = "namespace:" + time;
 		key = "key:" + time;
-		value = (bucket +":" + key + ":" + className).getBytes();
-		store.delete(bucket, key);
+		value = (namespace +":" + key + ":" + className).getBytes();
+		store.delete(namespace, key);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		store.delete(bucket, key);
+		store.delete(namespace, key);
 	}
 }

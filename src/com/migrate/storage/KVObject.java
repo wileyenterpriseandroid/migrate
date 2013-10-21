@@ -11,7 +11,7 @@ import java.util.Arrays;
 public class KVObject implements Serializable {
 	public static final int ANY_VERSION = 0;
 	private static final long serialVersionUID = 3352850855330969122L;
-	private String bucket;
+	private String namespace;
 	private String className;
 	private String id;
 	private byte[] value;	
@@ -20,8 +20,8 @@ public class KVObject implements Serializable {
 	
 	public KVObject() {}
 	
-	public KVObject(String bucket, String key, String className, byte[] value) {
-		this.bucket = bucket;
+	public KVObject(String namespace, String key, String className, byte[] value) {
+		this.namespace = namespace;
 		this.id = key;
 		this.className = className;
 		this.value = value;
@@ -29,12 +29,12 @@ public class KVObject implements Serializable {
 		this.version = 0;
 	}
 
-	public String getBucket() {
-		return bucket;
+	public String getNamespace() {
+		return namespace;
 	}
 
-	public void setBucket(String bucket) {
-		this.bucket = bucket;
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
 	}
 
 	public String getClassName() {
@@ -81,7 +81,7 @@ public class KVObject implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((bucket == null) ? 0 : bucket.hashCode());
+		result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
 		result = prime * result
 				+ ((className == null) ? 0 : className.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
@@ -100,10 +100,10 @@ public class KVObject implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		KVObject other = (KVObject) obj;
-		if (bucket == null) {
-			if (other.bucket != null)
+		if (namespace == null) {
+			if (other.namespace != null)
 				return false;
-		} else if (!bucket.equals(other.bucket))
+		} else if (!namespace.equals(other.namespace))
 			return false;
 		if (className == null) {
 			if (other.className != null)

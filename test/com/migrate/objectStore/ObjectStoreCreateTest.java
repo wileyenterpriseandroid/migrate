@@ -17,13 +17,13 @@ public class ObjectStoreCreateTest extends ObjectStoreTest {
 	@Before 
 	public void ensureDelete() throws IOException {
 		setup();
-		store.delete(bucket, key);
+		store.delete(namespace, key);
 	}
 	
 	@Test
 	public void createTest() throws Exception {
 		store.create(testObj);
-		TestClass tc = store.get(bucket, key, TestClass.class.getCanonicalName(), TestClass.class);
+		TestClass tc = store.get(namespace, key, TestClass.class.getCanonicalName(), TestClass.class);
 		System.out.println(tc.getIntValue());
 		assertArrayEquals(tc.getBytes(), testObj.getBytes());
 		assertArrayEquals(tc.getListValue().toArray(), testObj.getListValue().toArray());

@@ -20,12 +20,12 @@ public class MenuCategory extends BasePersistentObject {
 	public MenuCategory() {
 		
 	}
-	public MenuCategory(String bucket, String key, String name) {
-		//super(bucket, key, name);
+	public MenuCategory(String namespace, String key, String name) {
+		//super(namespace, key, name);
 	}
 	
-	public MenuCategory(String bucket, String key, String name, boolean bEmbedded) {
-		this(bucket, key, name);
+	public MenuCategory(String namespace, String key, String name, boolean bEmbedded) {
+		this(namespace, key, name);
 		this.bEmbedded = bEmbedded;
 	}
 	

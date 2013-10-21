@@ -19,7 +19,8 @@ import com.migrate.storage.ObjectStore;
 public class DataService {
 	private static final String NAMESPACE = "__data";
 	private static org.apache.log4j.Logger log = Logger.getLogger(SchemaService.class);
-	@Autowired
+
+    @Autowired
 	@Qualifier(value = "objectStore")
 	private ObjectStore store;
 
@@ -53,7 +54,7 @@ public class DataService {
 		return luceneIndexService.search(className, queryStr);
 	}
 	
-	public List<GenericMap> find(String className, long time) throws ParseException, IOException {
-		return store.findChanged(NAMESPACE,className, time);
+	public List<GenericMap> find(String className, long time, int start, int numMatches) throws ParseException, IOException {
+		return store.findChanged(NAMESPACE, className, time, start, numMatches);
 	}
 }

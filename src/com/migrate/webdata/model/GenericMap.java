@@ -1,4 +1,5 @@
 package com.migrate.webdata.model;
+
 /**
  * Zane Pan
  */
@@ -6,11 +7,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GenericMap extends HashMap<String, Object> implements PersistentObject {
-    static private final String NAMESPACE = "wd_namespace" ;
-    static private final String ID = "wd_id" ;
-    static private final String VERSION = "wd_version" ;
-    static private final String UPDATETIME = "wd_updateTime" ;
-    static private final String CLASSNAME = "wd_classname" ;
+    static private final String WD_NAMESPACE = "wd_namespace";
+
+    // TODO: rename namespace back to bucket, and classname to namespace
+
+    /**
+     * If the generic map is a schema object, then this constant names the schema ID
+     * field. If its a data object, then it names a UUID.
+     */
+    static private final String WD_ID = "wd_id";
+    static private final String WD_VERSION = "wd_version";
+    static private final String WD_UPDATE_TIME = "wd_updateTime";
+    static private final String WD_CLASSNAME = "wd_classname";
 
     private static final long serialVersionUID = 7004975737945391947L;
     private Map<String, Object> map;
@@ -18,54 +26,54 @@ public class GenericMap extends HashMap<String, Object> implements PersistentObj
 
     @Override
     public String getWd_namespace() {
-        return (String) super.get(NAMESPACE);
+        return (String) super.get(WD_NAMESPACE);
     }
 
     @Override
     public void setWd_namespace(String value) {
-        super.put(NAMESPACE, value);
+        super.put(WD_NAMESPACE, value);
     }
 
 
     @Override
     public String getWd_id() {
-        return (String) super.get(ID);
+        return (String) super.get(WD_ID);
     }
 
     @Override
     public void setWd_id(String value) {
-        super.put(ID, value);
+        super.put(WD_ID, value);
     }
 
     @Override
     public long getWd_version() {
-        return getLongValue(super.get(VERSION));
+        return getLongValue(super.get(WD_VERSION));
     }
 
     @Override
     public void setWd_version(long version) {
 
-        super.put(VERSION, new Long(version));
+        super.put(WD_VERSION, new Long(version));
     }
 
     @Override
     public long getWd_updateTime() {
-        return getLongValue(super.get(UPDATETIME));
+        return getLongValue(super.get(WD_UPDATE_TIME));
     }
 
     @Override
     public void setWd_updateTime(long updateTime) {
-        super.put(UPDATETIME, new Long(updateTime));
+        super.put(WD_UPDATE_TIME, new Long(updateTime));
     }
 
     @Override
     public String getWd_classname() {
-        return (String) super.get(CLASSNAME);
+        return (String) super.get(WD_CLASSNAME);
     }
 
     @Override
     public void setWd_classname(String classname) {
-        super.put(CLASSNAME, classname);
+        super.put(WD_CLASSNAME, classname);
     }
 
     private long getLongValue(Object obj) {

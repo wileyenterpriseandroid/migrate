@@ -14,6 +14,6 @@ public interface ObjectStore {
 	<T extends PersistentObject> T get(String namespace, String key, String className, Class<T> valueType) throws IOException;
 	void update(PersistentObject bo) throws IOException;
 	void create(PersistentObject bo) throws IOException;
-	void delete(String bucket, String key) throws IOException;
-	List<GenericMap> findChanged( String namespace, String classname,  long time) throws IOException;
+	void delete(String namespace, String key) throws IOException;
+	List<GenericMap> findChanged(String namespace, String classname, long time, int start, int numMatches) throws IOException;
 }

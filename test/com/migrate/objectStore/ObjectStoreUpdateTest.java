@@ -27,14 +27,14 @@ public class ObjectStoreUpdateTest extends ObjectStoreTest {
 	
 	@Test
 	public void createTest() throws Exception {
-		TestClass tc = store.get(bucket, key, TestClass.class.getName(), TestClass.class);
+		TestClass tc = store.get(namespace, key, TestClass.class.getName(), TestClass.class);
 		System.out.println(tc.getWd_namespace());
 		System.out.println(tc.getIntValue());
 		
 		modify(tc);
 		store.update(tc);
 		
-		TestClass tcUpdated = store.get(bucket, key, TestClass.class.getName(),  TestClass.class);
+		TestClass tcUpdated = store.get(namespace, key, TestClass.class.getName(),  TestClass.class);
 		System.out.println(tcUpdated.getIntValue());
 
 		assertEquals(tc.getIntValue(), tcUpdated.getIntValue());

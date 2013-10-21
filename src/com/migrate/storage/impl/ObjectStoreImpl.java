@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import com.migrate.storage.KVObject;
 import com.migrate.storage.KVStore;
 import com.migrate.storage.ObjectStore;
+
 /**
  * @author Zane Pan
  */
@@ -35,7 +35,7 @@ public class ObjectStoreImpl implements ObjectStore {
 			throw new IllegalArgumentException( valueType.getName() + " does not match " + kvo.getClassName() );
 		}
 		T t = JsonHelper.readValue(kvo.getValue(), valueType);
-		t.setWd_namespace(kvo.getBucket());
+		t.setWd_namespace(kvo.getNamespace());
 		t.setWd_classname(kvo.getClassName());
 		t.setWd_id(kvo.getKey());
 		t.setWd_version(kvo.getVersion());
@@ -43,11 +43,9 @@ public class ObjectStoreImpl implements ObjectStore {
 		return t;
 	}
 
-
-	@Override
+    @Override
 	public void update(PersistentObject bo)  throws IOException {
-
-		String bucket = bo.getWd_namespace();
+		String namespace = bo.getWd_namespace();
 		String key = bo.getWd_id();
 		KVObject kvo = store.get(bo.getWd_namespace(), bo.getWd_id());
 		if (kvo == null) {
@@ -59,22 +57,21 @@ public class ObjectStoreImpl implements ObjectStore {
 		kvo.setValue(data);
 		kvo.setVersion(bo.getWd_version());
 		store.update(kvo);
-		restoreBaseObjetId(bo, bucket, key);
+		restoreBaseObjetId(bo, namespace, key);
 	}
 
 	@Override
 	public void create(PersistentObject bo) throws IOException {
-		String bucket = bo.getWd_namespace();
+		String namespace = bo.getWd_namespace();
 		String key = bo.getWd_id();
 		cleanBaseObjectId(bo);
 		byte[] value = JsonHelper.writeValueAsByte(bo);
-		store.create (bucket, key, bo.getWd_classname(), value);
-		restoreBaseObjetId(bo, bucket, key);
-		
+		store.create (namespace, key, bo.getWd_classname(), value);
+		restoreBaseObjetId(bo, namespace, key);
 	}
 
-	private void restoreBaseObjetId(PersistentObject bo, String bucket, String key) {
-		bo.setWd_namespace(bucket);
+	private void restoreBaseObjetId(PersistentObject bo, String namespace, String key) {
+		bo.setWd_namespace(namespace);
 		bo.setWd_id(key);
 	}
 	private void cleanBaseObjectId(PersistentObject bo) {
@@ -82,31 +79,17 @@ public class ObjectStoreImpl implements ObjectStore {
 		bo.setWd_id(null);	
 	}
 
-
-	@Override
-	public void delete(String bucket, String key) throws IOException {
-		store.delete(bucket, key);
+    @Override
+	public void delete(String namespace, String key) throws IOException {
+		store.delete(namespace, key);
 	}
-
-
-//	@Override
-//	public <T extends PersistentObject> List<T> findChanged( String namespace,  Class<T> valueType,  long time) throws IOException {
-//		List<KVObject> list = store.findChanged(namespace, valueType.getName(), time);
-//		List<T> result = new ArrayList<T>(list.size());
-//		for ( KVObject kvo: list ) {
-//			T t = JsonHelper.readValue(kvo.getValue(), valueType);
-//			t.setWd_namespace(namespace);
-//			t.setWd_id(kvo.getKey());
-//			t.setWd_updateTime(kvo.getUpdateTime());
-//			t.setWd_version(kvo.getVersion());
-//			result.add(t);
-//		}
-//		return result;
-//	}
 	
 	@Override
-	public List<GenericMap> findChanged( String namespace, String classname,  long time) throws IOException {
-		List<KVObject> list = store.findChanged(namespace, classname, time);
+	public List<GenericMap> findChanged(String namespace, String classname, long time,
+                                        int start, int numMatches) throws IOException
+    {
+		List<KVObject> list = store.findChanged(namespace, classname, time, start, numMatches);
+
 		List<GenericMap> result = new ArrayList<GenericMap>(list.size());
 		for ( KVObject kvo: list ) {
 			GenericMap map = JsonHelper.readValue(kvo.getValue(), GenericMap.class);
@@ -118,5 +101,4 @@ public class ObjectStoreImpl implements ObjectStore {
 		}
 		return result;
 	}
-
 }

@@ -1,31 +1,23 @@
 package com.migrate.rest;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.migrate.exception.VersionMismatchException;
+import com.migrate.exception.DuplicationKeyException;
+import com.migrate.service.DataService;
+import com.migrate.webdata.model.GenericMap;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.migrate.webdata.model.GenericMap;
-import com.migrate.webdata.model.SyncResult;
-import com.migrate.exception.DuplicationKeyException;
-import com.migrate.service.DataService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Zane Pan
@@ -35,6 +27,8 @@ import com.migrate.service.DataService;
 public class DataController {
     private static org.apache.log4j.Logger log =
             Logger.getLogger(DataController.class);
+
+    private static final int MAX_NUM_DATA_TO_SYNCH = 1000;
 
     @Autowired
     @Qualifier(value = "dataService")
@@ -150,42 +144,159 @@ public class DataController {
     // result.setSynchTime(now);
     // return result;
     // }
-    @RequestMapping(value = "{className}", method = RequestMethod.POST)
-    @ResponseBody
-    public SyncResult syncData(@PathVariable String className,
-                               @RequestBody GenericMap[] clientChangedData,
-                               @RequestParam(value = "syncTime", required = true) long syncTime,
-                               HttpServletResponse resp) throws IOException, ParseException
+
+//    @RequestMapping(value = "{className}", method = RequestMethod.POST)
+//    @ResponseBody
+//    public SyncResult syncData(@PathVariable String className,
+//                               @RequestBody GenericMap[] clientChangedData,
+//                               @RequestParam(value = "syncTime", required = true) long syncTime,
+//                               HttpServletResponse resp) throws IOException, ParseException
+//    {
+//        // TODO: client data wont deserialize as a generic map :-(
+//
+//        System.out.println(" *sync time : " + syncTime);
+//        //String queryStr = "modified:[" + syncTime + " TO 9991517871585]";
+//
+//        Long now = new Long(System.currentTimeMillis());
+//        List<GenericMap> serverChangedData = dataService.find(className, syncTime);
+//
+//        for (GenericMap clientData : clientChangedData) {
+//            if (clientData != null) {
+//                clientData.setWd_classname(className);
+//                System.out.println(" *** wd_id: " + clientData.getWd_id());
+//                Integer deleted = (Integer) clientData.get("wd_deleted");
+//
+//                if (deleted != null && deleted.equals('1')) { // as represented by sqlite
+//                    dataService.deleteObject(className, clientData.getWd_id());
+//                } else {
+//
+//                    // TODO: need to better handle corrupt or incomplete data
+//
+//                    dataService.storeObject(clientData);
+//                }
+//            }
+//        }
+//
+//        SyncResult result = new SyncResult();
+//        result.setGenericMapList(serverChangedData);
+//        result.setSynchTime(now);
+//        return result;
+//    }
+
+
+    public List<GenericMap> findChanged(String classname, long time, int start, int numMatches)
+            throws IOException, ParseException
     {
-        // TODO: client data wont deserialize as a generic map :-(
+        return dataService.find(classname, time, start, numMatches);
+    }
 
-        System.out.println(" *sync time : " + syncTime);
-        //String queryStr = "modified:[" + syncTime + " TO 9991517871585]";
-
-        Long now = new Long(System.currentTimeMillis());
-        List<GenericMap> serverChangedData = dataService.find(className, syncTime);
-
-        for (GenericMap clientData : clientChangedData) {
-            if (clientData != null) {
-                clientData.setWd_classname(className);
-                System.out.println(" *** wd_id: " + clientData.getWd_id());
-                Integer deleted = (Integer) clientData.get("wd_deleted");
-
-                if (deleted != null && deleted.equals('1')) { // as represented by sqlite
-                    dataService.deleteObject(className, clientData.getWd_id());
-                } else {
-
-                    // TODO: need to better handle corrupt or incomplete data
-
-                    dataService.storeObject(clientData);
-                }
+    private GenericMap findData(List<GenericMap> list, GenericMap data) {
+        for (GenericMap listData : list) {
+            if (listData.getWd_id().equals(data.getWd_id())) {
+                return listData;
             }
         }
+        return null;
+    }
 
-        SyncResult result = new SyncResult();
-        result.setGenericMapList(serverChangedData);
-        result.setSynchTime(now);
-        return result;
+    private void removeData(List<GenericMap> dataList, GenericMap data) {
+        for (GenericMap c : dataList) {
+            if (c.getWd_id().equals(data.getWd_id())) {
+                dataList.remove(c);
+                return;
+            }
+        }
+    }
+
+    private void removeData(List<GenericMap> srcList, List<GenericMap> removeList) {
+        for (GenericMap data : removeList) {
+            removeData(srcList, data);
+        }
+    }
+
+    public GenericMap getData(String classname, String id) throws IOException {
+        return dataService.getObject(classname, id);
+    }
+
+    @RequestMapping(value = "{classname}", method = RequestMethod.POST)
+    @ResponseBody
+    public SyncResult syncData(@PathVariable String classname,
+                               @RequestBody SyncRequest syncRequest)
+            throws IOException
+    {
+        try {
+            List<GenericMap> clientModifiedData = syncRequest.getModified();
+
+            List<GenericMap> conflictData = new ArrayList<GenericMap>();
+
+            /***
+             * TODO: For now, max records is 1000
+             *
+             * Get server records changed since the client's last sync time.
+             */
+            List<GenericMap> serverModifiedData =
+                    findChanged(classname, syncRequest.getSyncTime(), 0, MAX_NUM_DATA_TO_SYNCH);
+
+            /**
+             * The current time becomes the client's next sync time.
+             *
+             * TODO: It is possible that another client can modify the data after the "now" timestamp before the call
+             * to findChanged. In this case, the modified data is already included in the changedData set, however the
+             * next sync, the modified data will be included in the changedData set again since its update time is
+             * great than "now".
+             */
+            Long now = System.currentTimeMillis();
+            SyncResult ret = new SyncResult(serverModifiedData, conflictData, now);
+
+            for (GenericMap clientElt : clientModifiedData) {
+                try {
+                    dataService.storeObject(clientElt);
+                } catch (VersionMismatchException e) {
+
+                    /*
+                     * The client's version does not match the server's version, therefore the server must changed its
+                     * data since last sync, so find the conflicting server elt.
+                     */
+                    GenericMap conflictServerElt = findData(serverModifiedData, clientElt);
+
+                    if (conflictServerElt != null) {
+                         // Confirms that server did change the data since last sync.
+                        conflictData.add(conflictServerElt);
+                    } else {
+                        // TODO: must conflict with some item changed *before* last sync?
+
+                        conflictServerElt = getData(classname, clientElt.getWd_id());
+
+                        if (conflictServerElt.getWd_version() > clientElt.getWd_version()) {
+                            conflictData.add(conflictServerElt);
+                        } else {
+                            /*
+                             * The client has a newer version than the server's, so the client must be sending a wrong
+                             * data version.
+                             */
+                            throw new IllegalArgumentException(
+                                    "Client is sending wrong data version");
+                        }
+                    }
+                }
+            }
+
+            /*
+             * Dont send server data as "server modified" that the client also changed, since that data will no longer
+             * be plain server modified - it will be a conflict, and thus present in the conflicts list. The client will
+             * need to have kept its version of changes for resolution on arrival of the server conflict result list.
+             */
+            removeData(serverModifiedData, clientModifiedData);
+
+            return ret;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            // TODO: right thing to do?
+            throw new IOException("Could not execute query", e);
+        }
     }
 
     @ExceptionHandler(DuplicationKeyException.class)
@@ -197,7 +308,7 @@ public class DataController {
         return "Duplication key";
     }
 
-    @ExceptionHandler(VersionMismatchException.class)
+    @ExceptionHandler(com.migrate.exception.VersionMismatchException.class)
     @ResponseBody
     public String handleVersionMissMatchException(Throwable exception,
                                                   HttpServletResponse response) throws IOException
