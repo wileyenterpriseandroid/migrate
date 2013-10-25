@@ -1,11 +1,10 @@
 package com.migrate.exception;
 
-import java.io.IOException;
 /**
  * @author Zane Pan
  */
-public class VersionMismatchException extends IOException {
+public class VersionMismatchException extends MigrateServiceException {
 	public VersionMismatchException(String msg) {
-		super(msg);
+		super(MigrateServiceException.VERSION_MISMATCH, msg);
 	}
 }

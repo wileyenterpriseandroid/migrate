@@ -117,7 +117,7 @@ public class DBKVStore implements KVStore {
 
 	private void updateDo(KVObject data)  throws IOException {
 		long version = data.getVersion();
-		data.setVersion(version +1);
+		data.setVersion(version + 1);
 		int rowupdated = jdbcTemplate.update(updateWithVersionSql,
 				new Object[] { 	data.getValue(), System.currentTimeMillis(),
 								data.getVersion(), data.getNamespace(), data.getKey(),

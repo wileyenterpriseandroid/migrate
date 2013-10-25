@@ -22,7 +22,7 @@ public class KVStoreUpdateTest extends KVStoreTest {
 	}
 	
 	@Test 
-	public void updataTest() throws IOException {
+	public void updateTest() throws IOException {
 		long ver = 1;
 		KVObject kvo = store.get(namespace, key, ver);
 		kvo.setValue("new value".getBytes());

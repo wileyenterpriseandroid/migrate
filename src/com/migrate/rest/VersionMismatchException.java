@@ -1,16 +1,16 @@
 package com.migrate.rest;
 
-import java.io.IOException;
+import com.migrate.exception.MigrateServiceException;
 
-public class VersionMismatchException extends IOException {
+public class VersionMismatchException extends MigrateServiceException {
 
     private static final long serialVersionUID = -2569918372089349114L;
 
     public VersionMismatchException(String message, Throwable cause)  {
-        super(message, cause);
+        super(MigrateServiceException.VERSION_MISMATCH, message, cause);
     }
 
     public VersionMismatchException(String message)  {
-        super(message);
+        super(MigrateServiceException.VERSION_MISMATCH, message);
     }
 }

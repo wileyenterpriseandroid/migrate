@@ -18,7 +18,7 @@ public class SyncRequest implements Serializable {
         this.syncTime = syncTime;
     }
 
-    public List<GenericMap> getModified() {
+    public List<GenericMap> getModifiedData() {
         return modified;
     }
 

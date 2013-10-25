@@ -110,80 +110,6 @@ public class DataController {
         return ret;
     }
 
-    // @RequestMapping(value = "{className}", method = RequestMethod.POST)
-    // @ResponseBody
-    // public SyncResult sync(@PathVariable String context,
-    // @PathVariable String className,
-    // @RequestBody List<GenericMap> clientChangedData,
-    // @RequestParam(value = "syncTime", required = true) String syncTime,
-    // HttpServletResponse resp) throws IOException, ParseException
-    // {
-    // // TODO: client data wont deserialize as a generic map :-(
-    //
-    // System.out.println(" sync time : " + syncTime);
-    // String queryStr = "modified:[" + syncTime + " TO 9991517871585]";
-    //
-    // Long now = new Long(System.currentTimeMillis());
-    // List<GenericMap> serverChangedData = dataService.find(className,
-    // queryStr);
-    //
-    //
-    // for (GenericMap clientData : clientChangedData) {
-    // if ( clientData != null ) {
-    // clientData.setWd_classname(className);
-    // if (((Boolean) clientData.get("deleted")).booleanValue()) {
-    // dataService.deleteObject(className, clientData.getWd_id());
-    // } else {
-    // dataService.storeObject(clientData);
-    // }
-    // }
-    // }
-    //
-    // SyncResult result = new SyncResult();
-    // result.setGenericMapList(serverChangedData);
-    // result.setSynchTime(now);
-    // return result;
-    // }
-
-//    @RequestMapping(value = "{className}", method = RequestMethod.POST)
-//    @ResponseBody
-//    public SyncResult syncData(@PathVariable String className,
-//                               @RequestBody GenericMap[] clientChangedData,
-//                               @RequestParam(value = "syncTime", required = true) long syncTime,
-//                               HttpServletResponse resp) throws IOException, ParseException
-//    {
-//        // TODO: client data wont deserialize as a generic map :-(
-//
-//        System.out.println(" *sync time : " + syncTime);
-//        //String queryStr = "modified:[" + syncTime + " TO 9991517871585]";
-//
-//        Long now = new Long(System.currentTimeMillis());
-//        List<GenericMap> serverChangedData = dataService.find(className, syncTime);
-//
-//        for (GenericMap clientData : clientChangedData) {
-//            if (clientData != null) {
-//                clientData.setWd_classname(className);
-//                System.out.println(" *** wd_id: " + clientData.getWd_id());
-//                Integer deleted = (Integer) clientData.get("wd_deleted");
-//
-//                if (deleted != null && deleted.equals('1')) { // as represented by sqlite
-//                    dataService.deleteObject(className, clientData.getWd_id());
-//                } else {
-//
-//                    // TODO: need to better handle corrupt or incomplete data
-//
-//                    dataService.storeObject(clientData);
-//                }
-//            }
-//        }
-//
-//        SyncResult result = new SyncResult();
-//        result.setGenericMapList(serverChangedData);
-//        result.setSynchTime(now);
-//        return result;
-//    }
-
-
     public List<GenericMap> findChanged(String classname, long time, int start, int numMatches)
             throws IOException, ParseException
     {
@@ -225,7 +151,7 @@ public class DataController {
             throws IOException
     {
         try {
-            List<GenericMap> clientModifiedData = syncRequest.getModified();
+            List<GenericMap> clientModifiedData = syncRequest.getModifiedData();
 
             List<GenericMap> conflictData = new ArrayList<GenericMap>();
 
