@@ -22,4 +22,7 @@ public interface PersistentObject extends Serializable {
 	
 	String getWd_classname();
 	void setWd_classname(String classname);
+
+    public boolean isWd_deleted();
+    public void setWd_isDeleted(boolean wd_deleted);
 }

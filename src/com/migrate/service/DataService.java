@@ -39,6 +39,11 @@ public class DataService {
 	}
 	
 	public void deleteObject(String className, String id) throws IOException {
+        deleteObject(className, id, false);
+    }
+
+    public void deleteObject(String className, String id, boolean isHard) throws IOException {
+        // TODO: ok drop the index, but still
 		luceneIndexService.deleteIndex(className, id);
 		store.delete(NAMESPACE,  id);
 	}

@@ -176,7 +176,16 @@ public class DataController {
 
             for (GenericMap clientElt : clientModifiedData) {
                 try {
-                    dataService.storeObject(clientElt);
+                    if (clientElt != null) {
+                        clientElt.setWd_classname(classname);
+
+                        if (clientElt.isWd_deleted()) {
+                            dataService.deleteObject(classname, clientElt.getWd_id());
+                        } else {
+                            // TODO: possibly maintain a log?
+                            dataService.storeObject(clientElt);
+                        }
+                    }
                 } catch (VersionMismatchException e) {
 
                     /*
@@ -186,7 +195,7 @@ public class DataController {
                     GenericMap conflictServerElt = findData(serverModifiedData, clientElt);
 
                     if (conflictServerElt != null) {
-                         // Confirms that server did change the data since last sync.
+                        // Confirms that server did change the data since last sync.
                         conflictData.add(conflictServerElt);
                     } else {
                         // TODO: must conflict with some item changed *before* last sync?

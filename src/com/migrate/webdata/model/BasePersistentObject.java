@@ -5,6 +5,8 @@ package com.migrate.webdata.model;
  */
 public class BasePersistentObject implements PersistentObject {
     public static final String WD_NAMESPACE_COLUMN = "wd_namespace";
+
+    // schema id and data id are both wd_id
     public static final String WD_SCHEMA_ID_COLUMN = "wd_id";
     public static final String WD_TYPE_COLUMN = "wd_type";
     public static final String WD_VERSION_COLUMN = "wd_version";
@@ -21,7 +23,7 @@ public class BasePersistentObject implements PersistentObject {
 		return wd_deleted;
 	}
 
-	public void setWd_deleted(boolean wd_deleted) {
+	public void setWd_isDeleted(boolean wd_deleted) {
 		this.wd_deleted = wd_deleted;
 	}
 

@@ -13,7 +13,7 @@ public class KVObject implements Serializable {
 	private static final long serialVersionUID = 3352850855330969122L;
 	private String namespace;
 	private String className;
-	private String id;
+	private String wd_id;
 	private byte[] value;	
 	private long version;
 	private long updateTime;
@@ -22,7 +22,7 @@ public class KVObject implements Serializable {
 	
 	public KVObject(String namespace, String key, String className, byte[] value) {
 		this.namespace = namespace;
-		this.id = key;
+		this.wd_id = key;
 		this.className = className;
 		this.value = value;
 		this.updateTime = System.currentTimeMillis();
@@ -46,11 +46,11 @@ public class KVObject implements Serializable {
 	}
 
 	public String getKey() {
-		return id;
+		return wd_id;
 	}
 
-	public void setKey(String key) {
-		this.id = key;
+	public void setWd_id(String wd_id) {
+		this.wd_id = wd_id;
 	}
 
 	public byte[] getValue() {
@@ -84,7 +84,7 @@ public class KVObject implements Serializable {
 		result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
 		result = prime * result
 				+ ((className == null) ? 0 : className.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((wd_id == null) ? 0 : wd_id.hashCode());
 		result = prime * result + (int) (updateTime ^ (updateTime >>> 32));
 		result = prime * result + Arrays.hashCode(value);
 		result = prime * result + (int) (version ^ (version >>> 32));
@@ -110,10 +110,10 @@ public class KVObject implements Serializable {
 				return false;
 		} else if (!className.equals(other.className))
 			return false;
-		if (id == null) {
-			if (other.id != null)
+		if (wd_id == null) {
+			if (other.wd_id != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!wd_id.equals(other.wd_id))
 			return false;
 		if (updateTime != other.updateTime)
 			return false;

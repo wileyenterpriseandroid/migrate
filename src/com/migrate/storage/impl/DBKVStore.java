@@ -27,14 +27,14 @@ import com.migrate.storage.KVStore;
 @Transactional(isolation=Isolation.REPEATABLE_READ)
 public class DBKVStore implements KVStore {
 	private static org.apache.log4j.Logger log = Logger.getLogger(DBKVStore.class);
-	private static final String getSql = "select dataKey, className, value, updateTime, version from kv_table where namespace=? and dataKey = ?";
+	private static final String getSql = "select wd_data_id, className, value, updateTime, version from kv_table where namespace=? and wd_data_id = ?";
 	private static final String getWithVersionSql = getSql + " and version = ?";
-	private static final String deleteSql = "delete from kv_table where namespace=? and dataKey = ?";
-	private static final String updateSql = "update kv_table set value = ?, updateTime=?, version=? where namespace = ? and datakey=?";
+	private static final String deleteSql = "delete from kv_table where namespace=? and wd_data_id = ?";
+	private static final String updateSql = "update kv_table set value = ?, updateTime=?, version=? where namespace = ? and wd_data_id=?";
 	private static final String updateWithVersionSql = updateSql + " and version = ?";
 	private static final String insertSql = "insert into kv_table values (?,?,?,?,?,?)";
-//	private static final String findSql = "select namespace, dataKey, className, value, updateTime, version from kv_table where namespace=? and classname = ? and updateTime > ?";
-	private static final String findSql = "select namespace, dataKey, className, value, updateTime, version from kv_table where (namespace=?) and (classname = ?) and (updateTime > ?) limit ?,?";
+//	private static final String findSql = "select namespace, wd_data_id, className, value, updateTime, version from kv_table where namespace=? and classname = ? and updateTime > ?";
+	private static final String findSql = "select namespace, wd_data_id, className, value, updateTime, version from kv_table where (namespace=?) and (classname = ?) and (updateTime > ?) limit ?,?";
 
 	private JdbcTemplate jdbcTemplate;
  
@@ -62,7 +62,7 @@ public class DBKVStore implements KVStore {
 			public KVObject mapRow(ResultSet rs, int rowNum) throws SQLException {
 				KVObject obj = new KVObject();
 				obj.setNamespace(rs.getString("namespace"));
-				obj.setKey(rs.getString("dataKey"));
+				obj.setWd_id(rs.getString("wd_id"));
 				obj.setClassName(rs.getString("className"));
 				obj.setUpdateTime(rs.getLong("updateTime"));
 				obj.setValue((rs.getBytes("value")));
@@ -81,7 +81,7 @@ public class DBKVStore implements KVStore {
 			public KVObject mapRow(ResultSet rs, int rowNum) throws SQLException {
 				KVObject obj = new KVObject();
 				obj.setNamespace(namespace);
-				obj.setKey(rs.getString("dataKey"));
+				obj.setWd_id(rs.getString("wd_id"));
 				obj.setClassName(rs.getString("className"));
 				obj.setUpdateTime(rs.getLong("updateTime"));
 				obj.setValue((rs.getBytes("value")));
@@ -117,7 +117,7 @@ public class DBKVStore implements KVStore {
 
 	private void updateDo(KVObject data)  throws IOException {
 		long version = data.getVersion();
-		data.setVersion(version + 1);
+		data.setVersion(version + 1); // TODO: also need to update version in json?
 		int rowupdated = jdbcTemplate.update(updateWithVersionSql,
 				new Object[] { 	data.getValue(), System.currentTimeMillis(),
 								data.getVersion(), data.getNamespace(), data.getKey(),

@@ -19,10 +19,11 @@ public class GenericMap extends HashMap<String, Object> implements PersistentObj
     static private final String WD_VERSION = "wd_version";
     static private final String WD_UPDATE_TIME = "wd_updateTime";
     static private final String WD_CLASSNAME = "wd_classname";
+    static private final String WD_DELETED = "wd_deleted";
 
     private static final long serialVersionUID = 7004975737945391947L;
     private Map<String, Object> map;
-
+    private Integer wd_deleted;
 
     @Override
     public String getWd_namespace() {
@@ -38,6 +39,21 @@ public class GenericMap extends HashMap<String, Object> implements PersistentObj
     @Override
     public String getWd_id() {
         return (String) super.get(WD_ID);
+    }
+
+    @Override
+    public boolean isWd_deleted() {
+        Integer deletedInteger = (Integer) super.get(WD_DELETED);
+        return (deletedInteger != null) && Integer.valueOf(1).equals(deletedInteger);
+    }
+
+    @Override
+    public void setWd_isDeleted(boolean wd_deleted) {
+        if (wd_deleted) {
+            super.put(WD_DELETED, Integer.valueOf(1));
+        } else {
+            super.put(WD_DELETED, Integer.valueOf(0));
+        }
     }
 
     @Override
