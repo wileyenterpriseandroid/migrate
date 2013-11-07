@@ -14,8 +14,10 @@ public class GenericMap extends HashMap<String, Object> implements PersistentObj
     /**
      * If the generic map is a schema object, then this constant names the schema ID
      * field. If its a data object, then it names a UUID.
+     *
+     * Note: Schema ID and Data ID use the same column.
      */
-    static private final String WD_ID = "wd_id";
+    static private final String WD_DATA_ID = "wd_id";
     static private final String WD_VERSION = "wd_version";
     static private final String WD_UPDATE_TIME = "wd_updateTime";
     static private final String WD_CLASSNAME = "wd_classname";
@@ -38,7 +40,7 @@ public class GenericMap extends HashMap<String, Object> implements PersistentObj
 
     @Override
     public String getWd_id() {
-        return (String) super.get(WD_ID);
+        return (String) super.get(WD_DATA_ID);
     }
 
     @Override
@@ -58,7 +60,7 @@ public class GenericMap extends HashMap<String, Object> implements PersistentObj
 
     @Override
     public void setWd_id(String value) {
-        super.put(WD_ID, value);
+        super.put(WD_DATA_ID, value);
     }
 
     @Override

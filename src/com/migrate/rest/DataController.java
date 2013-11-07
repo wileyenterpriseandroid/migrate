@@ -180,9 +180,10 @@ public class DataController {
                         clientElt.setWd_classname(classname);
 
                         if (clientElt.isWd_deleted()) {
-                            dataService.deleteObject(classname, clientElt.getWd_id());
+                            // hold till all concerned clients know its gone?
+                            // TODO: hold all deleted indefinitely ids in a single column?
+                            dataService.softDeleteObject(classname, clientElt.getWd_id(), now);
                         } else {
-                            // TODO: possibly maintain a log?
                             dataService.storeObject(clientElt);
                         }
                     }

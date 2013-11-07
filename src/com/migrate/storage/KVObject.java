@@ -13,16 +13,17 @@ public class KVObject implements Serializable {
 	private static final long serialVersionUID = 3352850855330969122L;
 	private String namespace;
 	private String className;
-	private String wd_id;
+	private String dataKey;
 	private byte[] value;	
 	private long version;
 	private long updateTime;
-	
-	public KVObject() {}
+    private String deleted;
+
+    public KVObject() {}
 	
 	public KVObject(String namespace, String key, String className, byte[] value) {
 		this.namespace = namespace;
-		this.wd_id = key;
+		this.dataKey = key;
 		this.className = className;
 		this.value = value;
 		this.updateTime = System.currentTimeMillis();
@@ -46,11 +47,11 @@ public class KVObject implements Serializable {
 	}
 
 	public String getKey() {
-		return wd_id;
+		return dataKey;
 	}
 
-	public void setWd_id(String wd_id) {
-		this.wd_id = wd_id;
+	public void setDataKey(String dataKey) {
+		this.dataKey = dataKey;
 	}
 
 	public byte[] getValue() {
@@ -84,7 +85,7 @@ public class KVObject implements Serializable {
 		result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
 		result = prime * result
 				+ ((className == null) ? 0 : className.hashCode());
-		result = prime * result + ((wd_id == null) ? 0 : wd_id.hashCode());
+		result = prime * result + ((dataKey == null) ? 0 : dataKey.hashCode());
 		result = prime * result + (int) (updateTime ^ (updateTime >>> 32));
 		result = prime * result + Arrays.hashCode(value);
 		result = prime * result + (int) (version ^ (version >>> 32));
@@ -110,10 +111,10 @@ public class KVObject implements Serializable {
 				return false;
 		} else if (!className.equals(other.className))
 			return false;
-		if (wd_id == null) {
-			if (other.wd_id != null)
+		if (dataKey == null) {
+			if (other.dataKey != null)
 				return false;
-		} else if (!wd_id.equals(other.wd_id))
+		} else if (!dataKey.equals(other.dataKey))
 			return false;
 		if (updateTime != other.updateTime)
 			return false;
@@ -123,5 +124,12 @@ public class KVObject implements Serializable {
 			return false;
 		return true;
 	}
-	
+
+    public void setDeleted(String deleted) {
+        this.deleted = deleted;
+    }
+
+    public String getDeleted() {
+        return deleted;
+    }
 }

@@ -57,7 +57,7 @@ public class ObjectStoreImpl implements ObjectStore {
 		kvo.setValue(data);
 		kvo.setVersion(bo.getWd_version());
 		store.update(kvo);
-		restoreBaseObjetId(bo, namespace, key);
+		restoreBaseObjectId(bo, namespace, key);
 	}
 
 	@Override
@@ -67,21 +67,27 @@ public class ObjectStoreImpl implements ObjectStore {
 		cleanBaseObjectId(bo);
 		byte[] value = JsonHelper.writeValueAsByte(bo);
 		store.create (namespace, key, bo.getWd_classname(), value);
-		restoreBaseObjetId(bo, namespace, key);
+		restoreBaseObjectId(bo, namespace, key);
 	}
 
-	private void restoreBaseObjetId(PersistentObject bo, String namespace, String key) {
+	private void restoreBaseObjectId(PersistentObject bo, String namespace, String key) {
 		bo.setWd_namespace(namespace);
 		bo.setWd_id(key);
 	}
-	private void cleanBaseObjectId(PersistentObject bo) {
+
+    private void cleanBaseObjectId(PersistentObject bo) {
 		bo.setWd_namespace(null);
 		bo.setWd_id(null);	
 	}
 
     @Override
-	public void delete(String namespace, String key) throws IOException {
-		store.delete(namespace, key);
+    public void delete(String namespace, String key) throws IOException {
+        delete(namespace, key, true, 0L);
+    }
+
+    @Override
+	public void delete(String namespace, String key, boolean isPermament, long now) throws IOException {
+		store.delete(namespace, key, isPermament, now);
 	}
 	
 	@Override
@@ -91,12 +97,18 @@ public class ObjectStoreImpl implements ObjectStore {
 		List<KVObject> list = store.findChanged(namespace, classname, time, start, numMatches);
 
 		List<GenericMap> result = new ArrayList<GenericMap>(list.size());
-		for ( KVObject kvo: list ) {
-			GenericMap map = JsonHelper.readValue(kvo.getValue(), GenericMap.class);
+		for (KVObject kvo : list) {
+            byte[] value = kvo.getValue();
+			GenericMap map = (value == null ?
+                    new GenericMap()
+                    :
+                    JsonHelper.readValue(kvo.getValue(), GenericMap.class));
+
 			map.setWd_namespace(namespace);
 			map.setWd_id(kvo.getKey());
 			map.setWd_updateTime(kvo.getUpdateTime());
 			map.setWd_version(kvo.getVersion());
+            map.setWd_isDeleted("1".equals(kvo.getDeleted()));
 			result.add(map);
 		}
 		return result;

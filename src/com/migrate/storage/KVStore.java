@@ -11,6 +11,8 @@ public interface KVStore {
 	// after each update.
 	KVObject get(String namespace, String key, long version) throws IOException;
 	void delete(String namespace, String key) throws IOException;
+	void delete(String namespace, String key, boolean isPermanent, long now) throws IOException;
+
 	void update(KVObject data) throws IOException;
 	void create(String namespace, String key, String className, byte[] data) throws IOException;
 	void put(KVObject data) throws IOException;

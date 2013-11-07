@@ -11,9 +11,17 @@ import com.migrate.webdata.model.PersistentObject;
  * @author Zane Pan
  */
 public interface ObjectStore {
-	<T extends PersistentObject> T get(String namespace, String key, String className, Class<T> valueType) throws IOException;
+	<T extends PersistentObject> T get(String namespace, String key, String className, Class<T> valueType)
+            throws IOException;
+
 	void update(PersistentObject bo) throws IOException;
+
 	void create(PersistentObject bo) throws IOException;
+
 	void delete(String namespace, String key) throws IOException;
-	List<GenericMap> findChanged(String namespace, String classname, long time, int start, int numMatches) throws IOException;
+
+	void delete(String namespace, String key, boolean isPermanent, long now) throws IOException;
+
+	List<GenericMap> findChanged(String namespace, String classname, long time, int start, int numMatches)
+            throws IOException;
 }
