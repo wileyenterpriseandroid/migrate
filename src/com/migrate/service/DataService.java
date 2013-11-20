@@ -33,6 +33,8 @@ public class DataService {
     }
 
     public void storeObject(GenericMap data) throws IOException {
+
+        // TODO: perhaps should flag an error if was not this already?
         data.setWd_namespace(NAMESPACE);
         luceneIndexService.updateIndex(data);
         store.update(data);

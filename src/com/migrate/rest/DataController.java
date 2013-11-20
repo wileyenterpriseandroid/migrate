@@ -160,8 +160,9 @@ public class DataController {
              *
              * Get server records changed since the client's last sync time.
              */
+            long lastClientSyncTime = syncRequest.getSyncTime();
             List<GenericMap> serverModifiedData =
-                    findChanged(classname, syncRequest.getSyncTime(), 0, MAX_NUM_DATA_TO_SYNCH);
+                    findChanged(classname, lastClientSyncTime, 0, MAX_NUM_DATA_TO_SYNCH);
 
             /**
              * The current time becomes the client's next sync time.
@@ -174,44 +175,46 @@ public class DataController {
             Long now = System.currentTimeMillis();
             SyncResult ret = new SyncResult(serverModifiedData, conflictData, now);
 
-            for (GenericMap clientElt : clientModifiedData) {
+            for (GenericMap clientObject : clientModifiedData) {
                 try {
-                    if (clientElt != null) {
-                        clientElt.setWd_classname(classname);
+                    if (clientObject != null) {
+                        clientObject.setWd_classname(classname);
 
-                        if (clientElt.isWd_deleted()) {
+                        if (clientObject.isWd_deleted()) {
                             // hold till all concerned clients know its gone?
                             // TODO: hold all deleted indefinitely ids in a single column?
-                            dataService.softDeleteObject(classname, clientElt.getWd_id(), now);
+                            dataService.softDeleteObject(classname, clientObject.getWd_id(), now);
                         } else {
-                            dataService.storeObject(clientElt);
+                            dataService.storeObject(clientObject);
                         }
                     }
                 } catch (VersionMismatchException e) {
-
                     /*
-                     * The client's version does not match the server's version, therefore the server must changed its
-                     * data since last sync, so find the conflicting server elt.
+                     * The client's version does not match the server's version, the server must have updated
+                     * since last sync - so find the conflicting server elt and let the client resolve it.
                      */
-                    GenericMap conflictServerElt = findData(serverModifiedData, clientElt);
+                    GenericMap conflictServerElt = findData(serverModifiedData, clientObject);
 
                     if (conflictServerElt != null) {
                         // Confirms that server did change the data since last sync.
                         conflictData.add(conflictServerElt);
                     } else {
                         // TODO: must conflict with some item changed *before* last sync?
+                        String uuid = clientObject.getWd_id();
+                        if (null == uuid) {
+                            throw new IllegalArgumentException("Client data has null id");
+                        }
 
-                        conflictServerElt = getData(classname, clientElt.getWd_id());
+                        conflictServerElt = getData(classname, uuid);
 
-                        if (conflictServerElt.getWd_version() > clientElt.getWd_version()) {
+                        if (conflictServerElt.getWd_version() > clientObject.getWd_version()) {
                             conflictData.add(conflictServerElt);
                         } else {
                             /*
                              * The client has a newer version than the server's, so the client must be sending a wrong
                              * data version.
                              */
-                            throw new IllegalArgumentException(
-                                    "Client is sending wrong data version");
+                            throw new IllegalArgumentException("Client sent incorrect data version");
                         }
                     }
                 }
@@ -241,15 +244,18 @@ public class DataController {
                                                 HttpServletResponse response) throws IOException
     {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
-        return "Duplication key";
+
+        // need to add return code here
+        return "Duplicate key";
     }
 
-    @ExceptionHandler(com.migrate.exception.VersionMismatchException.class)
+    @ExceptionHandler(VersionMismatchException.class)
     @ResponseBody
     public String handleVersionMissMatchException(Throwable exception,
                                                   HttpServletResponse response) throws IOException
     {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
-        return "Version MissMatch";
+        // need to add return code here
+        return "Version Mismatch";
     }
 }

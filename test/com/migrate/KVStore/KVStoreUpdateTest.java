@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
-import com.migrate.exception.VersionMismatchException;
+import com.migrate.rest.VersionMismatchException;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 

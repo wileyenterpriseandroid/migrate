@@ -44,27 +44,30 @@ public class ObjectStoreImpl implements ObjectStore {
 	}
 
     @Override
-	public void update(PersistentObject bo)  throws IOException {
-		String namespace = bo.getWd_namespace();
-		String key = bo.getWd_id();
-		KVObject kvo = store.get(bo.getWd_namespace(), bo.getWd_id());
-		if (kvo == null) {
-			 create(bo);
+	public void update(PersistentObject object)  throws IOException {
+		String namespace = object.getWd_namespace();
+		String key = object.getWd_id();
+		KVObject existingObject = store.get(namespace, key);
+		if (existingObject == null) {
+			 create(object);
 			 return;
 		}
-		cleanBaseObjectId(bo);
-		byte[] data = JsonHelper.writeValueAsByte(bo);
-		kvo.setValue(data);
-		kvo.setVersion(bo.getWd_version());
-		store.update(kvo);
-		restoreBaseObjectId(bo, namespace, key);
+		cleanObject(object);
+		byte[] data = JsonHelper.writeValueAsByte(object);
+
+        // restore before update, which could fail due to conflict, and lose existing id
+        restoreBaseObjectId(object, namespace, key);
+
+        existingObject.setValue(data);
+		existingObject.setVersion(object.getWd_version());
+		store.update(existingObject);
 	}
 
 	@Override
 	public void create(PersistentObject bo) throws IOException {
 		String namespace = bo.getWd_namespace();
 		String key = bo.getWd_id();
-		cleanBaseObjectId(bo);
+		cleanObject(bo);
 		byte[] value = JsonHelper.writeValueAsByte(bo);
 		store.create (namespace, key, bo.getWd_classname(), value);
 		restoreBaseObjectId(bo, namespace, key);
@@ -75,7 +78,7 @@ public class ObjectStoreImpl implements ObjectStore {
 		bo.setWd_id(key);
 	}
 
-    private void cleanBaseObjectId(PersistentObject bo) {
+    private void cleanObject(PersistentObject bo) {
 		bo.setWd_namespace(null);
 		bo.setWd_id(null);	
 	}

@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.migrate.exception.VersionMismatchException;
+import com.migrate.rest.VersionMismatchException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -132,8 +132,7 @@ public class DBKVStore implements KVStore {
     }
 
     @Override
-    public void update(KVObject data)
-            throws IOException {
+    public void update(KVObject data) throws IOException {
         updateDo(data);
     }
 
@@ -149,7 +148,7 @@ public class DBKVStore implements KVStore {
         // more informative, like: the version mismatched, fix your client.
 
         if (rowupdated != 1)  {
-            // TODO: this needs to get back to client as intelligible error, not as internal 500 error
+            // TODO: this needs to get back to client as intelligible error, not as internal 500 error.
             throw new VersionMismatchException("row updated : " + rowupdated);
         }
     }
