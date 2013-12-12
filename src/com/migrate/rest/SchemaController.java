@@ -1,6 +1,7 @@
 package com.migrate.rest;
 
 import com.migrate.service.SchemaService;
+import com.migrate.webdata.model.GenericMap;
 import com.migrate.webdata.model.PersistentSchema;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,6 +48,18 @@ public class SchemaController {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    @ResponseBody
+    public List<GenericMap> getSchema(
+            HttpServletRequest req,
+            HttpServletResponse resp,
+            @RequestParam(value = "syncTime", required = true) long syncTime)
+            throws IOException
+    {
+        List<GenericMap> allSchema = schemaService.getAllSchema(syncTime);
+        return allSchema;
     }
 
     @RequestMapping(value = "/{schemaName}", method = RequestMethod.GET)

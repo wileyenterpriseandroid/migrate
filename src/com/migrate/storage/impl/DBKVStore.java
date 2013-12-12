@@ -78,7 +78,9 @@ public class DBKVStore implements KVStore {
             }
         };
 
-        Object[] args = new Object[] {namespace, classname, time, start, numMatches};
+        Object[] args = new Object[] {
+                namespace, classname, time, start, numMatches
+        };
         List<KVObject> list = jdbcTemplate.query(FIND_SQL, args, mapper);
         return list;
     }

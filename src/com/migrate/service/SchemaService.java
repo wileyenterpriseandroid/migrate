@@ -1,7 +1,9 @@
 package com.migrate.service;
 
 import java.io.IOException;
+import java.util.List;
 
+import com.migrate.webdata.model.GenericMap;
 import com.migrate.webdata.model.PersistentSchema;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,10 @@ public class SchemaService {
 	public PersistentSchema getSchema(String schemaName) throws IOException {
 		return store.get(SCHEMA, schemaName, PersistentSchema.class.getName(), PersistentSchema.class);
 	}
+
+    public List<GenericMap> getAllSchema(long syncTime) throws IOException {
+        return store.findChanged(SCHEMA, PersistentSchema.class.getName(), syncTime, 0, 1000);
+    }
 
     public void deleteSchema(String schemaName) throws IOException {
    		store.delete(SCHEMA, schemaName);
