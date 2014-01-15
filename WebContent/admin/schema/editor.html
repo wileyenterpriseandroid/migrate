@@ -1,0 +1,57 @@
+<!doctype html>
+
+<html ng-app="MigrateSchema">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
+    <script src="http://localhost:8080/migrate/admin/schema/SchemaManagerController.js"></script>
+
+    <link rel="stylesheet" href="schema.css">
+</head>
+
+<body>
+<h2>Migrate Schema Editor: </h2>
+<div ng-controller="SchemaEditorController">
+    <p>
+        <span>{{properties.length}} schema properties.</span>
+    </p>
+
+    <form ng-submit="addProperty()">
+        Edit Migrate Schema:<br>
+        <hr>
+        Schema:<br>
+        <p>
+            Package: <input type="text" ng-model="schemaPackage"  size="50" placeholder="Enter package"><br>
+            Name: <input type="text" ng-model="schemaName"  size="50" placeholder="Enter name"><br>
+        </p>
+        <hr>
+
+        Properties:<br>
+        <ul class="unstyled">
+            <li ng-repeat="property in properties">
+                <span>{{property.migrateProperty.name}} : {{property.migrateType.typeName}}
+                <button type="button" ng-click="deleteProperty(property.migrateProperty.name)">Delete</button>
+                </span>
+            </li>
+        </ul>
+
+        <hr>
+
+        Add new property:<br>
+        <p>
+            Name: <input type="text" ng-model="propertyName"  size="90" placeholder="Enter name">
+            Type: <select ng-model="propertyType" ng-options="migrateType.typeName for migrateType in migrateTypes"></select>
+        </p>
+
+        <input class="btn-primary" type="submit" value="add">
+    </form>
+
+    <form ng-submit="postSchema()">
+        <input class="btn-post" type="submit" value="post">
+    </form>
+
+    <br>
+    <br>
+    <a href="manager.html">Manage schema</a>
+</div>
+</body>
+</html>

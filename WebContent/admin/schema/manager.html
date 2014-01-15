@@ -1,0 +1,29 @@
+<!doctype html>
+
+<html ng-app="MigrateSchema">
+<head>
+    <script src="http://localhost:8080/migrate/admin/schema/angular-1.2.7/angular.min.js"></script>
+    <script src="http://localhost:8080/migrate/admin/schema/SchemaManagerController.js"></script>
+
+    <link rel="stylesheet" href="schema.css">
+</head>
+
+<body onload="updateSchemas()">
+<h2>Migrate Schema Manager: </h2>
+<div ng-controller="SchemaManagerController">
+    <form ng-submit="updateSchemas()">
+
+        <ul class="unstyled">
+            <li ng-repeat="schema in schemas">
+                <span>{{schema.wd_id}}</span>
+            </li>
+        </ul>
+        <input class="btn-primary" type="submit" value="get">
+    </form>
+
+    <br>
+    <br>
+    <a href="editor.html">Add new migrate schema</a>
+</div>
+</body>
+</html>
