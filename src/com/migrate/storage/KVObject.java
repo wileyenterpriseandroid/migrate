@@ -6,8 +6,6 @@ import java.util.Arrays;
 /**
  * @author Zane Pan
  */
-
-
 public class KVObject implements Serializable {
 	public static final int ANY_VERSION = 0;
 	private static final long serialVersionUID = 3352850855330969122L;

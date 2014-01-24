@@ -50,6 +50,25 @@ public class SchemaController {
         return null;
     }
 
+    @RequestMapping(value = "/id", method = RequestMethod.GET)
+    @ResponseBody
+    public String[] getSchemaIDs(
+            HttpServletRequest req,
+            HttpServletResponse resp,
+            @RequestParam(value = "syncTime", required = true) long syncTime)
+            throws IOException
+    {
+        List<GenericMap> allSchema = schemaService.getAllSchema(syncTime);
+        String[] schemaIDs = new String[allSchema.size()];
+        int count = 0;
+        for (GenericMap schemaMap : allSchema) {
+            schemaIDs[count] = schemaMap.getWd_id();
+            count++;
+        }
+
+        return schemaIDs;
+    }
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ResponseBody
     public List<GenericMap> getSchema(
