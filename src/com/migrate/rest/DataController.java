@@ -8,6 +8,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth.common.signature.OAuthSignatureMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +26,11 @@ import java.util.Map;
 @Controller
 @RequestMapping("/classes")
 public class DataController {
-    private static org.apache.log4j.Logger log =
-            Logger.getLogger(DataController.class);
+    private static org.apache.log4j.Logger log = Logger.getLogger(DataController.class);
+
+//    @Autowired
+//    @Qualifier(value = "oAuthSignatureMethodFactory")
+//    private OAuthSignatureMethodFactory oAuthSignatureMethodFactory;
 
     private static final int MAX_NUM_DATA_TO_SYNCH = 1000;
 
@@ -39,10 +43,14 @@ public class DataController {
      */
     @RequestMapping(value = "{className}/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public Map<String, Object> getObject(@PathVariable String className,
-                                         @PathVariable String id,
-                                         HttpServletResponse resp) throws IOException
+    public Map<String, Object> getObject(
+//            @RequestHeader("Authorization") String oauth,
+            @PathVariable String className,
+            @PathVariable String id,
+            HttpServletResponse resp) throws IOException
     {
+//        String userId = getUserId(oauth);
+
         GenericMap ret = dataService.getObject(className, id);
         if (ret == null) {
             resp.setStatus(HttpStatus.NOT_FOUND.value());
@@ -55,14 +63,17 @@ public class DataController {
      */
     @RequestMapping(value = "{className}/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public Map<String, String> putObject(@PathVariable String className,
-                                         @PathVariable String id,
-                                         @RequestBody GenericMap data, HttpServletRequest req,
-                                         HttpServletResponse resp) throws IOException
+    public Map<String, String> putObject(
+//            @RequestHeader("Authorization") String oauth,
+            @PathVariable String className,
+            @PathVariable String id,
+            @RequestBody GenericMap data, HttpServletRequest req,
+            HttpServletResponse resp) throws IOException
     {
         data.setWd_classname(className);
         data.setWd_id(id);
 
+//        String userId = getUserId(oauth);
         dataService.storeObject(data);
         Map<String, String> map = new HashMap<String, String>(1);
         map.put("location", req.getRequestURL().toString());
@@ -74,15 +85,18 @@ public class DataController {
      */
     @RequestMapping(value = "{className}/{id}", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, String> createObject(@PathVariable String className,
-                                            @PathVariable String id,
-                                            @RequestBody GenericMap data, HttpServletRequest req,
-                                            HttpServletResponse resp) throws IOException
+    public Map<String, String> createObject(
+//            @RequestHeader("Authorization") String oauth,
+            @PathVariable String className,
+            @PathVariable String id,
+            @RequestBody GenericMap data, HttpServletRequest req,
+            HttpServletResponse resp) throws IOException
     {
         System.out.println(" classname :" + className);
         data.setWd_classname(className);
         data.setWd_id(id);
 
+//        String userId = getUserId(oauth);
         dataService.createObject(data);
         Map<String, String> map = new HashMap<String, String>(1);
         map.put("location", req.getRequestURL().toString());
@@ -90,17 +104,22 @@ public class DataController {
     }
 
     @RequestMapping(value = "{className}/{id}", method = RequestMethod.DELETE)
-    public void deleteObject(@PathVariable String className, @PathVariable String id,
-                             HttpServletResponse resp) throws IOException
+    public void deleteObject(
+//            @RequestHeader("Authorization") String oauth,
+            @PathVariable String className,
+            @PathVariable String id,
+            HttpServletResponse resp) throws IOException
     {
         dataService.deleteObject(className, id);
     }
 
     @RequestMapping(value = "{className}", method = RequestMethod.GET)
     @ResponseBody
-    public List<GenericMap> searchObject(@PathVariable String className,
-                                         @RequestParam(value = "query", required = true) String queryStr,
-                                         HttpServletResponse resp) throws IOException, ParseException
+    public List<GenericMap> searchObject(
+//            @RequestHeader("Authorization") String oauth,
+            @PathVariable String className,
+            @RequestParam(value = "query", required = true) String queryStr,
+            HttpServletResponse resp) throws IOException, ParseException
     {
         // log.info("******** queryStr: " + queryStr);
         List<GenericMap> ret = dataService.luceneSearch(className, queryStr);
@@ -141,16 +160,21 @@ public class DataController {
     }
 
     public GenericMap getData(String classname, String id) throws IOException {
+//    public GenericMap getData(String classname, String id, String userid) throws IOException {
         return dataService.getObject(classname, id);
     }
 
     @RequestMapping(value = "{classname}", method = RequestMethod.POST)
     @ResponseBody
-    public SyncResult syncData(@PathVariable String classname,
-                               @RequestBody SyncRequest syncRequest)
+    public SyncResult syncData(
+//            @RequestHeader("Authorization") String oauth,
+            @PathVariable String classname,
+            @RequestBody SyncRequest syncRequest)
             throws IOException
     {
         try {
+//            String userId = getUserId(oauth);
+
             List<GenericMap> clientModifiedData = syncRequest.getModifiedData();
 
             List<GenericMap> conflictData = new ArrayList<GenericMap>();
@@ -257,5 +281,17 @@ public class DataController {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         // need to add return code here
         return "Version Mismatch";
+    }
+
+    private String getUserId(String oauth)  {
+        return "";
+
+//        oauth = oauth.trim();
+//        String[] temp = oauth.split(",");
+//        String consumerKey = temp[1].replace("consumerKey=", "");
+//        String signature = temp[2].replace("signature=", "");
+//        OAuthSignatureMethod oauthMethod = oAuthSignatureMethodFactory.getOAuthSignatureMethod(consumerKey);
+//        oauthMethod.verify(temp[0] + "," + temp[1], signature);
+//        return consumerKey;
     }
 }

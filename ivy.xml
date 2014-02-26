@@ -33,7 +33,9 @@
     </configurations>
 
     <dependencies>
-        <dependency org="cglib" name="cglib" rev="2.2.2"/>   
+        <dependency org="org.springframework.security.oauth" name="spring-security-oauth" rev="1.0.1.RELEASE" />
+
+        <dependency org="cglib" name="cglib" rev="2.2.2"/>
         <dependency org="javax.servlet" name="servlet-api" rev="2.5" />
 		<dependency org="jstl" name="jstl" rev="1.2"/>
             
@@ -42,13 +44,15 @@
         <dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.1.1"/>
         <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.1.1"/>
         <dependency org="com.fasterxml.jackson.core" name="jackson-annotations" rev="2.1.1"/>
-        <!-- Spring still use the the 1.9x  -->
         <dependency org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.5" />
         <dependency org="org.codehaus.jackson" name="jackson-mapper-lgpl" rev="1.9.5"/>
         <dependency org="org.springframework" name="spring-core" rev="3.1.1.RELEASE" />
+
+        <!-- Spring still uses 1.9x -->
         <dependency org="org.springframework" name="spring-webmvc" rev="3.1.1.RELEASE" />
         <dependency org="org.springframework" name="spring-oxm" rev="3.1.1.RELEASE"/>
         <dependency org="org.springframework" name="spring-orm" rev="3.1.1.RELEASE"/>
+
         <dependency org="log4j" name="log4j" rev="1.2.16"/>
         <dependency org="commons-io" name="commons-io" rev="2.4"/>
         <dependency org="commons-dbcp" name="commons-dbcp" rev="1.4"/>

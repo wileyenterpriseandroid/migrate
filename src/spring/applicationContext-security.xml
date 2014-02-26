@@ -1,0 +1,106 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <beans:import resource="classpath:spring/applicationContext-storage.xml"/>
+
+    <!--HTTP basic authentication in Spring Security-->
+    <http realm="Migrate Realm">
+        <!--<intercept-url pattern="/" access="ROLE_USER" />-->
+        <!--<intercept-url pattern="/*" access="ROLE_USER" />-->
+        <intercept-url pattern="/schema/**" access="ROLE_USER" />
+        <intercept-url pattern="/classes/**" access="ROLE_USER" />
+        <intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
+        <http-basic/>
+
+        <form-login
+                login-page="/login.jsp"
+                authentication-failure-url="/login.jsp?auth_valid=false"
+                default-target-url="/welcome.jsp"
+                login-processing-url=""
+                always-use-default-target="true"
+                />
+        <logout logout-success-url="/login.jsp" />
+
+    </http>
+
+    <!--<authentication-manager >-->
+    <!--<authentication-provider>-->
+    <!--<user-service>-->
+    <!--<user name="ldornin" password="123" authorities="ROLE_USER" />-->
+    <!--<user name="admin" password="234" authorities="ROLE_ADMIN, ROLE_USER" />-->
+    <!--</user-service>-->
+    <!--</authentication-provider>-->
+    <!--</authentication-manager>-->
+
+    <!--<beans:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">-->
+    <!--<beans:property name="providers">-->
+    <!--<beans:list>-->
+    <!--<beans:ref local="daoAuthenticationProvider"/>-->
+    <!--&lt;!&ndash;<beans:ref local="anonymousAuthenticationProvider"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<beans:ref local="ldapAuthenticationProvider"/>&ndash;&gt;-->
+    <!--</beans:list>-->
+    <!--</beans:property>-->
+    <!--</beans:bean>-->
+
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider ref="daoAuthenticationProvider"/>
+    </authentication-manager>
+
+    <beans:bean id="userDetailsManager" class="org.springframework.security.provisioning.JdbcUserDetailsManager">
+        <beans:property name="dataSource" ref="dataSource"/>
+    </beans:bean>
+
+    <beans:bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+        <beans:constructor-arg value="256"/>
+        <!-- beefed up security-->
+        <beans:property name="iterations" value="1000" />
+    </beans:bean>
+
+    <beans:bean id="saltSource" class="org.springframework.security.authentication.dao.ReflectionSaltSource">
+        <!--TODO: better to use a uuid?-->
+        <beans:property name="userPropertyToUse" value="username" />
+    </beans:bean>
+
+    <beans:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <beans:property name="userDetailsService" ref="userDetailsManager"/>
+        <!--<beans:property name="userCache" ref="userCache"/>-->
+        <!--<beans:property name="passwordEncoder">-->
+        <!--<beans:bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>-->
+        <!--</beans:property>-->
+
+        <beans:property name="passwordEncoder" ref="passwordEncoder"/>
+        <beans:property name="saltSource" ref="saltSource"/>
+    </beans:bean>
+
+    <!--TODO: Versioning problem with the user cache-->
+    <!--<beans:bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>-->
+    <!--<beans:bean id="userCacheBackend" class="org.springframework.cache.ehcache.EhCacheFactoryBean">-->
+    <!--<beans:property name="cacheManager" ref="cacheManager"/>-->
+    <!--<beans:property name="cacheName" value="userCache"/>-->
+    <!--</beans:bean>-->
+    <!--<beans:bean id="userCache" class="org.springframework.security.core.userdetails.cache.EhCacheBasedUserCache">-->
+    <!--<beans:property name="cache" ref="userCacheBackend"/>-->
+    <!--</beans:bean>-->
+
+    <!-- Automatically receives AuthenticationEvent messages -->
+    <beans:bean id="loggerListener" class="org.springframework.security.authentication.event.LoggerListener"/>
+
+    <beans:bean id="basicAuthenticationFilter"
+                class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
+    </beans:bean>
+
+    <beans:bean id="authenticationEntryPoint"
+                class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+        <beans:property name="realmName" value="Migrate Realm"/>
+    </beans:bean>
+
+    <beans:bean id="dataSourcePopulator" class="com.migrate.storage.UserDetailInitializer">
+        <beans:constructor-arg ref="dataSource"/>
+    </beans:bean>
+
+</beans:beans>
