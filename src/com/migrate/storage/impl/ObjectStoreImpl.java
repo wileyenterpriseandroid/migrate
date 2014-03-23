@@ -26,8 +26,8 @@ public class ObjectStoreImpl implements ObjectStore {
 	private KVStore store;
 	
 	@Override
-	public <T extends PersistentObject> T get(String namespace, String key, String className, Class<T> valueType) throws IOException {
-		KVObject kvo = store.get(namespace, key);
+	public <T extends PersistentObject> T get(String namespace, String key, String className, Class<T> valueType, String tenantId) throws IOException {
+		KVObject kvo = store.get(namespace, key, tenantId);
 		if (kvo == null) {
 			return null;
 		}
@@ -44,12 +44,12 @@ public class ObjectStoreImpl implements ObjectStore {
 	}
 
     @Override
-	public void update(PersistentObject object)  throws IOException {
+	public void update(PersistentObject object, String tenantId)  throws IOException {
 		String namespace = object.getWd_namespace();
 		String key = object.getWd_id();
-		KVObject existingObject = store.get(namespace, key);
+		KVObject existingObject = store.get(namespace, key, tenantId);
 		if (existingObject == null) {
-			 create(object);
+			 create(object, tenantId);
 			 return;
 		}
 		cleanObject(object);
@@ -60,16 +60,16 @@ public class ObjectStoreImpl implements ObjectStore {
 
         existingObject.setValue(data);
 		existingObject.setVersion(object.getWd_version());
-		store.update(existingObject);
+		store.update(existingObject, tenantId);
 	}
 
 	@Override
-	public void create(PersistentObject bo) throws IOException {
+	public void create(PersistentObject bo, String tenantId) throws IOException {
 		String namespace = bo.getWd_namespace();
 		String key = bo.getWd_id();
 		cleanObject(bo);
 		byte[] value = JsonHelper.writeValueAsByte(bo);
-		store.create (namespace, key, bo.getWd_classname(), value);
+		store.create (namespace, key, bo.getWd_classname(), value, tenantId);
 		restoreBaseObjectId(bo, namespace, key);
 	}
 
@@ -84,20 +84,20 @@ public class ObjectStoreImpl implements ObjectStore {
 	}
 
     @Override
-    public void delete(String namespace, String key) throws IOException {
-        delete(namespace, key, true, 0L);
+    public void delete(String namespace, String key, String tenantId) throws IOException {
+        delete(namespace, key, true, 0L, tenantId);
     }
 
     @Override
-	public void delete(String namespace, String key, boolean isPermament, long now) throws IOException {
-		store.delete(namespace, key, isPermament, now);
+	public void delete(String namespace, String key, boolean isPermament, long now, String tenantId) throws IOException {
+		store.delete(namespace, key, isPermament, now, tenantId);
 	}
 	
 	@Override
 	public List<GenericMap> findChanged(String namespace, String classname, long time,
-                                        int start, int numMatches) throws IOException
+                                        int start, int numMatches, String tenantId) throws IOException
     {
-		List<KVObject> list = store.findChanged(namespace, classname, time, start, numMatches);
+		List<KVObject> list = store.findChanged(namespace, classname, time, start, numMatches, tenantId);
 
 		List<GenericMap> result = new ArrayList<GenericMap>(list.size());
 		for (KVObject kvo : list) {

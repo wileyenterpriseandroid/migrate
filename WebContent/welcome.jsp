@@ -40,6 +40,11 @@
 <%--<a href="${pageContext.request.contextPath}/contacts">list contacts</a>--%>
 <h3>Welcome!</h3>
 Get started!
+
+<p>
+<a href="admin/dashboard.jsp">Dashboard</a>
+</p>
+
 </form>
 
 </body>

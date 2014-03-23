@@ -14,20 +14,22 @@ import org.junit.Test;
 import com.migrate.storage.KVObject;
 
 public class KVStoreUpdateTest extends KVStoreTest {
-	private static org.apache.log4j.Logger log = Logger.getLogger(KVStoreUpdateTest.class);
+    public static final String TEST_TENANT_ID = "testTenant";
+
+    private static org.apache.log4j.Logger log = Logger.getLogger(KVStoreUpdateTest.class);
 	@Override
 	public void setup() throws Exception {
 		super.setup();
-		store.create(namespace, key, className, value);
+		store.create(namespace, key, className, value, TEST_TENANT_ID);
 	}
 	
 	@Test 
 	public void updateTest() throws IOException {
 		long ver = 1;
-		KVObject kvo = store.get(namespace, key, ver);
+		KVObject kvo = store.get(namespace, key, ver, TEST_TENANT_ID);
 		kvo.setValue("new value".getBytes());
-		store.update(kvo);
-		KVObject updateKvo = store.get(namespace, key, ver+1);
+		store.update(kvo, TEST_TENANT_ID);
+		KVObject updateKvo = store.get(namespace, key, ver+1, TEST_TENANT_ID);
 		assertNotNull(updateKvo);
 		assertEquals(ver+1, updateKvo.getVersion());
 		assertArrayEquals(kvo.getValue(), updateKvo.getValue());
@@ -35,7 +37,7 @@ public class KVStoreUpdateTest extends KVStoreTest {
 		boolean bException = false;
 		try {
 			kvo.setVersion(1L);
-			store.update(kvo);
+			store.update(kvo, TEST_TENANT_ID);
 		} catch (VersionMismatchException e ) {
 			bException = true;
 		}
@@ -43,7 +45,7 @@ public class KVStoreUpdateTest extends KVStoreTest {
 	}
 	
 	public void tearDown() throws Exception {
-		store.delete(namespace, key);
+		store.delete(namespace, key, TEST_TENANT_ID);
 	}
 	
 	

@@ -21,7 +21,9 @@ import com.migrate.storage.ObjectStore;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( { "/spring/applicationContext-*.xml" })
 public abstract class ObjectStoreTest {
-	@Autowired
+    public static final String TEST_TENANT_ID = "testTenant";
+
+    @Autowired
 	@Qualifier(value = "objectStore")
 	protected ObjectStore store;
 	protected String namespace = "ObjectStoreTest";
@@ -52,7 +54,7 @@ public abstract class ObjectStoreTest {
 	
 	@After
 	public void tearDown() throws IOException {
-		store.delete(namespace, key);
+		store.delete(namespace, key, TEST_TENANT_ID);
 	}
 	
 	public static class TestClass extends BasePersistentObject {

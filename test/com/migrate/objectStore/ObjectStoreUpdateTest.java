@@ -1,7 +1,4 @@
 package com.migrate.objectStore;
-/**
- * @author Zane Pan
- */
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -17,24 +14,29 @@ import org.junit.Test;
 
 import com.migrate.exception.DuplicationKeyException;
 
+/**
+ * @author Zane Pan
+ */
 public class ObjectStoreUpdateTest extends ObjectStoreTest {
+    public static final String TEST_TENANT_ID = "testTenant";
+
 
 	@Before 
 	public void ensureDelete() throws IOException {
 		setup();
-		store.create(testObj);
+		store.create(testObj, TEST_TENANT_ID);
 	}
 	
 	@Test
 	public void createTest() throws Exception {
-		TestClass tc = store.get(namespace, key, TestClass.class.getName(), TestClass.class);
+		TestClass tc = store.get(namespace, key, TestClass.class.getName(), TestClass.class, TEST_TENANT_ID);
 		System.out.println(tc.getWd_namespace());
 		System.out.println(tc.getIntValue());
 		
 		modify(tc);
-		store.update(tc);
+		store.update(tc, TEST_TENANT_ID);
 		
-		TestClass tcUpdated = store.get(namespace, key, TestClass.class.getName(),  TestClass.class);
+		TestClass tcUpdated = store.get(namespace, key, TestClass.class.getName(),  TestClass.class, TEST_TENANT_ID);
 		System.out.println(tcUpdated.getIntValue());
 
 		assertEquals(tc.getIntValue(), tcUpdated.getIntValue());
@@ -46,7 +48,7 @@ public class ObjectStoreUpdateTest extends ObjectStoreTest {
 		//assertEquals(tc, tcUpdated);
 		boolean bException = false;
 		try {
-			store.create(testObj);
+			store.create(testObj, TEST_TENANT_ID);
 		} catch (DuplicationKeyException e) {
 			bException = true;
 		}

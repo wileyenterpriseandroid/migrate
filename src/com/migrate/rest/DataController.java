@@ -8,13 +8,13 @@ import org.apache.lucene.queryParser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.oauth.common.signature.OAuthSignatureMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,11 +47,12 @@ public class DataController {
 //            @RequestHeader("Authorization") String oauth,
             @PathVariable String className,
             @PathVariable String id,
+            Principal principal,
             HttpServletResponse resp) throws IOException
     {
-//        String userId = getUserId(oauth);
+        String userId = SchemaController.authorize(null /*oauth*/, principal);
 
-        GenericMap ret = dataService.getObject(className, id);
+        GenericMap ret = dataService.getObject(className, id, userId);
         if (ret == null) {
             resp.setStatus(HttpStatus.NOT_FOUND.value());
         }
@@ -68,13 +69,14 @@ public class DataController {
             @PathVariable String className,
             @PathVariable String id,
             @RequestBody GenericMap data, HttpServletRequest req,
+            Principal principal,
             HttpServletResponse resp) throws IOException
     {
         data.setWd_classname(className);
         data.setWd_id(id);
 
-//        String userId = getUserId(oauth);
-        dataService.storeObject(data);
+        String userId = SchemaController.authorize(null /*oauth*/, principal);
+        dataService.storeObject(data, userId);
         Map<String, String> map = new HashMap<String, String>(1);
         map.put("location", req.getRequestURL().toString());
         return map;
@@ -89,15 +91,17 @@ public class DataController {
 //            @RequestHeader("Authorization") String oauth,
             @PathVariable String className,
             @PathVariable String id,
-            @RequestBody GenericMap data, HttpServletRequest req,
+            @RequestBody GenericMap data,
+            Principal principal,
+            HttpServletRequest req,
             HttpServletResponse resp) throws IOException
     {
         System.out.println(" classname :" + className);
         data.setWd_classname(className);
         data.setWd_id(id);
 
-//        String userId = getUserId(oauth);
-        dataService.createObject(data);
+        String userId = SchemaController.authorize(null /*oauth*/, principal);
+        dataService.createObject(data, userId);
         Map<String, String> map = new HashMap<String, String>(1);
         map.put("location", req.getRequestURL().toString());
         return map;
@@ -108,9 +112,11 @@ public class DataController {
 //            @RequestHeader("Authorization") String oauth,
             @PathVariable String className,
             @PathVariable String id,
+            Principal principal,
             HttpServletResponse resp) throws IOException
     {
-        dataService.deleteObject(className, id);
+        String userId = SchemaController.authorize(null /*oauth*/, principal);
+        dataService.deleteObject(className, id, userId);
     }
 
     @RequestMapping(value = "{className}", method = RequestMethod.GET)
@@ -129,10 +135,10 @@ public class DataController {
         return ret;
     }
 
-    public List<GenericMap> findChanged(String classname, long time, int start, int numMatches)
+    public List<GenericMap> findChanged(String classname, long time, int start, int numMatches, String userId)
             throws IOException, ParseException
     {
-        return dataService.find(classname, time, start, numMatches);
+        return dataService.find(classname, time, start, numMatches, userId);
     }
 
     private GenericMap findData(List<GenericMap> list, GenericMap data) {
@@ -159,9 +165,9 @@ public class DataController {
         }
     }
 
-    public GenericMap getData(String classname, String id) throws IOException {
+    public GenericMap getData(String classname, String id, String tenantId) throws IOException {
 //    public GenericMap getData(String classname, String id, String userid) throws IOException {
-        return dataService.getObject(classname, id);
+        return dataService.getObject(classname, id, tenantId);
     }
 
     @RequestMapping(value = "{classname}", method = RequestMethod.POST)
@@ -169,11 +175,12 @@ public class DataController {
     public SyncResult syncData(
 //            @RequestHeader("Authorization") String oauth,
             @PathVariable String classname,
-            @RequestBody SyncRequest syncRequest)
+            @RequestBody SyncRequest syncRequest,
+        Principal principal)
             throws IOException
     {
         try {
-//            String userId = getUserId(oauth);
+            String userId = SchemaController.authorize(null /*oauth*/, principal);
 
             List<GenericMap> clientModifiedData = syncRequest.getModifiedData();
 
@@ -186,7 +193,7 @@ public class DataController {
              */
             long lastClientSyncTime = syncRequest.getSyncTime();
             List<GenericMap> serverModifiedData =
-                    findChanged(classname, lastClientSyncTime, 0, MAX_NUM_DATA_TO_SYNCH);
+                    findChanged(classname, lastClientSyncTime, 0, MAX_NUM_DATA_TO_SYNCH, userId);
 
             /**
              * The current time becomes the client's next sync time.
@@ -207,9 +214,9 @@ public class DataController {
                         if (clientObject.isWd_deleted()) {
                             // hold till all concerned clients know its gone?
                             // TODO: hold all deleted indefinitely ids in a single column?
-                            dataService.softDeleteObject(classname, clientObject.getWd_id(), now);
+                            dataService.softDeleteObject(classname, clientObject.getWd_id(), now, userId);
                         } else {
-                            dataService.storeObject(clientObject);
+                            dataService.storeObject(clientObject, userId);
                         }
                     }
                 } catch (VersionMismatchException e) {
@@ -229,7 +236,7 @@ public class DataController {
                             throw new IllegalArgumentException("Client data has null id");
                         }
 
-                        conflictServerElt = getData(classname, uuid);
+                        conflictServerElt = getData(classname, uuid, userId);
 
                         if (conflictServerElt.getWd_version() > clientObject.getWd_version()) {
                             conflictData.add(conflictServerElt);
@@ -281,17 +288,5 @@ public class DataController {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         // need to add return code here
         return "Version Mismatch";
-    }
-
-    private String getUserId(String oauth)  {
-        return "";
-
-//        oauth = oauth.trim();
-//        String[] temp = oauth.split(",");
-//        String consumerKey = temp[1].replace("consumerKey=", "");
-//        String signature = temp[2].replace("signature=", "");
-//        OAuthSignatureMethod oauthMethod = oAuthSignatureMethodFactory.getOAuthSignatureMethod(consumerKey);
-//        oauthMethod.verify(temp[0] + "," + temp[1], signature);
-//        return consumerKey;
     }
 }

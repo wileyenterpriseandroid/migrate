@@ -21,21 +21,21 @@ public class SchemaService {
 	@Qualifier(value = "objectStore")
 	private ObjectStore store;
 	
-	public void updateSchema(PersistentSchema persistentSchema) throws IOException {
+	public void updateSchema(PersistentSchema persistentSchema, String tenantId) throws IOException {
 		persistentSchema.setWd_classname(PersistentSchema.class.getName());
 		persistentSchema.setWd_namespace(SCHEMA);
-		store.update(persistentSchema);
+		store.update(persistentSchema, tenantId);
 	}
 	
-	public PersistentSchema getSchema(String schemaName) throws IOException {
-		return store.get(SCHEMA, schemaName, PersistentSchema.class.getName(), PersistentSchema.class);
+	public PersistentSchema getSchema(String schemaName, String tenantId) throws IOException {
+		return store.get(SCHEMA, schemaName, PersistentSchema.class.getName(), PersistentSchema.class, tenantId);
 	}
 
-    public List<GenericMap> getAllSchema(long syncTime) throws IOException {
-        return store.findChanged(SCHEMA, PersistentSchema.class.getName(), syncTime, 0, 1000);
+    public List<GenericMap> getAllSchema(long syncTime, String tenantId) throws IOException {
+        return store.findChanged(SCHEMA, PersistentSchema.class.getName(), syncTime, 0, 1000, tenantId);
     }
 
-    public void deleteSchema(String schemaName) throws IOException {
-   		store.delete(SCHEMA, schemaName);
+    public void deleteSchema(String schemaName, String tenantId) throws IOException {
+   		store.delete(SCHEMA, schemaName, tenantId);
    	}
 }

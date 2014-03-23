@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -182,9 +183,9 @@ public class UserCreator
                 accountNonLocked,
                 grantedAuthorities);
 
-        // if the user exists, delete it
+        // dissallow duplicate users
         if (userDetailsManager.userExists(userHashedPassword.getUsername())) {
-            userDetailsManager.deleteUser(userHashedPassword.getUsername());
+            throw new BadCredentialsException("Duplicate username: " + username);
         }
 
         // and finally, create the user

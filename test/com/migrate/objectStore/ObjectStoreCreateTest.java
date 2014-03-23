@@ -13,17 +13,18 @@ import org.junit.Test;
 import com.migrate.exception.DuplicationKeyException;
 
 public class ObjectStoreCreateTest extends ObjectStoreTest {
+    public static final String TEST_TENANT_ID = "testTenant";
 
-	@Before 
+    @Before
 	public void ensureDelete() throws IOException {
 		setup();
-		store.delete(namespace, key);
+		store.delete(namespace, key, TEST_TENANT_ID);
 	}
 	
 	@Test
 	public void createTest() throws Exception {
-		store.create(testObj);
-		TestClass tc = store.get(namespace, key, TestClass.class.getCanonicalName(), TestClass.class);
+		store.create(testObj, TEST_TENANT_ID);
+		TestClass tc = store.get(namespace, key, TestClass.class.getCanonicalName(), TestClass.class, TEST_TENANT_ID);
 		System.out.println(tc.getIntValue());
 		assertArrayEquals(tc.getBytes(), testObj.getBytes());
 		assertArrayEquals(tc.getListValue().toArray(), testObj.getListValue().toArray());
@@ -33,7 +34,7 @@ public class ObjectStoreCreateTest extends ObjectStoreTest {
 	
 		boolean bException = false;
 		try {
-			store.create(testObj);
+			store.create(testObj, TEST_TENANT_ID);
 		} catch (DuplicationKeyException e) {
 			bException = true;
 		}

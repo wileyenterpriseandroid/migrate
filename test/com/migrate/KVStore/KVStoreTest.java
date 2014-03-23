@@ -16,6 +16,8 @@ import com.migrate.storage.KVStore;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( { "/spring/applicationContext-*.xml" })
 public abstract class KVStoreTest {
+    public static final String TEST_TENANT_ID = "testTenant";
+
 	@Autowired
 	@Qualifier(value = "kvStore")
 	protected KVStore store;
@@ -30,11 +32,11 @@ public abstract class KVStoreTest {
 		namespace = "namespace:" + time;
 		key = "key:" + time;
 		value = (namespace +":" + key + ":" + className).getBytes();
-		store.delete(namespace, key);
+		store.delete(namespace, key, TEST_TENANT_ID);
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		store.delete(namespace, key);
+		store.delete(namespace, key, TEST_TENANT_ID);
 	}
 }

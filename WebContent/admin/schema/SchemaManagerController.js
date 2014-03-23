@@ -68,6 +68,7 @@ angular.module('MigrateSchema.service', []).factory('MigrateService', function($
                     return result.data;
                 });
         },
+
         updateSchemas: function (schemaID, schemasArr) {
             var getSchemaUri;
 

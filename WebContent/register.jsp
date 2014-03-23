@@ -35,11 +35,17 @@
             </td>
         </tr>
         <tr>
-            <td colspan='2'><input name="submit" type="submit" value="Register" />
+            <td>Roles:</td>
+            <td>
+                <select name="roles">
+                    <option value="ROLE_ADMIN,ROLE_USER">User, Admin</option>
+                    <option value="ROLE_USER">User</option>
+                </select>
             </td>
         </tr>
+
         <tr>
-            <td colspan='2'><input name="reset" type="reset" />
+            <td colspan='2'><input name="submit" type="submit" value="Register" />
             </td>
         </tr>
 

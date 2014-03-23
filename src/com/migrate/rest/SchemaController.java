@@ -7,13 +7,13 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.oauth.common.signature.OAuthSignatureMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequestMapping("/schema")
 public class SchemaController {
 //    @Autowired
-//    @Qualifier(value = "oAuthSignatureMethodFactory")
+//    @Qualifier(value = "migrateOAuthSignatureMethodFactory")
 //    private OAuthSignatureMethodFactory oAuthSignatureMethodFactory;
 
     private static org.apache.log4j.Logger log = Logger.getLogger(SchemaController.class);
@@ -40,14 +40,15 @@ public class SchemaController {
 //            @RequestHeader("Authorization") String oauth,
             @PathVariable String schemaName,
             @RequestBody PersistentSchema schema, HttpServletRequest req,
-            HttpServletResponse resp) throws IOException
+            HttpServletResponse resp,
+            Principal principal)
+            throws IOException
     {
-
-//        String userId = getUserId(oauth);
+        String userId = authorize(null /*oauth*/, principal);
 
         try {
             schema.setWd_id(schemaName);
-            schemaService.updateSchema(schema);
+            schemaService.updateSchema(schema, userId);
             Map<String, String> map = new HashMap<String, String>(1);
             map.put("location", req.getRequestURL().toString());
             resp.setStatus(HttpStatus.ACCEPTED.value());
@@ -65,12 +66,12 @@ public class SchemaController {
             HttpServletRequest req,
             HttpServletResponse resp,
 //            @RequestHeader("Authorization") String oauth,
-            @RequestParam(value = "syncTime", required = true) long syncTime)
-            throws IOException
+            @RequestParam(value = "syncTime", required = true) long syncTime,
+            Principal principal) throws IOException
     {
-//        String userId = getUserId(oauth);
+        String userId = authorize(null/*oauth*/, principal);
 
-        List<GenericMap> allSchema = schemaService.getAllSchema(syncTime);
+        List<GenericMap> allSchema = schemaService.getAllSchema(syncTime, userId);
         String[] schemaIDs = new String[allSchema.size()];
         int count = 0;
         for (GenericMap schemaMap : allSchema) {
@@ -87,12 +88,12 @@ public class SchemaController {
             HttpServletRequest req,
             HttpServletResponse resp,
 //            @RequestHeader("Authorization") String oauth,
-            @RequestParam(value = "syncTime", required = true) long syncTime)
-            throws IOException
+            @RequestParam(value = "syncTime", required = true) long syncTime,
+            Principal principal) throws IOException
     {
-//        String userId = getUserId(oauth);
+        String userId = authorize(null/*oauth*/, principal);
 
-        List<GenericMap> allSchema = schemaService.getAllSchema(syncTime);
+        List<GenericMap> allSchema = schemaService.getAllSchema(syncTime, userId);
         return allSchema;
     }
 
@@ -102,11 +103,12 @@ public class SchemaController {
 //            @RequestHeader("Authorization") String oauth,
             @PathVariable String schemaName,
             HttpServletRequest req,
-            HttpServletResponse resp) throws IOException
+            HttpServletResponse resp,
+            Principal principal) throws IOException
     {
-//        String userId = getUserId(oauth);
+        String userId = authorize(null/*oauth*/, principal);
 
-        PersistentSchema persistentSchema = schemaService.getSchema(schemaName);
+        PersistentSchema persistentSchema = schemaService.getSchema(schemaName, userId);
         return persistentSchema;
     }
 
@@ -115,23 +117,27 @@ public class SchemaController {
     public void deleteSchema(
 //            @RequestHeader("Authorization") String oauth,
             @PathVariable String schemaName,
+            Principal principal,
             HttpServletRequest req,
             HttpServletResponse resp) throws IOException
     {
-//        String userId = getUserId(oauth);
+        String userId = authorize(null /*oauth*/, principal);
 
-        schemaService.deleteSchema(schemaName);
+        schemaService.deleteSchema(schemaName, userId);
     }
 
-    private String getUserId(String oauth) {
-        return "";
+    /*
+     * Validate the user using either 'o' or basic auth
+     */
+    public static String authorize(String authHeader, Principal principal) {
+        if (null != principal) {
+            // basic
+            String pn = principal.getName();
+            return pn;
+        } else {
+            throw new SecurityException("Unable to authorize request.");
+        }
 
-//        oauth = oauth.trim();
-//        String[] temp = oauth.split(",");
-//        String consumerKey = temp[1].replace("consumerKey=", "");
-//        String signature = temp[2].replace("signature=", "");
-//        OAuthSignatureMethod oauthMethod = oAuthSignatureMethodFactory.getOAuthSignatureMethod(consumerKey);
-//        oauthMethod.verify(temp[0] + "," + temp[1], signature);
-//        return consumerKey;
+//        String userId = oAuthSignatureMethodFactory.authorize(oauth);
     }
 }

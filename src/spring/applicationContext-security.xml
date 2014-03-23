@@ -10,6 +10,7 @@
     <http realm="Migrate Realm">
         <!--<intercept-url pattern="/" access="ROLE_USER" />-->
         <!--<intercept-url pattern="/*" access="ROLE_USER" />-->
+
         <intercept-url pattern="/schema/**" access="ROLE_USER" />
         <intercept-url pattern="/classes/**" access="ROLE_USER" />
         <intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
@@ -23,27 +24,18 @@
                 always-use-default-target="true"
                 />
         <logout logout-success-url="/login.jsp" />
-
     </http>
 
-    <!--<authentication-manager >-->
-    <!--<authentication-provider>-->
-    <!--<user-service>-->
-    <!--<user name="ldornin" password="123" authorities="ROLE_USER" />-->
-    <!--<user name="admin" password="234" authorities="ROLE_ADMIN, ROLE_USER" />-->
-    <!--</user-service>-->
-    <!--</authentication-provider>-->
-    <!--</authentication-manager>-->
-
-    <!--<beans:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">-->
-    <!--<beans:property name="providers">-->
-    <!--<beans:list>-->
-    <!--<beans:ref local="daoAuthenticationProvider"/>-->
-    <!--&lt;!&ndash;<beans:ref local="anonymousAuthenticationProvider"/>&ndash;&gt;-->
-    <!--&lt;!&ndash;<beans:ref local="ldapAuthenticationProvider"/>&ndash;&gt;-->
-    <!--</beans:list>-->
-    <!--</beans:property>-->
+    <!--<beans:bean name="migrateOAuthSignatureMethodFactory"-->
+                <!--class="com.migrate.security.OAuthSignatureMethodFactory">-->
+        <!--<beans:property name="oauthKeyMap" value=""/>-->
     <!--</beans:bean>-->
+
+    <beans:bean name="coreOAuthSignatureMethodFactory"
+                class="org.springframework.security.oauth.common.signature.CoreOAuthSignatureMethodFactory">
+        <beans:property name="supportRSA_SHA1" value="true"/>
+        <beans:property name="supportHMAC_SHA1" value="true"/>
+    </beans:bean>
 
     <authentication-manager alias="authenticationManager">
         <authentication-provider ref="daoAuthenticationProvider"/>
@@ -56,7 +48,8 @@
     <beans:bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
         <beans:constructor-arg value="256"/>
         <!-- beefed up security-->
-        <beans:property name="iterations" value="1000" />
+        <beans:property name="iterations" value="10" />
+        <!--<beans:property name="iterations" value="1000" />-->
     </beans:bean>
 
     <beans:bean id="saltSource" class="org.springframework.security.authentication.dao.ReflectionSaltSource">

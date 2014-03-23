@@ -1,21 +1,16 @@
 package com.migrate.service;
 
+import com.migrate.storage.impl.JsonHelper;
 import com.migrate.webdata.model.GenericMap;
 import com.migrate.webdata.model.PersistentSchema;
 import com.migrate.webdata.model.PropertyIndex;
-import com.migrate.storage.impl.JsonHelper;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexNotFoundException;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.*;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -24,7 +19,6 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.NoSuchDirectoryException;
 import org.apache.lucene.util.Version;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,10 +44,10 @@ public class LuceneIndexService {
     @Qualifier(value = "schemaService")
     private SchemaService schemaService;
 
-    public void updateIndex(GenericMap data) throws IOException
+    public void updateIndex(GenericMap data, String tenantId) throws IOException
     {
         String indexName = data.getWd_classname();
-        PersistentSchema persistentSchema = schemaService.getSchema(indexName);
+        PersistentSchema persistentSchema = schemaService.getSchema(indexName, tenantId);
         if (persistentSchema == null) {
             return;
         }

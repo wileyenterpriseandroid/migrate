@@ -27,6 +27,10 @@
         </beans:property>
     </beans:bean>
 
+    <beans:bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        <beans:property name="useDefaultSuffixPattern" value="false" />
+    </beans:bean>
+
     <beans:bean id="jspviewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
         <beans:property name="order" value="2"/>
         <beans:property name="cache" value="true"/>
@@ -41,6 +45,7 @@
 
     <mvc:resources mapping="/resource" location="/resource/**"/>
 
+    <!-- This is redundant with the declarations above, and will break url syntax. -->
     <!--<mvc:annotation-driven />-->
 
 </beans:beans>

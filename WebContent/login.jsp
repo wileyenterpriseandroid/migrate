@@ -14,7 +14,7 @@
     </style>
 </head>
 <body onload='document.f.j_username.focus();'>
-<h3>Login with Migrate Credentials:</h3>
+<h3>Migrate Login:</h3>
 
 <c:if test="${not empty param.auth_valid}">
     <div class="errorblock">
@@ -35,14 +35,9 @@
             </td>
         </tr>
         <tr>
-            <td colspan='2'><input name="submit" type="submit" value="submit" />
+            <td colspan='2'><input name="submit" type="submit" value="Submit" />
             </td>
         </tr>
-        <tr>
-            <td colspan='2'><input name="reset" type="reset" />
-            </td>
-        </tr>
-
     </table>
 </form>
 
