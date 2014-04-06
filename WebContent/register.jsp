@@ -38,7 +38,6 @@
             <td>Roles:</td>
             <td>
                 <select name="roles">
-                    <option value="ROLE_ADMIN,ROLE_USER">User, Admin</option>
                     <option value="ROLE_USER">User</option>
                 </select>
             </td>

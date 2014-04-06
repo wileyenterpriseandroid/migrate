@@ -48,7 +48,7 @@
     <beans:bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
         <beans:constructor-arg value="256"/>
         <!-- beefed up security-->
-        <beans:property name="iterations" value="10" />
+        <beans:property name="iterations" value="1" />
         <!--<beans:property name="iterations" value="1000" />-->
     </beans:bean>
 

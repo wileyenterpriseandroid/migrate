@@ -87,8 +87,7 @@ public class UserController {
     public static final String ROLE_USER = "ROLE_USER";
 
     /*
-     * create the JSON object with the given type and id.
-     * TODO: needs https
+     * Verify parameter credentials are valid.
      */
     @RequestMapping(value = "{username}", method = RequestMethod.GET)
     @ResponseBody

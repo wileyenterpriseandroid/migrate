@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="schema.css">
 </head>
 
+<!--TODO: script fails when logged out due to ajax call, need to redirect to login.-->
+<!--TODO: script fails when logged out due to ajax call, need to redirect to login.-->
+<!--TODO: why does it show three dots before logging in??????? -->
+
 <body>
 <h2>Migrate Schema Editor: </h2>
 <div ng-controller="SchemaEditorController">
-    <p>
-        <span>{{properties.length}} schema properties.</span>
-    </p>
-
     <form ng-submit="addProperty()">
         Edit Migrate Schema:<br>
         <hr>

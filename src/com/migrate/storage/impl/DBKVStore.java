@@ -145,9 +145,9 @@ public class DBKVStore implements KVStore {
         int rowUpdated = jdbcTemplate.update(UPDATE_WITH_VERSION_SQL,
                 data.getValue(), System.currentTimeMillis(),
                 data.getVersion(), data.getNamespace(), data.getKey(),
-                new Long(version), tenantId);
+                tenantId, new Long(version));
 
-        // throwing cryptic 500 errors to the client absolutely sucks. They need to be
+        // TODO: throwing cryptic 500 errors to the client absolutely sucks. They need to be
         // more informative, like: the version mismatched, fix your client.
 
         if (rowUpdated != 1)  {
