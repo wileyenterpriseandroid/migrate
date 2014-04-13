@@ -34,14 +34,6 @@
             <td><input type='text' name='password' />
             </td>
         </tr>
-        <tr>
-            <td>Roles:</td>
-            <td>
-                <select name="roles">
-                    <option value="ROLE_USER">User</option>
-                </select>
-            </td>
-        </tr>
 
         <tr>
             <td colspan='2'><input name="submit" type="submit" value="Register" />

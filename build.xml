@@ -114,7 +114,7 @@
     <target name="dist" depends="compile">
         <mkdir dir="${dist.home}"/>
 
-        <jar jarfile="${dist.home}/${migrate}.war" basedir="${build.home}"/>
+        <jar jarfile="${dist.home}/${migrate}.war" basedir="${build.home}" excludes="**/servlet-api-2.5.jar"/>
         <jar jarfile="${dist.home}/${migrate}-model.jar">
             <fileset dir="${build.web-inf.classes}" includes="**/model/*.class"/>
             <fileset dir="${build.web-inf.classes}" includes="com/migrate/storage/impl/JsonHelper.class"/>

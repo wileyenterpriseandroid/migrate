@@ -2,15 +2,15 @@
 
 <html ng-app="MigrateSchema">
 <head>
-    <script src="http://localhost:8080/migrate/admin/schema/angular-1.2.7/angular.min.js"></script>
-    <script src="http://localhost:8080/migrate/admin/schema/SchemaManagerController.js"></script>
+    <script src="/migrate/angular-1.2.7/angular.min.js"></script>
+    <script src="/migrate/manage/schema/SchemaManagerController.js"></script>
 
     <link rel="stylesheet" href="schema.css">
 </head>
 
-<body onload="updateSchemas()">
+<body>
 <h2>Migrate Schema Manager: </h2>
-<div ng-controller="SchemaManagerController">
+<div ng-controller="SchemaManagerController" ng-init="updateSchemas()">
     <form ng-submit="updateSchemas()">
 
         <ul class="unstyled">
@@ -18,7 +18,7 @@
                 <span>{{schema.wd_id}}</span>
             </li>
         </ul>
-        <input class="btn-primary" type="submit" value="get">
+        <input class="btn-primary" type="submit" value="Update">
     </form>
 
     <br>

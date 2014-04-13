@@ -30,6 +30,8 @@ import java.util.Map;
 @Controller
 @RequestMapping("/users")
 public class UserController {
+    private static final String DEFAULT_ROLES = "ROLE_USER";
+
     private static org.apache.log4j.Logger log = Logger.getLogger(DataController.class);
 
     @Autowired
@@ -58,11 +60,11 @@ public class UserController {
     public boolean newUser(
             @RequestParam(value = "username", required = true) String username,
             @RequestParam(value = "password", required = true) String password,
-            @RequestParam(value = "roles", required = true) String roles,
             HttpServletResponse resp) throws IOException
     {
         try {
-            List roleList = Arrays.asList(roles.split(","));
+
+            List<String> roleList = Arrays.asList(DEFAULT_ROLES);
 
             UserCreator userCreator = new UserCreator();
             userCreator.setUsername(username);
@@ -80,6 +82,8 @@ public class UserController {
             return true;
 
         } catch (Exception e) {
+            log.error("Could not create user.", e);
+            e.printStackTrace();
             return false;
         }
     }
@@ -113,6 +117,7 @@ public class UserController {
 
             return isValid;
         } catch (Exception e) {
+            log.error("Could not create user.", e);
             e.printStackTrace();
             return false;
         }

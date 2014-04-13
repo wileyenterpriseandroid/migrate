@@ -42,7 +42,7 @@
 Get started!
 
 <p>
-<a href="admin/dashboard.jsp">Dashboard</a>
+<a href="dashboard.jsp">Dashboard</a>
 </p>
 
 </form>

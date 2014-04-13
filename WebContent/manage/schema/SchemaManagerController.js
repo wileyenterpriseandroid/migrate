@@ -48,14 +48,14 @@ function internalAddProperty(schema, property, propertyType, required) {
     };
 }
 
-angular.module('MigrateSchema.service', []).factory('MigrateService', function($http) {
-    var schemaBase = "http://localhost:8080/migrate/schema";
+angular.module('MigrateSchema.service', []).factory('MigrateService', function($http, $location) {
+    var schemaBase = "http://" + $location.host() + ":" + $location.port() + "/migrate/schema";
 
     var schemas = [];
 
     return {
         postSchema: function (schemaId, schemaJson) {
-            var postSchemaUri =  schemaBase + "/" + schemaId;
+            var postSchemaUri = schemaBase + "/" + schemaId;
 
             // return the promise directly.
             return $http.post(postSchemaUri, schemaJson)
@@ -63,7 +63,7 @@ angular.module('MigrateSchema.service', []).factory('MigrateService', function($
                     // Resolve the promise as the data
 
                     // Direct the browser back to the management page
-//                    browser.$location = "http://localhost:8080/migrate/schema/manager.html"
+//                    browser.$location = "/migrate/manage/schema/manager.html"
 
                     return result.data;
                 });
