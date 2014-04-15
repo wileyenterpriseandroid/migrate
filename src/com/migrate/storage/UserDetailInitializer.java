@@ -15,6 +15,8 @@ public class UserDetailInitializer implements InitializingBean {
     }
 
     public void afterPropertiesSet() throws Exception {
+        // Note: always make tables lower case since mysql is case sensitive on linux
+
         // Normal authentication tables
         template.execute("CREATE TABLE IF NOT EXISTS users(USERNAME VARCHAR(50) NOT NULL PRIMARY KEY, PASSWORD VARCHAR(500) NOT NULL,ENABLED BOOLEAN NOT NULL);");
         template.execute("CREATE TABLE IF NOT EXISTS authorities(USERNAME VARCHAR(50) NOT NULL,AUTHORITY VARCHAR(50) NOT NULL,CONSTRAINT FK_AUTHORITIES_USERS FOREIGN KEY(USERNAME) REFERENCES users(USERNAME));");
