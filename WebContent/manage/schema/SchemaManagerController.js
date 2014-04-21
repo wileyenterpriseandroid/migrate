@@ -61,14 +61,9 @@ angular.module('MigrateSchema.service', []).factory('MigrateService', function($
             return $http.post(postSchemaUri, schemaJson)
                 .then(function (result) {
                     // Resolve the promise as the data
-
-                    // Direct the browser back to the management page
-//                    browser.$location = "/migrate/manage/schema/manager.html"
-
                     return result.data;
                 });
         },
-
         updateSchemas: function (schemaID, schemasArr) {
             var getSchemaUri;
 
@@ -178,8 +173,4 @@ function SchemaEditorController($scope, MigrateService) {
 
         MigrateService.postSchema(schemaId, schemaJson);
     };
-
-    function empty(value) {
-        return value == null || value == '';
-    }
 }

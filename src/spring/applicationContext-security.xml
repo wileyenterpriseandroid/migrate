@@ -19,7 +19,7 @@
         <form-login
                 login-page="/login.jsp"
                 authentication-failure-url="/login.jsp?auth_valid=false"
-                default-target-url="/welcome.jsp"
+                default-target-url="/dashboard.jsp"
                 login-processing-url=""
                 always-use-default-target="true"
                 />

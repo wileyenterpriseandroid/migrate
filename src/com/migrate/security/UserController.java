@@ -1,31 +1,30 @@
 package com.migrate.security;
 
 import com.migrate.rest.DataController;
-import com.migrate.security.UserCreator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/users")
@@ -38,9 +37,9 @@ public class UserController {
     @Qualifier(value = "userDetailsManager")
     private JdbcUserDetailsManager userDetailsManager;
 
-//    @Autowired
-//    @Qualifier(value = "daoAuthenticationProvider")
-//    private org.springframework.security.authentication.dao.DaoAuthenticationProvider authProvider;
+    @Autowired
+    @Qualifier(value = "daoAuthenticationProvider")
+    private org.springframework.security.authentication.dao.DaoAuthenticationProvider authProvider;
 
     @Autowired
     @Qualifier(value = "saltSource")
@@ -56,11 +55,12 @@ public class UserController {
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
-//    @ResponseStatus(value = HttpStatus.ACCEPTED)
     public boolean newUser(
             @RequestParam(value = "username", required = true) String username,
             @RequestParam(value = "password", required = true) String password,
-            HttpServletResponse resp) throws IOException
+            HttpServletRequest request,
+            HttpServletResponse resp,
+            HttpSession session) throws IOException
     {
         try {
 
@@ -78,6 +78,21 @@ public class UserController {
             userCreator.setCredentialsNonExpired(true);
             userCreator.setEnabled(true);
             userCreator.createUser();
+
+            // create a new session if they created the user from the web UI
+
+            try {
+                // Must be called from request filtered by Spring Security, otherwise SecurityContextHolder is not updated
+                UsernamePasswordAuthenticationToken token =
+                        new UsernamePasswordAuthenticationToken(username, password);
+                token.setDetails(new WebAuthenticationDetails(request));
+                Authentication authentication = authProvider.authenticate(token);
+                log.debug("Logging in with new user:" +  authentication.getPrincipal());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (Exception e) {
+                SecurityContextHolder.getContext().setAuthentication(null);
+                log.error("Failure in autoLogin", e);
+            }
 
             return true;
 
