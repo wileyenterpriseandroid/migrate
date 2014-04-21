@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,46 +52,36 @@ public class UserController {
      * create the JSON object with the given type and id.
      * TODO: needs https
      */
+    @RequestMapping(value = "web", method = RequestMethod.POST)
+    @ResponseBody
+    public boolean newUserWeb(
+            @RequestParam(value = "username", required = true) String username,
+            @RequestParam(value = "password", required = true) String password,
+            HttpServletRequest request) throws IOException
+    {
+        try {
+            createUser(username, password);
+            sessionLogin(username, password, request);
+            return true;
+        } catch (Exception e) {
+            log.error("Could not create user.", e);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /*
+     * create the JSON object with the given type and id.
+     * TODO: needs https
+     */
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
     public boolean newUser(
             @RequestParam(value = "username", required = true) String username,
-            @RequestParam(value = "password", required = true) String password,
-            HttpServletRequest request,
-            HttpServletResponse resp,
-            HttpSession session) throws IOException
+            @RequestParam(value = "password", required = true) String password) throws IOException
     {
         try {
-
-            List<String> roleList = Arrays.asList(DEFAULT_ROLES);
-
-            UserCreator userCreator = new UserCreator();
-            userCreator.setUsername(username);
-            userCreator.setPassword(password);
-            userCreator.setUserDetailsManager(userDetailsManager);
-            userCreator.setGrantedAuthoritiesByName(roleList);
-            userCreator.setSaltSource(saltSource);
-            userCreator.setPasswordEncoder(passwordEncoder);
-            userCreator.setAccountNonExpired(true);
-            userCreator.setAccountNonLocked(true);
-            userCreator.setCredentialsNonExpired(true);
-            userCreator.setEnabled(true);
-            userCreator.createUser();
-
-            // create a new session if they created the user from the web UI
-
-            try {
-                // Must be called from request filtered by Spring Security, otherwise SecurityContextHolder is not updated
-                UsernamePasswordAuthenticationToken token =
-                        new UsernamePasswordAuthenticationToken(username, password);
-                token.setDetails(new WebAuthenticationDetails(request));
-                Authentication authentication = authProvider.authenticate(token);
-                log.debug("Logging in with new user:" +  authentication.getPrincipal());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (Exception e) {
-                SecurityContextHolder.getContext().setAuthentication(null);
-                log.error("Failure in autoLogin", e);
-            }
+            createUser(username, password);
 
             return true;
 
@@ -100,6 +89,38 @@ public class UserController {
             log.error("Could not create user.", e);
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void createUser(String username, String password) {
+        List<String> roleList = Arrays.asList(DEFAULT_ROLES);
+
+        UserCreator userCreator = new UserCreator();
+        userCreator.setUsername(username);
+        userCreator.setPassword(password);
+        userCreator.setUserDetailsManager(userDetailsManager);
+        userCreator.setGrantedAuthoritiesByName(roleList);
+        userCreator.setSaltSource(saltSource);
+        userCreator.setPasswordEncoder(passwordEncoder);
+        userCreator.setAccountNonExpired(true);
+        userCreator.setAccountNonLocked(true);
+        userCreator.setCredentialsNonExpired(true);
+        userCreator.setEnabled(true);
+        userCreator.createUser();
+    }
+
+    private void sessionLogin(String username, String password, HttpServletRequest request) {
+        try {
+            // Must be called from request filtered by Spring Security, otherwise SecurityContextHolder is not updated
+            UsernamePasswordAuthenticationToken token =
+                    new UsernamePasswordAuthenticationToken(username, password);
+            token.setDetails(new WebAuthenticationDetails(request));
+            Authentication authentication = authProvider.authenticate(token);
+            log.debug("Logging in with new user:" +  authentication.getPrincipal());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (Exception e) {
+            SecurityContextHolder.getContext().setAuthentication(null);
+            log.error("Failure in autoLogin", e);
         }
     }
 

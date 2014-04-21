@@ -4,7 +4,7 @@ angular.module('MigrateUser.service', []).factory('MigrateUserService', function
 
     return {
         register: function (username, password) {
-            var postUserUri = migrateBase + "/migrate/users?username=" + username + "&password=" + password;
+            var postUserUri = migrateBase + "/migrate/users/web?username=" + username + "&password=" + password;
 
             // return the promise directly.
             return $http.post(postUserUri)
