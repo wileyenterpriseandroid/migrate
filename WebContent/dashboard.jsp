@@ -1,9 +1,34 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<html>
-<head></head>
+<html ng-app="MigrateSchema">
+<head>
+    <script src="/migrate/angular-1.2.7/angular.min.js"></script>
+    <script src="/migrate/compare.js"></script>
+    <script src="/migrate/manage/schema/SchemaManagerController.js"></script>
+
+    <link rel="stylesheet" href="/migrate/migrate.css">
+</head>
+
 <body>
 <h3>Migrate Dashboard</h3><br>
-<a href="manage/schema/manager.html">Manage Schema</a>
+<div ng-controller="SchemaManagerController" ng-init="updateSchemas()">
+    <form ng-submit="updateSchemas()">
+
+        <ul class="unstyled">
+            <li ng-repeat="schema in schemas">
+                <span>{{schema.wd_id}}</span>
+            </li>
+        </ul>
+        <input class="btn-primary" type="submit" value="Update">
+    </form>
+
+    <br>
+    <br>
+    <a href="manage/schema/editor.html">Add schema</a>
+</div>
+</body>
+</html>
+
+
 <a href="<c:url value="j_spring_security_logout" />" > Logout</a>
 </body>
 </html>
