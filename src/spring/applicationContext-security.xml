@@ -11,6 +11,7 @@
         <!--<intercept-url pattern="/" access="ROLE_USER" />-->
         <!--<intercept-url pattern="/*" access="ROLE_USER" />-->
 
+        <intercept-url pattern="/dashboard/**" access="ROLE_USER" />
         <intercept-url pattern="/schema/**" access="ROLE_USER" />
         <intercept-url pattern="/classes/**" access="ROLE_USER" />
         <intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
@@ -19,7 +20,7 @@
         <form-login
                 login-page="/login.jsp"
                 authentication-failure-url="/login.jsp?auth_valid=false"
-                default-target-url="/dashboard.jsp"
+                default-target-url="/dashboard/dashboard.jsp"
                 login-processing-url=""
                 always-use-default-target="true"
                 />

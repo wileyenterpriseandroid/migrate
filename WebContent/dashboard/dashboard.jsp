@@ -23,13 +23,13 @@
 
     <br>
     <br>
-    <a href="manage/schema/editor.html">Add schema</a>
+    <a href="/migrate/manage/schema/editor.html">Add schema</a>
 </div>
 </body>
 </html>
 
 
-<a href="<c:url value="j_spring_security_logout" />" > Logout</a>
+<a href="<c:url value="/migrate/j_spring_security_logout" />" > Logout</a>
 </body>
 </html>
 

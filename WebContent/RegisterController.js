@@ -41,7 +41,7 @@ function RegisterController($scope, MigrateUserService) {
                 if (result == "false") {
                     alert("Invalid credentials or duplicate user.");
                 } else {
-                    var newUrl = '/migrate/welcome.jsp';
+                    var newUrl = '/migrate/dashboard/welcome.jsp';
                     MigrateUserService.setLocation(newUrl);
                 }
 
