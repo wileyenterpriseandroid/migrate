@@ -2,7 +2,7 @@
 <html ng-app="MigrateSchema">
 <head>
     <script src="/migrate/angular-1.2.7/angular.min.js"></script>
-    <script src="/migrate/compare.js"></script>
+    <script src="/migrate/global.js"></script>
     <script src="/migrate/manage/schema/SchemaManagerController.js"></script>
 
     <link rel="stylesheet" href="/migrate/migrate.css">
@@ -13,11 +13,13 @@
 <div ng-controller="SchemaManagerController" ng-init="updateSchemas()">
     <form ng-submit="updateSchemas()">
 
-        <ul class="unstyled">
-            <li ng-repeat="schema in schemas">
-                <span>{{schema.wd_id}}</span>
-            </li>
-        </ul>
+        <span ng-if="schemas.length > 0">
+            <ul class="unstyled">
+                <li ng-repeat="schema in schemas">
+                    <span>{{schema.wd_id}}</span>
+                </li>
+            </ul>
+            </span>
         <input class="btn-primary" type="submit" value="Update">
     </form>
 
