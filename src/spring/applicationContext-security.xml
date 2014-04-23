@@ -6,15 +6,24 @@
 
     <beans:import resource="classpath:spring/applicationContext-storage.xml"/>
 
-    <!--HTTP basic authentication in Spring Security-->
-    <http realm="Migrate Realm">
-        <!--<intercept-url pattern="/" access="ROLE_USER" />-->
-        <!--<intercept-url pattern="/*" access="ROLE_USER" />-->
+    <beans:bean id="plain401BasicAuthenticationEntryPoint"
+          class="com.migrate.security.AjaxAwareAuthenticationEntryPoint">
+        <beans:property name="realmName" value="com.migrate.security"/>
+    </beans:bean>
 
+    <beans:bean id="basicAuthenticationFilter"
+                class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="authenticationEntryPoint" ref="plain401BasicAuthenticationEntryPoint"/>
+    </beans:bean>
+
+    <!--HTTP basic authentication in Spring Security-->
+    <http realm="com.migrate.security" entry-point-ref="plain401BasicAuthenticationEntryPoint">
         <intercept-url pattern="/dashboard/**" access="ROLE_USER" />
+        <intercept-url pattern="/manage/**" access="ROLE_USER" />
         <intercept-url pattern="/schema/**" access="ROLE_USER" />
         <intercept-url pattern="/classes/**" access="ROLE_USER" />
-        <intercept-url pattern="/admin/**" access="ROLE_ADMIN" />
+
         <http-basic/>
 
         <form-login
@@ -32,11 +41,11 @@
         <!--<beans:property name="oauthKeyMap" value=""/>-->
     <!--</beans:bean>-->
 
-    <beans:bean name="coreOAuthSignatureMethodFactory"
-                class="org.springframework.security.oauth.common.signature.CoreOAuthSignatureMethodFactory">
-        <beans:property name="supportRSA_SHA1" value="true"/>
-        <beans:property name="supportHMAC_SHA1" value="true"/>
-    </beans:bean>
+    <!--<beans:bean name="coreOAuthSignatureMethodFactory"-->
+                <!--class="org.springframework.security.oauth.common.signature.CoreOAuthSignatureMethodFactory">-->
+        <!--<beans:property name="supportRSA_SHA1" value="true"/>-->
+        <!--<beans:property name="supportHMAC_SHA1" value="true"/>-->
+    <!--</beans:bean>-->
 
     <authentication-manager alias="authenticationManager">
         <authentication-provider ref="daoAuthenticationProvider"/>
@@ -79,22 +88,11 @@
     <!--<beans:property name="cache" ref="userCacheBackend"/>-->
     <!--</beans:bean>-->
 
-    <!-- Automatically receives AuthenticationEvent messages -->
-    <beans:bean id="loggerListener" class="org.springframework.security.authentication.event.LoggerListener"/>
-
-    <beans:bean id="basicAuthenticationFilter"
-                class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
-        <beans:property name="authenticationManager" ref="authenticationManager"/>
-        <beans:property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
-    </beans:bean>
-
-    <beans:bean id="authenticationEntryPoint"
-                class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
-        <beans:property name="realmName" value="Migrate Realm"/>
-    </beans:bean>
-
     <beans:bean id="dataSourcePopulator" class="com.migrate.storage.UserDetailInitializer">
         <beans:constructor-arg ref="dataSource"/>
     </beans:bean>
+
+    <!-- Automatically receives AuthenticationEvent messages -->
+    <beans:bean id="loggerListener" class="org.springframework.security.authentication.event.LoggerListener"/>
 
 </beans:beans>
