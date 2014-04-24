@@ -6,19 +6,19 @@
 
     <beans:import resource="classpath:spring/applicationContext-storage.xml"/>
 
-    <beans:bean id="plain401BasicAuthenticationEntryPoint"
-          class="com.migrate.security.AjaxAwareAuthenticationEntryPoint">
+    <beans:bean id="ajaxAwareAuthEntryPoint"
+                class="com.migrate.security.AjaxAwareAuthenticationEntryPoint">
         <beans:property name="realmName" value="com.migrate.security"/>
     </beans:bean>
 
     <beans:bean id="basicAuthenticationFilter"
                 class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
         <beans:property name="authenticationManager" ref="authenticationManager"/>
-        <beans:property name="authenticationEntryPoint" ref="plain401BasicAuthenticationEntryPoint"/>
+        <beans:property name="authenticationEntryPoint" ref="ajaxAwareAuthEntryPoint"/>
     </beans:bean>
 
     <!--HTTP basic authentication in Spring Security-->
-    <http realm="com.migrate.security" entry-point-ref="plain401BasicAuthenticationEntryPoint">
+    <http realm="com.migrate.security" entry-point-ref="ajaxAwareAuthEntryPoint">
         <intercept-url pattern="/dashboard/**" access="ROLE_USER" />
         <intercept-url pattern="/manage/**" access="ROLE_USER" />
         <intercept-url pattern="/schema/**" access="ROLE_USER" />
@@ -37,14 +37,14 @@
     </http>
 
     <!--<beans:bean name="migrateOAuthSignatureMethodFactory"-->
-                <!--class="com.migrate.security.OAuthSignatureMethodFactory">-->
-        <!--<beans:property name="oauthKeyMap" value=""/>-->
+    <!--class="com.migrate.security.OAuthSignatureMethodFactory">-->
+    <!--<beans:property name="oauthKeyMap" value=""/>-->
     <!--</beans:bean>-->
 
     <!--<beans:bean name="coreOAuthSignatureMethodFactory"-->
-                <!--class="org.springframework.security.oauth.common.signature.CoreOAuthSignatureMethodFactory">-->
-        <!--<beans:property name="supportRSA_SHA1" value="true"/>-->
-        <!--<beans:property name="supportHMAC_SHA1" value="true"/>-->
+    <!--class="org.springframework.security.oauth.common.signature.CoreOAuthSignatureMethodFactory">-->
+    <!--<beans:property name="supportRSA_SHA1" value="true"/>-->
+    <!--<beans:property name="supportHMAC_SHA1" value="true"/>-->
     <!--</beans:bean>-->
 
     <authentication-manager alias="authenticationManager">
