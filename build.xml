@@ -5,11 +5,15 @@
     <property file="build.properties"/>
     <property file="src/jdbc.properties"/>
 
+    <property file="build.properties"/>
     <property name="migrate" value="migrate"/>
     <property name="migrate.path" value="/${migrate}"/>
     <property name="migrate.version" value="1.0"/>
-    <property name="build.home" value="${basedir}/build"/>
-    <property name="build.web-inf.classes" value="${build.home}/WEB-INF/classes"/>
+
+    <property name="build" value="${basedir}/build"/>
+    <property name="build.web-inf" value="${build}/WEB-INF"/>
+    <property name="build.web-inf.classes" value="${build.web-inf}/classes"/>
+    <property name="build.web-inf.lib" value="${build.web-inf}/lib"/>
     <property name="src.home" value="src"/>
     <property name="web.home" value="WebContent"/>
     <property name="dist.home" value="${basedir}/dist"/>
@@ -24,6 +28,12 @@
     <property name="compile.deprecation" value="false"/>
     <property name="compile.optimize"    value="true"/>
     <property name="tools.eclipse" value="${basedir}/tools/ide/eclipse" />
+
+    <fail message="Property &quot;sdk.dir&quot; needs to be set, please edit the build.properties file to set App Engine SDK directory "
+          unless="sdk.dir"/>
+
+    <import file="${sdk.dir}/config/user/ant-macros.xml" />
+
 
     <target name="download-ivy" unless="skip.download">
         <mkdir dir="${ivy.jar.dir}"/>
@@ -47,11 +57,40 @@
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
 
+    <!-- ==================== Copy app engine jars ================================== -->
+    <target name="copy-appengine-jars" depends="resolve"
+            description="Copies the App Engine JARs to the WAR.">
+
+        <mkdir dir="${build.web-inf.lib}" />
+        <!--<copy todir="${build.home}">-->
+            <!--<fileset dir="war">-->
+                <!--<include name="**/*" />-->
+            <!--</fileset>-->
+        <!--</copy>-->
+
+        <copy todir="${build.web-inf.lib}" flatten="true">
+            <fileset dir="${sdk.dir}/lib/user">
+                <include name="**/appengine-api-1.0-sdk*.jar" />
+            </fileset>
+            <fileset dir="${sdk.dir}/lib/opt/user">
+                <include name="appengine-api-labs/v1/*.jar" />
+                <include name="jsr107/v1/*.jar" />
+                <include name="datanucleus/v2/*.jar" />
+                <include name="appengine-endpoints/v1/appengine-endpoints.jar" />
+            </fileset>
+        </copy>
+
+        <!--<copy todir="war/WEB-INF/lib" flatten="true">-->
+            <!--<fileset dir="${build.web-inf.lib}">-->
+                <!--<include name="*.jar" />-->
+            <!--</fileset>-->
+        <!--</copy>-->
+    </target>
 
     <!-- ==================== resolve ivy dependencies Target ================================== -->
     <target name="resolve" description="--> resolve ivy dependencies">
         <property name="ivy.dep.file" value="${basedir}/ivy.xml" />
-        <property name="ivy.lib.dir" value="${build.home}/WEB-INF/lib" />
+        <property name="ivy.lib.dir" value="${build.web-inf.lib}" />
         <ivy:retrieve />
     </target>
 
@@ -60,23 +99,23 @@
     <target name="prepare" depends="install-ivy">
 
         <!-- Create build directories as needed -->
-        <mkdir  dir="${build.home}"/>
-        <mkdir  dir="${build.home}/WEB-INF"/>
-        <mkdir  dir="${build.home}/WEB-INF/classes"/>
+        <mkdir  dir="${build}"/>
+        <mkdir  dir="${build.web-inf}"/>
+        <mkdir  dir="${build.web-inf.classes}"/>
 
-        <copy todir="${build.home}">
+        <copy todir="${build}">
             <fileset dir="${web.home}"/>
         </copy>
 
-        <mkdir  dir="${build.home}/WEB-INF/lib"/>
+        <mkdir  dir="${build.web-inf.lib}"/>
 
-        <copy todir="${build.home}/WEB-INF" >
+        <copy todir="${build.web-inf}" >
             <fileset dir="${web.home}/WEB-INF"  excludes="**/*.classes"/>
         </copy>
     </target>
 
     <path id="compile.classpath">
-        <fileset dir="${build.home}/WEB-INF/lib">
+        <fileset dir="${build.web-inf.lib}">
             <include name="*.jar"/>
         </fileset>
 
@@ -88,14 +127,15 @@
 
     <target name="clean"
             description="Delete old build and dist directories">
-        <delete dir="${build.home}"/>
+        <delete dir="${build}"/>
         <delete dir="${dist.home}"/>
     </target>
 
-    <target name="compile" depends="prepare, resolve">
-        <mkdir dir="${build.home}/WEB-INF/classes"/>
+    <target name="compile" depends="prepare, resolve, copy-appengine-jars">
+
+        <mkdir dir="${build.web-inf.classes}"/>
         <javac srcdir="${src.home}"
-               destdir="${build.home}/WEB-INF/classes"
+               destdir="${build.web-inf.classes}"
                debug="${compile.debug}"
                deprecation="${compile.deprecation}"
                optimize="${compile.optimize}"
@@ -106,18 +146,50 @@
         </javac>
 
         <!-- Copy application resources -->
-        <copy  todir="${build.home}/WEB-INF/classes">
+        <copy  todir="${build.web-inf.classes}">
             <fileset dir="src" excludes="**/*.java"/>
         </copy>
     </target>
 
     <target name="dist" depends="compile">
         <mkdir dir="${dist.home}"/>
-
-        <jar jarfile="${dist.home}/${migrate}.war" basedir="${build.home}" excludes="**/servlet-api-2.5.jar"/>
+        <jar jarfile="${dist.home}/${migrate}.war" basedir="${build}" excludes="**/servlet-api-2.5.jar"/>
         <jar jarfile="${dist.home}/${migrate}-model.jar">
             <fileset dir="${build.web-inf.classes}" includes="**/model/*.class"/>
             <fileset dir="${build.web-inf.classes}" includes="com/migrate/storage/impl/JsonHelper.class"/>
         </jar>
+    </target>
+
+    <target name="datanucleusenhance" depends="dist"
+            description="Performs enhancement on compiled data classes.">
+        <enhance_war war="${build}">
+            <args>
+                <arg value="-enhancerVersion"/>
+                <arg value="v2"/>
+            </args>
+        </enhance_war>
+    </target>
+
+    <target name="runserver" depends="datanucleusenhance"
+            description="Starts the development server.">
+        <dev_appserver war="${build}" />
+    </target>
+
+    <target name="deploy-app" description="Uploads and deploys the application to App Engine." depends="datanucleusenhance">
+        <input message="Enter email" addproperty="gae-email"/>
+        <input message="Enter password :- " addproperty="gae-password">
+            <handler type="secure"/>
+        </input>
+
+        <!-- Call dependencies here rather than with 'depends' attribute to get input first -->
+        <antcall target="datanucleusenhance" />
+
+        <java classname="com.google.appengine.tools.admin.AppCfg" inputstring="${gae-password}"
+              classpath="${sdk.dir}/lib/appengine-tools-api.jar" fork="true" failonerror="true">
+            <arg value="--email=${gae-email}" />
+            <arg value="--passin" />
+            <arg value="update" />
+            <arg value="${build}" />
+        </java>
     </target>
 </project>
