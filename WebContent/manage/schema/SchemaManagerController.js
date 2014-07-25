@@ -49,7 +49,7 @@ function internalAddProperty(schema, property, propertyType, required) {
 }
 
 angular.module('MigrateSchema.service', []).factory('MigrateService', function($http, $location) {
-    var schemaBase = "http://" + $location.host() + ":" + $location.port() + "/migrate/schema";
+    var schemaBase = "http://" + $location.host() + ":" + $location.port() + "/schema";
 
     var schemas = [];
 

@@ -4,7 +4,7 @@ angular.module('MigrateUser.service', []).factory('MigrateUserService', function
 
     return {
         register: function (username, password) {
-            var postUserUri = migrateBase + "/migrate/users/web?username=" + username + "&password=" + password;
+            var postUserUri = migrateBase + "/users/web?username=" + username + "&password=" + password;
 
             // return the promise directly.
             return $http.post(postUserUri)
@@ -41,7 +41,7 @@ function RegisterController($scope, MigrateUserService) {
                 if (result == "false") {
                     alert("Invalid credentials or duplicate user.");
                 } else {
-                    var newUrl = '/migrate/dashboard/welcome.jsp';
+                    var newUrl = '/dashboard/welcome.jsp';
                     MigrateUserService.setLocation(newUrl);
                 }
 

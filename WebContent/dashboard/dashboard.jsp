@@ -1,11 +1,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html ng-app="MigrateSchema">
 <head>
-    <script src="/migrate/angular-1.2.7/angular.min.js"></script>
-    <script src="/migrate/global.js"></script>
-    <script src="/migrate/manage/schema/SchemaManagerController.js"></script>
+    <script src="/angular-1.2.7/angular.min.js"></script>
+    <script src="/global.js"></script>
+    <script src="/manage/schema/SchemaManagerController.js"></script>
 
-    <link rel="stylesheet" href="/migrate/migrate.css">
+    <link rel="stylesheet" href="migrate.css">
 </head>
 
 <body>
@@ -25,13 +25,13 @@
 
     <br>
     <br>
-    <a href="/migrate/manage/schema/editor.html">Add schema</a>
+    <a href="/manage/schema/editor.html">Add schema</a>
 </div>
 </body>
 </html>
 
 
-<a href="<c:url value="/migrate/j_spring_security_logout" />" > Logout</a>
+<a href="<c:url value="/j_spring_security_logout" />" > Logout</a>
 </body>
 </html>
 

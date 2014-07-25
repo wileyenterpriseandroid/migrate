@@ -14,9 +14,9 @@
     </style>
 </head>
 <head>
-    <script src="/migrate/angular-1.2.7/angular.min.js"></script>
-    <script src="/migrate/global.js"></script>
-    <script src="/migrate/RegisterController.js"></script>
+    <script src="/angular-1.2.7/angular.min.js"></script>
+    <script src="/global.js"></script>
+    <script src="/RegisterController.js"></script>
 
     <link rel="stylesheet" href="migrate.css">
 </head>

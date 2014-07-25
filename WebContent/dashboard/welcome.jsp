@@ -152,7 +152,7 @@
 <a href="dashboard.jsp">Dashboard</a>
 <br>
 <p>
-    <a href="<c:url value="/migrate/j_spring_security_logout" />" > Logout</a>
+    <a href="<c:url value="/j_spring_security_logout" />" > Logout</a>
 </p>
 </body>
 </html>

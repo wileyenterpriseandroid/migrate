@@ -22,7 +22,7 @@
     </div>
 </c:if>
 
-<form name='f' action='/migrate/j_spring_security_check' method='POST'>
+<form name='f' action='/j_spring_security_check' method='POST'>
     <table>
         <tr>
             <td>User:</td>
@@ -41,7 +41,7 @@
     </table>
 </form>
 
-<a href="/migrate/register.jsp">Register</a>
+<a href="/register.jsp">Register</a>
 
 </body>
 </html>
