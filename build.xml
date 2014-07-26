@@ -176,10 +176,13 @@
     </target>
 
     <target name="deploy-app" description="Uploads and deploys the application to App Engine." depends="datanucleusenhance">
-        <input message="Enter email" addproperty="gae-email"/>
-        <input message="Enter password :- " addproperty="gae-password">
-            <handler type="secure"/>
-        </input>
+        <!--<input message="Enter email" addproperty="gae-email"/>-->
+        <!--<input message="Enter password :- " addproperty="gae-password">-->
+            <!--<handler type="secure"/>-->
+        <!--</input>-->
+
+        <property name="gae-email" value="gybedev@gmail.com"/>
+        <property name="gae-password" value="itbjxxmfzwvdgybz"/>
 
         <!-- Call dependencies here rather than with 'depends' attribute to get input first -->
         <antcall target="datanucleusenhance" />
