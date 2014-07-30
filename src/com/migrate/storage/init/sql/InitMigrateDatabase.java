@@ -29,28 +29,14 @@ public class InitMigrateDatabase implements ServletContextListener {
             DataSourceHolder dataHolder = (DataSourceHolder) wac.getBean("dataHolder");
             BasicDataSource dataSource = dataHolder.getDataSource();
 
-            Class.forName("com.mysql.jdbc.Driver");
-
-            // must strip off the database since it does may not exist yet
-
             String dataSourceURL = dataSource.getUrl();
-            int slashSlash = dataSourceURL.indexOf("//");
-            if (slashSlash >= 0) {
-                slashSlash += 2;
-                int slash = dataSourceURL.indexOf("/", slashSlash);
-                if (slash >= 0) {
-                    String hostPort = dataSourceURL.substring(slashSlash,  slash);
+            Connection c = DriverManager.getConnection(dataSourceURL,
+                    dataSource.getUsername(), dataSource.getPassword());
 
-                    String dbURL = "jdbc:mysql://" + hostPort + "/";
+            initDatabase(c, ctx);
 
-                    Connection c = DriverManager.getConnection(dbURL,
-                            dataSource.getUsername(), dataSource.getPassword());
+            ctx.log("DB script executed");
 
-                    initDatabase(c, ctx);
-
-                    ctx.log("DB script executed");
-                }
-            }
         } catch (Exception e) {
             ctx.log("Unable to execute DB script", e);
         }

@@ -11,17 +11,31 @@
      		http://www.springframework.org/schema/tx/spring-tx-3.1.xsd"
 	        >
 
-   <!-- the DataSource (parameterized for configuration via a PropertyPlaceHolderConfigurer) -->
-    <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
+    <!-- the DataSource (parameterized for configuration via a PropertyPlaceHolderConfigurer) -->
+    <bean id="dataSourceLocal" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
+    <!--<bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">-->
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url" value="jdbc:mysql://localhost:3306/migrate"/>
         <property name="username" value="root"/>
         <property name="password" value="mysql"/>
     </bean>
- 
+
+    <!-- the DataSource (parameterized for configuration via a PropertyPlaceHolderConfigurer) -->
+    <!--https://developers.google.com/appengine/docs/java/cloud-sql/#Java_Connect_to_your_database-->
+    <bean id="dataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
+    <!--<bean id="dataSourceGoogleCloudSql" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">-->
+        <property name="driverClassName" value="com.mysql.jdbc.GoogleDriver"/>
+        <!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
+        <property name="url" value="jdbc:google:mysql://project-migrate-beta:migrate-mysql/migrate?user=root"/>
+        <!--<property name="url" value="jdbc:mysql://localhost:3306/migrate"/>-->
+        <property name="username" value="root"/>
+        <property name="password" value="mysql"/>
+    </bean>
+
     <tx:annotation-driven transaction-manager="txManager"/>
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
   		<property name="dataSource" ref="dataSource"/>
+  		<!--<property name="dataSource" ref="dataSourceGoogleCloudSql"/>-->
   	</bean>
   	
 	<bean id="kvStore" class="com.migrate.storage.impl.DBKVStore" p:dataSource-ref="dataSource" >

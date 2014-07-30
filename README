@@ -9,6 +9,9 @@ backend, a mysql instance must be present on local port 3306. Future releases
 will accommodate varying scalable implementations, likely based on Google App
 Engine, Amazon Dynamo DB, etc.
 
+Update: App engine now supported, enable Google Cloud SQL API in App Engine console,
+update build.xml
+
 * To build the project:
 
    Install ant version 1.1.8
