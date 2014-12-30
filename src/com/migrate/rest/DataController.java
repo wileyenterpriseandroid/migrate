@@ -38,6 +38,10 @@ public class DataController {
     @Qualifier(value = "dataService")
     private DataService dataService;
 
+    @Autowired
+    @Qualifier(value = "syncNotification")
+    private SyncNotification notifier;
+
     /*
      * Get the JSON object with the given type and id.
      */
@@ -176,7 +180,7 @@ public class DataController {
 //            @RequestHeader("Authorization") String oauth,
             @PathVariable String classname,
             @RequestBody SyncRequest syncRequest,
-        Principal principal)
+            Principal principal)
             throws IOException
     {
         try {
@@ -204,7 +208,10 @@ public class DataController {
              * great than "now".
              */
             Long now = System.currentTimeMillis();
-            SyncResult ret = new SyncResult(serverModifiedData, conflictData, now);
+            SyncResult syncResult = new SyncResult(serverModifiedData, conflictData, now);
+
+            // Set true if any client changes are accepted
+            boolean isChanged = false;
 
             for (GenericMap clientObject : clientModifiedData) {
                 try {
@@ -219,6 +226,10 @@ public class DataController {
                             dataService.storeObject(clientObject, userId);
                         }
                     }
+
+                    // sync resulted in at least one object modification
+                    isChanged = true;
+
                 } catch (VersionMismatchException e) {
                     /*
                      * The client's version does not match the server's version, the server must have updated
@@ -258,7 +269,12 @@ public class DataController {
              */
             removeData(serverModifiedData, clientModifiedData);
 
-            return ret;
+            // For now tell all listeners about all changes
+            if (isChanged) {
+                notifier.dataChanged(now);
+            }
+
+            return syncResult;
         } catch (IOException e) {
             e.printStackTrace();
             throw e;
