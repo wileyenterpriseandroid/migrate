@@ -15,6 +15,10 @@
     <!-- Enable annotation scanning. -->
     <context:component-scan base-package="com.migrate"/>
 
+    <aop:config proxy-target-class="true">
+        <!-- other beans defined here... -->
+    </aop:config>
+
     <beans:bean id="marshallingHttpMessageConverter"
                 class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
     </beans:bean>
