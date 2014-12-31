@@ -65,7 +65,7 @@ public class UserController {
             return true;
         } catch (Exception e) {
             log.error("Could not create user.", e);
-            e.printStackTrace();
+//            e.printStackTrace();
             return false;
         }
     }
@@ -87,7 +87,7 @@ public class UserController {
 
         } catch (Exception e) {
             log.error("Could not create user.", e);
-            e.printStackTrace();
+//            e.printStackTrace();
             return false;
         }
     }

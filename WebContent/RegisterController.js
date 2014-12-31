@@ -1,10 +1,8 @@
 
 angular.module('MigrateUser.service', []).factory('MigrateUserService', function($http, $location, $window) {
-    var migrateBase = "http://" + $location.host() + ":" + $location.port();
-
     return {
         register: function (username, password) {
-            var postUserUri = migrateBase + "/users/web?username=" + username + "&password=" + password;
+            var postUserUri = "users/web?username=" + username + "&password=" + password;
 
             // return the promise directly.
             return $http.post(postUserUri)
@@ -13,7 +11,8 @@ angular.module('MigrateUser.service', []).factory('MigrateUserService', function
                 });
         },
         setLocation : function (url) {
-            var newUrl = migrateBase + url;
+            //var newUrl = migrateBase + url;
+            var newUrl = url;
             $window.location.href = newUrl;
         }
     }
@@ -41,7 +40,7 @@ function RegisterController($scope, MigrateUserService) {
                 if (result == "false") {
                     alert("Invalid credentials or duplicate user.");
                 } else {
-                    var newUrl = '/dashboard/welcome.jsp';
+                    var newUrl = 'dashboard/welcome.jsp';
                     MigrateUserService.setLocation(newUrl);
                 }
 

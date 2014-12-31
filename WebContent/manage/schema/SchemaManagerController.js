@@ -49,22 +49,30 @@ function internalAddProperty(schema, property, propertyType, required) {
 }
 
 angular.module('MigrateSchema.service', []).factory('MigrateService', function($http, $location) {
-    var schemaBase = "http://" + $location.host() + ":" + $location.port() + "/schema";
-
-    var schemas = [];
 
     return {
         postSchema: function (schemaId, schemaJson) {
+            // two levels up because called from manage/schema/editor.html
+            var schemaBase = "../../schema";
+
             var postSchemaUri = schemaBase + "/" + schemaId;
 
             // return the promise directly.
-            return $http.post(postSchemaUri, schemaJson)
-                .then(function (result) {
-                    // Resolve the promise as the data
-                    return result.data;
-                });
+            var promise = $http.post(postSchemaUri, schemaJson)
+            promise.then(function (result) {
+                // Resolve the promise as the data
+                return result.data;
+            });
+            promise.error(function(response, status) {
+                if ( status != "" ) {
+                    alert("Post schema error: " + status + ": " + response);
+                }
+            });
         },
         updateSchemas: function (schemaID, schemasArr) {
+            // two levels up because called from dashboard/dashboard.jsp
+            var schemaBase = "../schema";
+
             var getSchemaUri;
 
             if (schemaID == null) {

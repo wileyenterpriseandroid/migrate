@@ -89,7 +89,8 @@
     <!--</beans:bean>-->
 
     <beans:bean id="dataSourcePopulator" class="com.migrate.storage.UserDetailInitializer">
-        <beans:constructor-arg ref="dataSource"/>
+        <beans:constructor-arg ref="bareDataSource"/>
+
     </beans:bean>
 
     <!-- Automatically receives AuthenticationEvent messages -->

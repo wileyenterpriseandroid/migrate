@@ -270,9 +270,9 @@ public class DataController {
             removeData(serverModifiedData, clientModifiedData);
 
             // For now tell all listeners about all changes
-            if (isChanged) {
-                notifier.dataChanged(now);
-            }
+//            if (isChanged) {
+//                notifier.dataChanged(now);
+//            }
 
             return syncResult;
         } catch (IOException e) {

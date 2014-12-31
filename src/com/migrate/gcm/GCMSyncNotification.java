@@ -4,17 +4,16 @@ import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Sender;
 import com.migrate.rest.SyncNotification;
-import org.apache.log4j.Logger;
 
-import javax.servlet.ServletContext;
 import java.io.IOException;
-
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GCMSyncNotification implements SyncNotification {
-    private static org.apache.log4j.Logger log = Logger.getLogger(GCMSyncNotification.class);
-
+    protected static final Logger logger =
+            Logger.getLogger(GCMSyncNotification.class.getName());
 
     // TODO: obviously need to configure this
     public static final String GCM_KEY = "AIzaSyC9a3CuvPjvVbpoL2nl6eLm0EZlgtmgm4s";
@@ -23,7 +22,7 @@ public class GCMSyncNotification implements SyncNotification {
     private static List<String> DEVICE_REGISTRATIONS= Arrays.asList(new String[]{"foo"});
 
     @Override
-    public void dataChanged(long syncTime, ServletContext ctx) {
+    public void dataChanged(long syncTime) {
         // iterate through attached notification systems (amazon, GCM, etc.)
         Sender s = new Sender(GCM_KEY);
         Message m = new Message.Builder().addData("lastSyncTime", String.valueOf(syncTime)).build();
@@ -33,7 +32,7 @@ public class GCMSyncNotification implements SyncNotification {
             System.out.println("canonical ids: " + mr.getCanonicalIds());
             System.out.println("string: " + mr.toString());
         } catch (IOException e) {
-            ctx.log("exception from cloud gcm request", e);
+            logger.log(Level.SEVERE, "Exception executing gcm cloud request.", e);
         }
     }
 }

@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS `kv_table` (`namespace` varchar(255) NOT NULL DEFAULT
 	`version` bigint(20) DEFAULT NULL,
 	`deleted` tinyint DEFAULT NULL,
 	`tenantId` varchar(255),
-    PRIMARY KEY (`namespace`, `dataKey`), INDEX (updateTime))
+    PRIMARY KEY (`namespace`, `dataKey`, `tenantId`), INDEX (updateTime))
     ENGINE=InnoDB DEFAULT CHARSET=utf8;

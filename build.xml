@@ -131,7 +131,7 @@
         <delete dir="${dist.home}"/>
     </target>
 
-    <target name="compile" depends="prepare, resolve, copy-appengine-jars">
+    <target name="compile" depends="prepare, resolve">
 
         <mkdir dir="${build.web-inf.classes}"/>
         <javac srcdir="${src.home}"
@@ -151,7 +151,7 @@
         </copy>
     </target>
 
-    <target name="dist" depends="compile">
+    <target name="-dist" depends="compile">
         <mkdir dir="${dist.home}"/>
         <jar jarfile="${dist.home}/${migrate}.war" basedir="${build}" excludes="**/servlet-api-2.5.jar"/>
         <jar jarfile="${dist.home}/${migrate}-model.jar">
@@ -160,7 +160,9 @@
         </jar>
     </target>
 
-    <target name="datanucleusenhance" depends="dist"
+    <target name="local.dist" depends="-dist"/>
+
+    <target name="appengine.datanucleusenhance" depends="-dist, copy-appengine-jars"
             description="Performs enhancement on compiled data classes.">
         <enhance_war war="${build}">
             <args>
@@ -170,12 +172,12 @@
         </enhance_war>
     </target>
 
-    <target name="runserver" depends="datanucleusenhance"
+    <target name="appengine.runlocal" depends="appengine.datanucleusenhance"
             description="Starts the development server.">
         <dev_appserver war="${build}" />
     </target>
 
-    <target name="deploy-app" description="Uploads and deploys the application to App Engine." depends="datanucleusenhance">
+    <target name="appengine.deploy" description="Uploads and deploys the application to App Engine." depends="appengine.datanucleusenhance">
         <!--<input message="Enter email" addproperty="gae-email"/>-->
         <!--<input message="Enter password :- " addproperty="gae-password">-->
             <!--<handler type="secure"/>-->
@@ -185,7 +187,7 @@
         <property name="gae-password" value="itbjxxmfzwvdgybz"/>
 
         <!-- Call dependencies here rather than with 'depends' attribute to get input first -->
-        <antcall target="datanucleusenhance" />
+        <antcall target="appengine.datanucleusenhance" />
 
         <java classname="com.google.appengine.tools.admin.AppCfg" inputstring="${gae-password}"
               classpath="${sdk.dir}/lib/appengine-tools-api.jar" fork="true" failonerror="true">
