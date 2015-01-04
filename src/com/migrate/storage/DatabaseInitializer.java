@@ -1,6 +1,5 @@
 package com.migrate.storage;
 
-import com.migrate.gcm.GCMSyncNotification;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.Assert;
@@ -11,22 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UserDetailInitializer implements InitializingBean {
+public class DatabaseInitializer implements InitializingBean {
     protected static final Logger logger =
-            Logger.getLogger(UserDetailInitializer.class.getName());
+            Logger.getLogger(DatabaseInitializer.class.getName());
 
     @Autowired
     private ServletContext ctx;
 
     protected JdbcTemplate template;
 
-    public UserDetailInitializer(DataSource dataSource) {
+    public DatabaseInitializer(DataSource dataSource) {
        Assert.notNull(dataSource, "DataSource required");
        this.template = new JdbcTemplate(dataSource);
     }

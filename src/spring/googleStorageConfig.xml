@@ -1,0 +1,23 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+        >
+    <bean id="nodbDataSourceGoogleCloudSql" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.GoogleDriver"/>
+        <property name="url" value="jdbc:google:mysql://project-migrate-beta:migrate-mysql/?user=root"/>
+        <property name="username" value="root"/>
+        <property name="password" value="mysql"/>
+    </bean>
+
+    <!-- the DataSource (parameterized for configuration via a PropertyPlaceHolderConfigurer) -->
+    <!--https://developers.google.com/appengine/docs/java/cloud-sql/#Java_Connect_to_your_database-->
+    <bean id="dataSourceGoogleCloudSql" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.GoogleDriver"/>
+        <property name="url" value="jdbc:google:mysql://project-migrate-beta:migrate-mysql/migrate?user=root"/>
+        <property name="username" value="root"/>
+        <property name="password" value="mysql"/>
+    </bean>
+
+    <alias name="nodbDataSourceGoogleCloudSql" alias="nodbDataSource"/>
+    <alias name="dataSourceGoogleCloudSql" alias="dataSource"/>
+</beans>

@@ -7,46 +7,13 @@
      		http://www.springframework.org/schema/tx/spring-tx-3.1.xsd"
         >
 
-    <bean id="nodbDataSourceGoogleCloudSql" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="com.mysql.jdbc.GoogleDriver"/>
-        <property name="url" value="jdbc:google:mysql://project-migrate-beta:migrate-mysql/?user=root"/>
-        <property name="username" value="root"/>
-        <property name="password" value="mysql"/>
-    </bean>
-    <bean id="nodbDataSourceLocal" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://localhost:3306/"/>
-        <property name="username" value="root"/>
-        <property name="password" value="mysql"/>
-    </bean>
-
-    <!-- the DataSource (parameterized for configuration via a PropertyPlaceHolderConfigurer) -->
-    <!--https://developers.google.com/appengine/docs/java/cloud-sql/#Java_Connect_to_your_database-->
-    <bean id="dataSourceGoogleCloudSql" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="com.mysql.jdbc.GoogleDriver"/>
-        <property name="url" value="jdbc:google:mysql://project-migrate-beta:migrate-mysql/migrate?user=root"/>
-        <property name="username" value="root"/>
-        <property name="password" value="mysql"/>
-    </bean>
-
-    <bean id="dataSourceLocal" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://localhost:3306/migrate"/>
-        <property name="username" value="root"/>
-        <property name="password" value="mysql"/>
-    </bean>
-
-    <!--Swap when deploying locally or to Google-->
-    <!--<alias name="nodbDataSourceLocal" alias="nodbDataSource"/>-->
-    <alias name="nodbDataSourceGoogleCloudSql" alias="nodbDataSource"/>
-    <!--<alias name="dataSourceLocal" alias="dataSource"/>-->
-    <alias name="dataSourceGoogleCloudSql" alias="dataSource"/>
+    <import resource="storageConfig.xml"/>
 
     <tx:annotation-driven transaction-manager="txManager"/>
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
   		<property name="dataSource" ref="dataSource"/>
   	</bean>
-  	
+
 	<bean id="kvStore" class="com.migrate.storage.impl.DBKVStore" p:dataSource-ref="dataSource" >
     </bean>
 

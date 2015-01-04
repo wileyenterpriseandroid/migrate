@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="migrate" default="compile" basedir=".">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="migrate" default="local.dist" basedir=".">
 
     <property file="build.properties"/>
     <property file="src/jdbc.properties"/>
@@ -14,7 +14,7 @@
     <property name="build.web-inf" value="${build}/WEB-INF"/>
     <property name="build.web-inf.classes" value="${build.web-inf}/classes"/>
     <property name="build.web-inf.lib" value="${build.web-inf}/lib"/>
-    <property name="src.home" value="src"/>
+    <property name="src.home" value="${basedir}/src"/>
     <property name="web.home" value="WebContent"/>
     <property name="dist.home" value="${basedir}/dist"/>
     <property name="compile.debug" value="true"/>
@@ -62,11 +62,6 @@
             description="Copies the App Engine JARs to the WAR.">
 
         <mkdir dir="${build.web-inf.lib}" />
-        <!--<copy todir="${build.home}">-->
-            <!--<fileset dir="war">-->
-                <!--<include name="**/*" />-->
-            <!--</fileset>-->
-        <!--</copy>-->
 
         <copy todir="${build.web-inf.lib}" flatten="true">
             <fileset dir="${sdk.dir}/lib/user">
@@ -80,11 +75,6 @@
             </fileset>
         </copy>
 
-        <!--<copy todir="war/WEB-INF/lib" flatten="true">-->
-            <!--<fileset dir="${build.web-inf.lib}">-->
-                <!--<include name="*.jar" />-->
-            <!--</fileset>-->
-        <!--</copy>-->
     </target>
 
     <!-- ==================== resolve ivy dependencies Target ================================== -->
@@ -95,6 +85,14 @@
     </target>
 
     <!-- ==================== Prepare Target ================================== -->
+
+    <target name="prepareLocal">
+        <copy file="${src.home}/spring/localStorageConfig.xml" tofile="${src.home}/spring/storageConfig.xml" overwrite="true"/>
+    </target>
+
+    <target name="prepareGoogle">
+        <copy file="${src.home}/spring/googleStorageConfig.xml" tofile="${src.home}/spring/storageConfig.xml" overwrite="true"/>
+    </target>
 
     <target name="prepare" depends="install-ivy">
 
@@ -121,9 +119,6 @@
 
         <pathelement location="src"/>
     </path>
-
-    <target name="all" depends="clean,compile"
-            description="Clean build and dist directories, then compile"/>
 
     <target name="clean"
             description="Delete old build and dist directories">
@@ -160,9 +155,9 @@
         </jar>
     </target>
 
-    <target name="local.dist" depends="-dist"/>
+    <target name="local.dist" depends="prepareLocal, -dist"/>
 
-    <target name="appengine.datanucleusenhance" depends="-dist, copy-appengine-jars"
+    <target name="appengine.datanucleusenhance" depends="copy-appengine-jars"
             description="Performs enhancement on compiled data classes.">
         <enhance_war war="${build}">
             <args>
@@ -177,10 +172,10 @@
         <dev_appserver war="${build}" />
     </target>
 
-    <target name="appengine.deploy" description="Uploads and deploys the application to App Engine." depends="appengine.datanucleusenhance">
+    <target name="appengine.deploy" description="Uploads and deploys the application to App Engine." depends="prepareGoogle, -dist, appengine.datanucleusenhance">
         <!--<input message="Enter email" addproperty="gae-email"/>-->
         <!--<input message="Enter password :- " addproperty="gae-password">-->
-            <!--<handler type="secure"/>-->
+        <!--<handler type="secure"/>-->
         <!--</input>-->
 
         <property name="gae-email" value="gybedev@gmail.com"/>
