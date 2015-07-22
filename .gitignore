@@ -1,11 +1,6 @@
-.DS_*
-.classpath
-.project
-.settings
-checkstyle
-build
-dist
-WebData.log
-build.ant
-.idea
-
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build

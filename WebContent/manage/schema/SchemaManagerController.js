@@ -107,7 +107,8 @@ function SchemaEditorController($scope, MigrateService) {
     $scope.migrateTypes = [
         {typeName:'String', typeValue:'string'},
         {typeName:'Integer', typeValue:'integer'},
-        {typeName:'Double', typeValue:'double'}
+        {typeName:'Double', typeValue:'double'},
+        {typeName:'Boolean', typeValue:'boolean'}
     ];
 
     $scope.schemaPackage = '';
